@@ -1,0 +1,282 @@
+page 2 (
+    name: Employees
+    alias: EMPLOYEES
+    title: Employees
+    appearance {
+        pageTemplate: @/left-side-column
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region employees-report (
+        name: Employees
+        title: Employee List
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select empno,
+                       ename,
+                       job,
+                       mgr,
+                       hiredate,
+                       sal,
+                       comm,
+                       deptno
+                  from emp e
+                 order by ename
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+
+        column COMM (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Commission
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DEPTNO (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Dept
+            }
+            lov {
+                type: sharedComponent
+                lov: @dept-dname
+            }
+            layout {
+                sequence: 99
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column EMPNO (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Emp #
+            }
+            layout {
+                sequence: 1
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ENAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column HIREDATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Hired
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column JOB (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Job
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MGR (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Manager
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SAL (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Salary
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region employees-search (
+        name: Employees Filters
+        title: Filter employees
+        type: facetedSearch
+        source {
+            filteredRegion: @employees-report
+        }
+        layout {
+            sequence: 6
+            slot: leftColumn
+            columnSpan: 4
+        }
+        appearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            showCurrentFacets: selector
+            currentFacetsSelector: #active_facets
+            showTotalRowCount: true
+            displayChartForTopNValues: 10
+        }
+
+        facet P02_DEPTNO (
+            type: checkboxGroup
+            label {
+                label: Department
+            }
+            lov {
+                type: sharedComponent
+                lov: @dept-dname
+            }
+            layout {
+                sequence: 10
+            }
+            listEntries {
+                maxDisplayedEntries: 7
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: DEPTNO
+                dataType: number
+            }
+        )
+
+        facet P02_SAL (
+            type: range
+            label {
+                label: Salary
+            }
+            settings {
+                selectMultiple: true
+            }
+            lov {
+                type: staticValues
+                staticValues: STATIC2:<900;|900,900 - 1#G#300;900|1300,1#G#300 - 2#G#000;1300|2000,2#G#000 - 2#G#500;2000|2500,>=2#G#500;2500|
+            }
+            layout {
+                sequence: 20
+            }
+            listEntries {
+                maxDisplayedEntries: 7
+            }
+            actionsMenu {
+                filter: false
+            }
+            advanced {
+                collapsible: true
+            }
+            source {
+                databaseColumn: SAL
+                dataType: number
+            }
+        )
+
+    )
+
+    region filter-bar (
+        name: Active Filters
+        type: staticContent
+        source {
+            htmlCode: <div id="active_facets"></div>
+        }
+        layout {
+            sequence: 5
+            slot: body
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--noPadding
+                t-ButtonRegion--noUI
+            ]
+        }
+    )
+
+)
+

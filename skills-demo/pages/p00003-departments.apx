@@ -1,0 +1,88 @@
+page 3 (
+    name: Departments
+    alias: DEPARTMENTS
+    title: Departments
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region departments-report (
+        name: Departments
+        title: Department List
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select deptno,
+                       dname,
+                       loc
+                  from dept
+                 order by dname
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            template: @/standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+
+        column DEPTNO (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Dept #
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column DNAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Department
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column LOC (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Location
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+)
+

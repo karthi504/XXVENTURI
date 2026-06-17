@@ -1,0 +1,263 @@
+page 1 (
+    name: Home
+    alias: HOME
+    title: Home
+    appearance {
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region app-name (
+        name: Home
+        title: Skills Demo
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/hero
+            templateOptions: #DEFAULT#
+        }
+        image {
+            fileUrl: #APP_FILES#icons/app-icon-512.png
+        }
+    )
+
+    region dashboard (
+        name: Dashboard Overview
+        title: Dashboard Overview
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <style>
+                .skills-dashboard {
+                  display: grid;
+                  gap: 1.5rem;
+                }
+                .dashboard-summary {
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                  gap: 1rem;
+                }
+                .metric-card {
+                  background: #ffffff;
+                  border-radius: 1rem;
+                  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+                  padding: 1.25rem;
+                  min-height: 128px;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                }
+                .metric-card-label {
+                  font-size: 0.95rem;
+                  color: #475569;
+                  margin-bottom: 0.75rem;
+                }
+                .metric-card-value {
+                  font-size: 2rem;
+                  font-weight: 700;
+                  color: #0f172a;
+                }
+                .metric-card-detail {
+                  margin-top: 0.75rem;
+                  color: #64748b;
+                  font-size: 0.9rem;
+                }
+                .dashboard-panels {
+                  display: grid;
+                  gap: 1rem;
+                  grid-template-columns: 1.2fr 0.8fr;
+                }
+                .panel {
+                  background: #ffffff;
+                  border-radius: 1rem;
+                  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+                  padding: 1rem;
+                }
+                .panel-title {
+                  margin-bottom: 1rem;
+                  font-size: 1rem;
+                  font-weight: 700;
+                  color: #0f172a;
+                }
+                .panel-chart {
+                  min-height: 280px;
+                }
+                .panel-chart canvas {
+                  width: 100% !important;
+                  height: 260px !important;
+                }
+                .dashboard-actions {
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 0.75rem;
+                  align-items: center;
+                }
+                .dashboard-actions a {
+                  text-decoration: none;
+                }
+                @media (max-width: 900px) {
+                  .dashboard-panels {
+                    grid-template-columns: 1fr;
+                  }
+                }
+                </style>
+                
+                <div class="skills-dashboard">
+                  <section class="dashboard-summary">
+                    <article class="metric-card">
+                      <div>
+                        <div class="metric-card-label">Active employees</div>
+                        <div class="metric-card-value">124</div>
+                      </div>
+                      <div class="metric-card-detail">Data refreshed automatically.</div>
+                    </article>
+                    <article class="metric-card">
+                      <div>
+                        <div class="metric-card-label">Open requests</div>
+                        <div class="metric-card-value">18</div>
+                      </div>
+                      <div class="metric-card-detail">15 requests due in the next 3 days.</div>
+                    </article>
+                    <article class="metric-card">
+                      <div>
+                        <div class="metric-card-label">Average salary</div>
+                        <div class="metric-card-value">$92.4K</div>
+                      </div>
+                      <div class="metric-card-detail">Current average across departments.</div>
+                    </article>
+                    <article class="metric-card">
+                      <div>
+                        <div class="metric-card-label">Completion rate</div>
+                        <div class="metric-card-value">84%</div>
+                      </div>
+                      <div class="metric-card-detail">Team progress over the last 30 days.</div>
+                    </article>
+                  </section>
+                
+                  <section class="dashboard-panels">
+                    <div class="panel panel-chart">
+                      <div class="panel-title">Headcount by Department</div>
+                      <canvas id="skills-dashboard-headcount"></canvas>
+                    </div>
+                    <div class="panel panel-chart">
+                      <div class="panel-title">Salary Trend</div>
+                      <canvas id="skills-dashboard-salary"></canvas>
+                    </div>
+                  </section>
+                
+                  <section class="dashboard-actions">
+                    <a class="t-Button t-Button--hot" href="f?p=&APP_ID.:2:&SESSION.">Employees</a>
+                    <a class="t-Button t-Button--hot" href="f?p=&APP_ID.:3:&SESSION.">Departments</a>
+                    <a class="t-Button t-Button--secondary" href="javascript:location.reload();">Refresh</a>
+                  </section>
+                </div>
+                
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                (function () {
+                  function updateTime() {
+                    var el = document.getElementById('skills-demo-time');
+                    if (el) {
+                      el.textContent = new Date().toLocaleString();
+                    }
+                  }
+                  updateTime();
+                  setInterval(updateTime, 1000);
+                
+                  function createChart(id, type, labels, values, color) {
+                    var ctx = document.getElementById(id);
+                    if (!ctx) {
+                      return;
+                    }
+                    new Chart(ctx, {
+                      type: type,
+                      data: {
+                        labels: labels,
+                        datasets: [{
+                          label: type === 'bar' ? 'Employees' : 'Salary ($K)',
+                          data: values,
+                          backgroundColor: type === 'bar' ? color : 'rgba(0, 162, 224, 0.25)',
+                          borderColor: color,
+                          borderWidth: 2,
+                          fill: type !== 'bar'
+                        }]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: { display: false }
+                        },
+                        scales: {
+                          x: { grid: { display: false } },
+                          y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.16)' } }
+                        }
+                      }
+                    });
+                  }
+                
+                  createChart('skills-dashboard-headcount', 'bar', ['Sales', 'HR', 'IT', 'Support'], [22, 14, 35, 18], '#0072c6');
+                  createChart('skills-dashboard-salary', 'line', ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], [88, 90, 92, 93, 94, 92], '#00a3e0');
+                })();
+                </script>
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region greeting (
+        name: Greeting
+        title: Welcome
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div class="t-Body-content">
+                  <h2>Hi i am rahul!</h2>
+                  <p>Welcome to the Skills Demo dashboard. The current time is <strong id="skills-demo-time"></strong>.</p>
+                  <p>Use this page to monitor the application at a glance, review key metrics, and jump to employee or department details.</p>
+                </div>
+                <script>
+                (function () {
+                  function updateTime() {
+                    var el = document.getElementById('skills-demo-time');
+                    if (el) {
+                      el.textContent = new Date().toLocaleString();
+                    }
+                  }
+                  updateTime();
+                  setInterval(updateTime, 1000);
+                })();
+                </script>
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @/content-block
+            templateOptions: #DEFAULT#
+        }
+    )
+
+)
+
