@@ -232,7 +232,7 @@ page 1 (
                 ```html
                 <div class="t-Body-content">
                   <h2>Hi i am rahul!</h2>
-                  <p>Welcome to the Skills Demo dashboard. The current time is <strong id="skills-demo-time"></strong>.</p>
+                  <p>Welcome to the Skill Demo Application. The current time is <strong id="skills-demo-time"></strong>.</p>
                   <p>Use this page to monitor the application at a glance, review key metrics, and jump to employee or department details.</p>
                 </div>
                 <script>
