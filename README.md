@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+>>>>>>> HEAD
 # Example Template
 
 The introduction summarizes the purpose and function of the project, and should be concise (a brief paragraph or two). This introduction may be the same as the first paragraph on the project page.
@@ -18,13 +18,6 @@ Submit bug reports and feature suggestions, or track changes in the
 - Troubleshooting
 - FAQ
 - Maintainers
-
-
-## Requirements (required)
-
-This project requires the following:
-
-- [Hard Work](https://www.noMorePlay.com)
 
 
 ## Installation (required, unless a separate INSTALL.md is provided)
