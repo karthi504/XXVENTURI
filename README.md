@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Example Template
 
 The introduction summarizes the purpose and function of the project, and should be concise (a brief paragraph or two). This introduction may be the same as the first paragraph on the project page.
@@ -45,3 +46,7 @@ Install as you would normally install.
 
 ## For more information about SQLcl Projects:
 Reach out to the SQLcl Project Extension documentation by visiting the [Database Application CI/CD Doc Link](https://docs.oracle.com/en/database/oracle/sql-developer-command-line/24.3/sqcug/database-application-ci-cd.html).
+=======
+# XXVENTURI
+DevOps Venturi
+>>>>>>> c0b9e2e2795c99a9b3522e2700bfe98b55a67215
