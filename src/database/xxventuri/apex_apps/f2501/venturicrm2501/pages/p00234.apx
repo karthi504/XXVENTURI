@@ -1,0 +1,546 @@
+page 234 (
+    name: Product Details
+    title: Product Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region product-details (
+        name: Product Details
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                  order_id,
+                  ORDER_PRODUCTS_ID	,
+                  sp.product_name,
+                  op.product_price,
+                  op.currency_type,
+                  op.quantity,
+                  op.delivery_date,
+                  REPEAT_STATUS
+                FROM xxeba_order_products op, eba_sales_products sp
+                WHERE op.product_id = sp.ID
+                AND (REPEAT_STATUS = 'Y'
+                OR REPEAT_STATUS IS NULL)
+                AND op.order_id = :P234_ORDER_ID;
+                
+                ```
+            pageItemsToSubmit: [
+                P234_ORDER_ID
+                P234_ORDER_PRODUCT_ID
+            ]
+        }
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        link {
+            linkColumn: singleRowView
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 88293635303308442
+        }
+
+        column CURRENCY_TYPE (
+            type: plainText
+            heading {
+                heading: Currency Type
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DELIVERY_DATE (
+            type: plainText
+            heading {
+                heading: Delivery Date
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ORDER_ID (
+            type: plainText
+            heading {
+                heading: Order Id
+                alignment: end
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ORDER_PRODUCTS_ID (
+            type: plainText
+            heading {
+                heading: Order Products Id
+                alignment: end
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PRODUCT_NAME (
+            type: plainText
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PRODUCT_PRICE (
+            type: plainText
+            heading {
+                heading: Product Price
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column QUANTITY (
+            type: plainText
+            heading {
+                heading: Quantity
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column REPEAT_STATUS (
+            type: plainText
+            heading {
+                heading: Repeat Status
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Product Details
+        }
+
+        savedReport 3177268 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CURRENCY_TYPE (
+                sequence: 5
+            )
+
+            displayColumn DELIVERY_DATE (
+                sequence: 7
+            )
+
+            displayColumn ORDER_ID (
+                sequence: 2
+            )
+
+            displayColumn ORDER_PRODUCTS_ID (
+                sequence: 1
+            )
+
+            displayColumn PRODUCT_NAME (
+                sequence: 3
+            )
+
+            displayColumn PRODUCT_PRICE (
+                sequence: 4
+            )
+
+            displayColumn QUANTITY (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+    pageItem P234_ORDER_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @product-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P234_ORDER_PRODUCT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @product-details
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                SELECT ORDER_PRODUCTS_ID 
+                FROM xxeba_order_products 
+                WHERE ORDER_ID =:P234_ORDER_ID
+                AND (REPEAT_STATUS = 'Y'
+                OR REPEAT_STATUS IS NULL) 
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P234_PRODUCT_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @product-details
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                SELECT PRODUCT_NAME 
+                FROM xxeba_order_products 
+                WHERE ORDER_ID =:P234_ORDER_ID
+                
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Remove
+        layout {
+            sequence: 30
+            region: @buttons-container
+            slot: bottom
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button repeat-orders (
+        buttonName: REPEAT_ORDERS
+        label: Create Repeat Order
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: bottom
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 103
+                items: {
+                    P103_ORDER_ID: &P234_ORDER_ID.
+                    P103_COPY_ORDER: S
+                    P103_SOURCE_PAGE: 102
+                    P103_REPEAT_ORDER_FLAG: R
+                    P103_ORDER_STATUS: New
+                }
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE 
+                LV_PRODUCT_NAME    VARCHAR2(200);
+                BEGIN
+                SELECT 
+                  
+                  sp.product_name INTO LV_PRODUCT_NAME
+                FROM xxeba_order_products op,
+                 eba_sales_products sp 
+                WHERE op.product_id = sp.ID
+                --and op.order_id = :P234_ORDER_ID
+                AND upper(sp.product_name) =UPPER(:P234_product_name);
+                   
+                EXCEPTION
+                    WHEN others THEN
+                        RETURN null;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+            type: never
+        }
+    )
+
+    process delete-process (
+        name: Delete process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                   UPDATE XXEBA_ORDER_PRODUCTS 
+                   SET REPEAT_STATUS = 'N'
+                   WHERE --TO_NUMBER(ORDER_ID) = (TO_NUMBER(:P234_ORDER_ID)) 
+                     TO_NUMBER(ORDER_PRODUCTS_ID) = (TO_NUMBER(:P234_ORDER_PRODUCT_ID)) 
+                  AND (REPEAT_STATUS = 'Y' OR REPEAT_STATUS IS NULL); 
+                   --   RAISE_APPLICATION_ERROR(-20001, 'No rows were updated. Either the ORDER_ID, ORDER_PRODUCTS_ID did not match or REPEAT_STATUS was not Y or NULL.');
+                END;
+                
+                
+                -- begin
+                --    -- Debug output
+                --    apex_debug.message('P234_ORDER_ID: ' || :P234_ORDER_ID);
+                --    apex_debug.message('P234_ORDER_PRODUCT_ID: ' || :P234_ORDER_PRODUCT_ID);
+                
+                --    Update XXEBA_ORDER_PRODUCTS 
+                --    SET REPEAT_STATUS='N'
+                --    where ORDER_ID IN (:P234_ORDER_ID) 
+                --    AND ORDER_PRODUCTS_ID IN (:P234_ORDER_PRODUCT_ID) 
+                --    AND (REPEAT_STATUS ='Y' OR REPEAT_STATUS IS NULL);
+                -- end;
+                
+                -- begin
+                --    -- Debug output
+                --    apex_debug.message('P234_ORDER_ID: ' || :P234_ORDER_ID);
+                --    apex_debug.message('P234_ORDER_PRODUCT_ID: ' || :P234_ORDER_PRODUCT_ID);
+                
+                --    Update XXEBA_ORDER_PRODUCTS 
+                --    SET REPEAT_STATUS='N'
+                --    where ORDER_ID = :P234_ORDER_ID 
+                --    AND ORDER_PRODUCTS_ID = :P234_ORDER_PRODUCT_ID 
+                --    AND (REPEAT_STATUS ='Y' OR REPEAT_STATUS IS NULL);
+                -- end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 88291464005308420
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process procees-row-fof-xxeba-order-products (
+        name: Procees row fof xxeba_order_products
+        type: formAutoRowProcessing
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 88291688593308422
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+            type: never
+        }
+    )
+
+    branch (
+        name: Go To Page 230
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 230
+                clearCache: 230
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

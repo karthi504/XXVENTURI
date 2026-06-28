@@ -1,0 +1,180 @@
+page 39 (
+    name: Reports
+    title: Reports
+    pageGroup: @reports
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            
+            .t-Footer{
+            	display:none;
+            }
+            ```
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: The reports accessible from this page mostly display information pertaining to opportunity data but the reports in the "Activity Reports" region display user activity information.
+    }
+
+    region activity-reports (
+        name: Activity Reports
+        type: list
+        source {
+            list: @activity-reports
+        }
+        layout {
+            sequence: 30
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region additional-reports (
+        name: Additional Reports
+        type: list
+        source {
+            list: @report-directory
+        }
+        layout {
+            sequence: 20
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region exception-reports (
+        name: Exception Reports
+        type: list
+        source {
+            list: @exception-reports
+        }
+        layout {
+            sequence: 40
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region primary-reports (
+        name: Primary Reports
+        type: list
+        source {
+            list: @primary-reports
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region reports (
+        name: Reports
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 70
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        advanced {
+            excludeTitleFromTranslation: true
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+        }
+    )
+
+)
+

@@ -1,0 +1,666 @@
+page 193 (
+    name: User Brands
+    alias: USER-BRANDS
+    title: User Brands
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region brands (
+        name: Brands
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+            ]
+        }
+    )
+
+    region report (
+        name: Report
+        type: interactiveGrid
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select USER_BRAND_ID,
+                       USER_ID,
+                       BRAND_ID,
+                       APPROVAL_LIMIT,
+                       STATUS,
+                       CREATED_BY,
+                       CREATED_DATE,
+                       UPDATED_BY,
+                       UPDATED_DATE
+                  from XXEBA_SALES_USER_BRANDS
+                  where user_id = :P193_USER_ID;
+                ```
+        }
+        layout {
+            sequence: 1230
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                margin-top-lg
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: update
+        }
+        componentAppearance {
+            selectFirstRow: false
+        }
+        toolbar {
+            controls: [
+                actionsMenu
+                saveButton
+            ]
+        }
+        enableUsersTo {
+            download: false
+        }
+        heading {
+            fixedTo: region
+            fixedReportHeight: 250
+        }
+        advanced {
+            savedReportMappingIdentifier: 318851946946440113
+        }
+
+        savedReport 3189190 (
+            visibility: primary
+            view {
+                default: grid
+            }
+            singleRowView {
+                displayedColumns: true
+            }
+
+            displayColumn (
+                column: @USER_BRAND_ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            displayColumn (
+                column: @USER_ID
+                layout {
+                    sequence: 2
+                }
+            )
+
+            displayColumn (
+                column: @BRAND_ID
+                layout {
+                    sequence: 3
+                }
+            )
+
+            displayColumn (
+                column: @APPROVAL_LIMIT
+                layout {
+                    sequence: 4
+                }
+            )
+
+            displayColumn (
+                column: @STATUS
+                layout {
+                    sequence: 5
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_BY
+                layout {
+                    sequence: 6
+                }
+            )
+
+            displayColumn (
+                column: @CREATED_DATE
+                layout {
+                    sequence: 7
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_BY
+                layout {
+                    sequence: 8
+                }
+            )
+
+            displayColumn (
+                column: @UPDATED_DATE
+                layout {
+                    sequence: 9
+                }
+            )
+
+            displayColumn (
+                column: @APEX$ROW_ACTION
+                layout {
+                    sequence: 0
+                }
+            )
+
+        )
+
+        column APEX$ROW_ACTION (
+            type: actionsMenu
+            layout {
+                sequence: 20
+            }
+        )
+
+        column APEX$ROW_SELECTOR (
+            type: rowSelector
+            settings {
+                enableMultiSelect: false
+                hideControl: true
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column APPROVAL_LIMIT (
+            type: hidden
+            layout {
+                sequence: 60
+            }
+            source {
+                databaseColumn: APPROVAL_LIMIT
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column BRAND_ID (
+            type: popupLov
+            heading {
+                heading: Brand
+            }
+            settings {
+                fetchOnSearch: true
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select BRAND_NAME ||' [ '||BRAND_CODE || ' ]' as display_value, BRAND_ID as Return_value
+                    from XXEBA_SALES_PRODUCT_BRANDS where status='Y';
+                    ```
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                databaseColumn: BRAND_ID
+                dataType: number
+            }
+            default {
+                type: sqlQuerySingleValue
+                sqlQuerySingleValue:
+                    ```sql
+                    select BRAND_ID
+                    from XXEBA_SALES_USER_BRANDS where user_id = :P193_USER_ID;
+                    ```
+            }
+            columnFilter {
+                performanceImpactingOperators: [
+                    contains
+                    startsWith
+                    caseInsensitive
+                    regexp
+                ]
+                lovType: useLov
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                databaseColumn: CREATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column CREATED_DATE (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                databaseColumn: CREATED_DATE
+                dataType: timestamp
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column STATUS (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                databaseColumn: STATUS
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                databaseColumn: UPDATED_BY
+                dataType: varchar2
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column UPDATED_DATE (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                databaseColumn: UPDATED_DATE
+                dataType: timestamp
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column USER_BRAND_ID (
+            type: hidden
+            layout {
+                sequence: 30
+            }
+            source {
+                databaseColumn: USER_BRAND_ID
+                dataType: number
+                primaryKey: true
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+        column USER_ID (
+            type: hidden
+            settings {
+                valueProtected: false
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                databaseColumn: USER_ID
+                dataType: number
+            }
+            exportPrinting {
+                includeInExportPrint: false
+            }
+        )
+
+    )
+
+    pageItem P193_APPROVAL_LIMIT (
+        type: numberField
+        label {
+            label: Approval Limit
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            virtualKeyboard: numeric
+        }
+        layout {
+            sequence: 40
+            region: @brands
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--xlarge
+            ]
+            width: 30
+        }
+    )
+
+    pageItem P193_SELECT_BRAND (
+        type: popupLov
+        label {
+            label: Brand
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select BRAND_NAME ||' ['||BRAND_CODE || ']' as display_value, BRAND_ID as Return_value
+                from XXEBA_SALES_PRODUCT_BRANDS where status='Y';
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @brands
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-floating
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--xlarge
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        comments {
+            comments:
+                ```
+                select BRAND_ID
+                from XXEBA_SALES_USER_BRANDS where user_id = :P193_USER_ID;
+                ```
+        }
+    )
+
+    pageItem P193_USERNAME (
+        type: displayOnly
+        label {
+            label: Username
+            alignment: left
+        }
+        settings {
+            showLineBreaks: false
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 20
+            region: @brands
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--xlarge
+            ]
+        }
+    )
+
+    pageItem P193_USER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @brands
+            slot: regionBody
+        }
+    )
+
+    button submit (
+        buttonName: SUBMIT
+        label: Submit
+        layout {
+            sequence: 50
+            region: @brands
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh-report (
+        name: Refresh Report
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation check-null (
+        name: Check null
+        execution {
+            sequence: 20
+        }
+        validation {
+            editableRegion: @report
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare 
+                    cnt number;
+                begin 
+                    if :P193_APPROVAL_LIMIT is null then 
+                        select count(1) into cnt 
+                        from EBA_SALES_SALESREPS 
+                        where REP_ROLE = (select id from eba_sales_salesrep_roles where role_name = 'Team Leader - Sales')
+                        and id=:P193_USER_ID;
+                
+                
+                        if cnt <> 0 then 
+                            RETURN 'Approval Limit must have some value.';
+                        end if;
+                    end if;
+                end;
+                ```
+        }
+        error {
+            associatedColumn: APPROVAL_LIMIT
+        }
+    )
+
+    validation check-role-for-approval-limit (
+        name: Check Role for Approval Limit
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare 
+                    cnt number;
+                begin 
+                    if :P193_APPROVAL_LIMIT is null then 
+                        select count(1) into cnt 
+                        from EBA_SALES_SALESREPS 
+                        where REP_ROLE = (select id from eba_sales_salesrep_roles where role_name = 'Team Leader - Sales')
+                        and id=:P193_USER_ID;
+                
+                
+                        if cnt <> 0 then 
+                            RETURN 'Approval Limit must have some value.';
+                        end if;
+                    end if;
+                end;
+                ```
+        }
+        error {
+            associatedItem: @P193_APPROVAL_LIMIT
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+    process insert-data (
+        name: Insert Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    CNT NUMBER;
+                BEGIN  
+                    BEGIN
+                    -- CHECK IF THE USER ALREADY EXISTS IN THE TABLE FOR THE GIVEN GROUP ID
+                        SELECT COUNT(1) INTO CNT
+                        FROM XXEBA_SALES_USER_BRANDS
+                        WHERE USER_ID=:P193_USER_ID
+                        AND BRAND_ID = :P193_SELECT_BRAND ;
+                
+                    EXCEPTION WHEN NO_DATA_FOUND THEN 
+                        CNT:=-1;
+                    END;
+                    IF CNT = 0 THEN                 
+                        -- INSERT IF THE ROLE DOES NOT EXIST
+                        INSERT INTO XXEBA_SALES_USER_BRANDS (USER_ID, BRAND_ID,APPROVAL_LIMIT)
+                        VALUES (:P193_USER_ID, :P193_SELECT_BRAND,:P193_APPROVAL_LIMIT);
+                    else    
+                        UPDATE XXEBA_SALES_USER_BRANDS SET APPROVAL_LIMIT = :P193_APPROVAL_LIMIT
+                        WHERE USER_ID = :P193_USER_ID
+                        AND BRAND_ID = :P193_SELECT_BRAND;
+                    END IF;
+                
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Successfully Updated!
+        }
+        advanced {
+            executionMappingIdentifier: 318851784183440111
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+    process report-save-interactive-grid-data (
+        name: Report - Save Interactive Grid Data
+        type: interactiveGridAutoRowProcessing
+        editableRegion: @report
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 318853185724440125
+        }
+    )
+
+    branch (
+        name: Go to Page 6
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 6
+                clearCache: 6
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+            type: never
+        }
+    )
+
+)
+

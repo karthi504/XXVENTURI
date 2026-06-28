@@ -1,0 +1,431 @@
+page 243 (
+    name: Product-wise Sales Orders
+    title: Product-wise Sales Orders
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region product-wise-sales-orders (
+        name: Product-wise Sales Orders
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ORDER_NUMBER ,
+                (select product_name from eba_sales_products where ID=PRODUCT_ID) Product_name,
+                ( select customer_name from eba_sales_customers where ID=CUSTOMER_ID) customer_name,
+                qty,ORDER_DATE from 
+                (SELECT SO.ORDER_NUMBER,
+                  OP.PRODUCT_ID,
+                  SO.CUSTOMER_ID,
+                  SO.ORDER_DATE,
+                  SUM(OP.QUANTITY) as qty
+                FROM XXEBA_ORDER_PRODUCTS OP,
+                  XXEBA_SALES_ORDER SO
+                WHERE OP.ORDER_ID=SO.ORDER_ID
+                AND SO.STATUS  NOT IN('X')
+                AND SO.ORDER_DATE BETWEEN :P243_FROM_DATE AND :P243_TO_DATE
+                GROUP BY SO.ORDER_NUMBER,
+                  OP.PRODUCT_ID,
+                  SO.CUSTOMER_ID,
+                  SO.ORDER_DATE);
+                                 
+                                 
+                ```
+            pageItemsToSubmit: [
+                P243_FROM_DATE
+                P243_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 194839097330186398
+        }
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column ORDER_DATE (
+            type: plainText
+            heading {
+                heading: Order Date
+            }
+            layout {
+                sequence: 50
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column ORDER_NUMBER (
+            type: plainText
+            heading {
+                heading: Order Number
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column PRODUCT_NAME (
+            type: plainText
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column QTY (
+            type: plainText
+            heading {
+                heading: "Quantity "
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1274130 (
+            visibility: primaryDefault
+            view {
+                groupBy: true
+                default: groupBy
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 3
+            )
+
+            displayColumn ORDER_DATE (
+                sequence: 5
+            )
+
+            displayColumn ORDER_NUMBER (
+                sequence: 4
+            )
+
+            displayColumn PRODUCT_NAME (
+                sequence: 1
+            )
+
+            displayColumn QTY (
+                sequence: 2
+            )
+
+            groupByColumn (
+                column: PRODUCT_NAME
+                layout {
+                    sequence: 1
+                }
+            )
+
+            groupByColumn (
+                column: ORDER_NUMBER
+                layout {
+                    sequence: 2
+                }
+            )
+
+            groupByAggregate (
+                heading: Total Qty.
+                aggregate {
+                    column: QTY
+                }
+                appearance {
+                    formatMask: 999G999G999G999G990
+                }
+                layout {
+                    sequence: 1
+                }
+            )
+
+            groupBySort (
+                column: PRODUCT_NAME
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region product-wise-sales-orders-2 (
+        name: Product-wise Sales Orders
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P243_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @product-wise-sales-orders
+            slot: regionBody
+            alignment: left
+            column: 1
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: SELECT (trunc(sysdate) - (to_number(to_char(sysdate,'DD')) - 1)) as from_date FROM dual
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P243_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:All;All,Visited;Visited, Scheduled;Scheduled
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @product-wise-sales-orders
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P243_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: "To "
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 20
+            region: @product-wise-sales-orders
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: Go
+        label: Go
+        layout {
+            sequence: 40
+            region: @product-wise-sales-orders
+            slot: regionBody
+            startNewRow: false
+            column: 7
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="margin-top: -53px;"
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @product-wise-sales-orders
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation to-date-validation (
+        name: To Date Validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody:
+                ```plsql
+                IF TO_DATE(:P243_TO_DATE) < TO_DATE(:P243_FROM_DATE) THEN
+                  RETURN FALSE;
+                ELSE 
+                  RETURN TRUE;
+                END IF;
+                ```
+        }
+        error {
+            errorMessage: TO Date should be Greater than From Date.
+            associatedItem: @P243_TO_DATE
+        }
+        serverSideCondition {
+            whenButtonPressed: @go
+        }
+    )
+
+)
+

@@ -1,0 +1,3256 @@
+page 225 (
+    name: Cutting Parameters
+    title: Cutting Parameters
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode != 46)) {
+                    return false;
+                }
+                return true;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region cutting-parameters (
+        name: Cutting Parameters
+        type: list
+        source {
+            list: @wizard-progress-list
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region cutting-parameters-blades-recom (
+        name: Cutting Parameters Blades - Recom 2
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @cutting-parameters-recom
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region cutting-parameters-blades-recom-2 (
+        name: Cutting Parameters Blades - Recom 1
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @cutting-parameters-recom-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region cutting-parameters-recom (
+        name: Cutting Parameters - Recom 2
+        type: staticContent
+        layout {
+            sequence: 80
+            parentRegion: @cutting-parameters
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent12
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region cutting-parameters-recom-2 (
+        name: Cutting Parameters - Recom 1
+        type: staticContent
+        layout {
+            sequence: 70
+            parentRegion: @cutting-parameters
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent12
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region cutting-parameters-tools-recom (
+        name: Cutting Parameters Tools - Recom 2
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @cutting-parameters-recom
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region cutting-parameters-tools-recom-2 (
+        name: Cutting Parameters Tools - Recom 1
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @cutting-parameters-recom-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region footer (
+        name: Footer
+        type: staticContent
+        layout {
+            sequence: 90
+            parentRegion: @cutting-parameters
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            customAttributes: style="background: #fafafa;"
+        }
+    )
+
+    region tool-details-blades-recom (
+        name: Tool Details Blades - Recom 2
+        type: staticContent
+        layout {
+            sequence: 20
+            parentRegion: @tool-details-recom
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region tool-details-blades-recom-2 (
+        name: Tool Details Blades - Recom 1
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @tool-details-recom-3
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region tool-details-recom (
+        name: Tool Details - Recom 2
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @cutting-parameters
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent3
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region tool-details-recom-2 (
+        name: Tool Details - Recom 2
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @tool-details-recom
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    region tool-details-recom-3 (
+        name: Tool Details - Recom 1
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @cutting-parameters
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent3
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region tool-details-recom-4 (
+        name: Tool Details - Recom 1
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @tool-details-recom-3
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: item!=value
+            item: P222_PRODUCT_CLASS
+            value: Blades
+        }
+    )
+
+    pageItem P225_COMP_BLADE_DIAMETER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @tool-details-recom-3
+            slot: regionBody
+        }
+        default {
+            type: expression
+            plsqlExpression: :P223_COMP_DIAMETER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_COMP_DIAMETER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @tool-details-recom-3
+            slot: regionBody
+        }
+        default {
+            type: expression
+            plsqlExpression: :P223_COMP_DIAMETER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_AVG_LIFE_PER_BL (
+        type: numberField
+        label {
+            label: Average Life / Blade in CM2
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_AVERAGE_LIFE_PER_BL
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_AVG_LIFE_PER_ED (
+        type: numberField
+        label {
+            label: Average Life per Edge
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_AVERAGE_LIFE_PER_ED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_COST_CM2 (
+        type: textField
+        label {
+            label: Cost / CM2
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_COST_CM2
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: onkeypress="return isNumber(event)" readonly
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_CYCLE_TIME (
+        type: numberField
+        label {
+            label: Cycle Time in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-parameters-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_CYCLE_TIME
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_GRADE (
+        type: textField
+        label {
+            label: Grade
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_GRADE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_INITIAL_FEED (
+        type: numberField
+        label {
+            label: Initial Feed
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @cutting-parameters-blades-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_INITIAL_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_NORMAL_FEED (
+        type: numberField
+        label {
+            label: Normal Feed
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-parameters-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_NORMAL_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_PROFILE (
+        type: textField
+        label {
+            label: Profile
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_PROFILE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_SIZE (
+        type: textField
+        label {
+            label: Blade Size
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_SIZE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_TPI (
+        type: textField
+        label {
+            label: TPI
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_TPI
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLADE_UNIT_PRICE (
+        type: numberField
+        label {
+            label: Unit Price
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_UNIT_PRICE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLD_CUTTING_SPEED (
+        type: numberField
+        label {
+            label: Cutting Speed in m/min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-parameters-blades-recom
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"readonly
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_CUTTING_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLD_SPINDLE_SPEED (
+        type: numberField
+        label {
+            label: Spindle Speed in RPM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-parameters-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_SPINDLE_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_BLD_TOOL_CHANGE_C (
+        type: selectList
+        label {
+            label: Tool Changing Criteria
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @tool-details-blades-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_TOOL_CHANGE_C
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_CUTTING_SPEED (
+        type: numberField
+        label {
+            label: Cutting Speed in m/min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"readonly
+        }
+        source {
+            type: item
+            item: P225_RECOM_CUTTING_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_CYCLE_TIME (
+        type: numberField
+        label {
+            label: Cycle Time in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_CYCLE_TIME
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_DEPTH_OF_CUT (
+        type: numberField
+        label {
+            label: Depth of Cut in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_DEPTH_OF_CUT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_FEED_PER_TOOTH (
+        type: numberField
+        label {
+            label: Feed per Tooth in mm/rev
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_FEED_PER_TOOTH
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_NO_OF_CUTTING_EDGE (
+        type: numberField
+        label {
+            label: No. of Cutting Edges
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_CUTTING_EDGES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_NO_OF_FLUTES (
+        type: numberField
+        label {
+            label: No. of Flutes
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_FLUTES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_NO_OF_PASSES (
+        type: numberField
+        label {
+            label: No. of Passes
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_PASSES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_NO_OF_REGRIND_DO (
+        type: numberField
+        label {
+            label: No. of Regrinding Done
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_REGRINDING_DO
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_SPINDLE_SPEED (
+        type: numberField
+        label {
+            label: Spindle Speed in RPM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_SPINDLE_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TABLE_FEED (
+        type: numberField
+        label {
+            label: Table Feed
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_TABLE_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TOOL_CHANGING_C (
+        type: selectList
+        label {
+            label: Tool Changing Criteria
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_CHANGING_CRITE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TOOL_HOLDING_SPEC (
+        type: textField
+        label {
+            label: Tool Holding Specification
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_HOLDING_SPEC
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TOOL_SPEC (
+        type: textField
+        label {
+            label: Tool Specification
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_SPEC
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TOTAL_MAT_REMO (
+        type: numberField
+        label {
+            label: Total Material Removal in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOTAL_MATERIAL_REMO
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_TYPE_OF_COATING (
+        type: selectList
+        label {
+            label: Type of Coating
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 60
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_TYPE_OF_COATING
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_UNIT_PRICE (
+        type: numberField
+        label {
+            label: Unit Price
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @tool-details-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_UNIT_PRICE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM1_WIDTH_OF_CUT (
+        type: numberField
+        label {
+            label: Width of Cut in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-parameters-tools-recom
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_WIDTH_OF_CUT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_AVERAGE_LIFE_PER_BL (
+        type: numberField
+        label {
+            label: Average Life / Blade in CM2
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_AVERAGE_LIFE_PER_BL
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_AVERAGE_LIFE_PER_ED (
+        type: numberField
+        label {
+            label: Average Life per Edge
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_AVERAGE_LIFE_PER_ED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_COST_CM2 (
+        type: textField
+        label {
+            label: Cost / CM2
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_COST_CM2
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: onkeypress="return isNumber(event)" readonly
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_CUTTING_SPEED (
+        type: numberField
+        label {
+            label: Cutting Speed in m/min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-parameters-blades-recom-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"readonly
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_CUTTING_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_CYCLE_TIME (
+        type: numberField
+        label {
+            label: Cycle Time in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-parameters-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_CYCLE_TIME
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_GRADE (
+        type: textField
+        label {
+            label: Grade
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_GRADE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_INITIAL_FEED (
+        type: numberField
+        label {
+            label: Initial Feed
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @cutting-parameters-blades-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_INITIAL_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_NORMAL_FEED (
+        type: numberField
+        label {
+            label: Normal Feed
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-parameters-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_NORMAL_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_PROFILE (
+        type: textField
+        label {
+            label: Profile
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 200
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_PROFILE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_SIZE (
+        type: textField
+        label {
+            label: Blade Size
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_SIZE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_SPINDLE_SPEED (
+        type: numberField
+        label {
+            label: Spindle Speed in RPM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-parameters-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_SPINDLE_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_TOOL_CHANGE_C (
+        type: selectList
+        label {
+            label: Tool Changing Criteria
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_TOOL_CHANGE_C
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_TPI (
+        type: textField
+        label {
+            label: TPI
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_TPI
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_BLADE_UNIT_PRICE (
+        type: numberField
+        label {
+            label: Unit Price
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @tool-details-blades-recom-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_BLADE_UNIT_PRICE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_CUTTING_SPEED (
+        type: numberField
+        label {
+            label: Cutting Speed in m/min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"readonly
+        }
+        source {
+            type: item
+            item: P225_RECOM_CUTTING_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_CYCLE_TIME (
+        type: numberField
+        label {
+            label: Cycle Time in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_CYCLE_TIME
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_DEPTH_OF_CUT (
+        type: numberField
+        label {
+            label: Depth of Cut in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_DEPTH_OF_CUT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_FEED_PER_TOOTH (
+        type: numberField
+        label {
+            label: Feed per Tooth in mm/rev
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_FEED_PER_TOOTH
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_NO_OF_CUTTING_EDGES (
+        type: numberField
+        label {
+            label: No. of Cutting Edges
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_CUTTING_EDGES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_NO_OF_FLUTES (
+        type: numberField
+        label {
+            label: No. of Flutes
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_FLUTES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_NO_OF_PASSES (
+        type: numberField
+        label {
+            label: No. of Passes
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_PASSES
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_NO_OF_REGRINDING_DO (
+        type: numberField
+        label {
+            label: No. of Regrinding Done
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_NO_OF_REGRINDING_DO
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_SPINDLE_SPEED (
+        type: numberField
+        label {
+            label: Spindle Speed in RPM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_SPINDLE_SPEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TABLE_FEED (
+        type: numberField
+        label {
+            label: Table Feed
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_TABLE_FEED
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TOOL_CHANGING_CRITE (
+        type: selectList
+        label {
+            label: Tool Changing Criteria
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_CHANGING_CRITE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TOOL_HOLDING_SPEC (
+        type: textField
+        label {
+            label: Tool Holding Specification
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_HOLDING_SPEC
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TOOL_SPEC (
+        type: textField
+        label {
+            label: Tool Specification
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOOL_SPEC
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TOTAL_MATERIAL_REMO (
+        type: numberField
+        label {
+            label: Total Material Removal in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_TOTAL_MATERIAL_REMO
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_TYPE_OF_COATING (
+        type: selectList
+        label {
+            label: Type of Coating
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 60
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P225_RECOM_TYPE_OF_COATING
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_UNIT_PRICE (
+        type: numberField
+        label {
+            label: Unit Price
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @tool-details-recom-4
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_UNIT_PRICE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P225_RECOM_WIDTH_OF_CUT (
+        type: numberField
+        label {
+            label: Width of Cut in MM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-parameters-tools-recom-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P225_RECOM_WIDTH_OF_CUT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @cutting-parameters
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to Cancel?', 'CANCEL');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel-2 (
+        buttonName: CANCEL_1
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @footer
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to Cancel?', 'CANCEL_1');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button finish (
+        buttonName: FINISH_1
+        label: Finish
+        layout {
+            sequence: 10
+            region: @footer
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button finish-2 (
+        buttonName: FINISH
+        label: Finish
+        layout {
+            sequence: 40
+            region: @cutting-parameters
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @cutting-parameters
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous-2 (
+        buttonName: PREVIOUS_1
+        label: Previous
+        layout {
+            sequence: 20
+            region: @footer
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-exist-blade-cutting-speed (
+        name: Set Exist Blade Cutting Speed
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P225_EXIST_BLADE_SPINDLE_SPEED
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      IF :P225_COMP_BLADE_DIAMETER  IS NOT NULL AND :P225_EXIST_BLADE_SPINDLE_SPEED IS NOT NULL THEN
+                        :P225_EXIST_BLADE_CUTTING_SPEED := (3.14 * NVL(:P225_COMP_BLADE_DIAMETER, 0) * NVL(:P225_EXIST_BLADE_SPINDLE_SPEED, 0))/1000;
+                      ELSE
+                        :P225_EXIST_BLADE_CUTTING_SPEED := NULL;
+                      END IF;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P225_EXIST_BLADE_SPINDLE_SPEED
+                    P225_COMP_BLADE_DIAMETER
+                ]
+                itemsToReturn: P225_EXIST_BLADE_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-exist-cutting-speed (
+        name: Set Exist Cutting Speed
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: [
+                P225_COMP_DIAMETER
+                P225_EXIST_SPINDLE_SPEED
+            ]
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      :P225_EXIST_CUTTING_SPEED := (3.14 * NVL(:P225_COMP_DIAMETER, 0) * NVL(:P225_EXIST_SPINDLE_SPEED, 0))/1000;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P225_COMP_DIAMETER
+                    P225_EXIST_SPINDLE_SPEED
+                ]
+                itemsToReturn: P225_EXIST_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-blade-cutting-speed (
+        name: Set Recom Blade Cutting Speed
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: [
+                P225_RECOM_BLADE_SPINDLE_SPEED
+                P225_COMP_BLADE_DIAMETER
+            ]
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      IF :P225_COMP_BLADE_DIAMETER IS NOT NULL AND :P225_RECOM_BLADE_SPINDLE_SPEED IS NOT NULL THEN
+                        :P225_RECOM_BLADE_CUTTING_SPEED := (3.142 * NVL(:P225_COMP_BLADE_DIAMETER, 0) * NVL(:P225_RECOM_BLADE_SPINDLE_SPEED, 0))/1000;
+                      ELSE
+                        :P225_RECOM_BLADE_CUTTING_SPEED := NULL;
+                      END IF;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P225_RECOM_BLADE_SPINDLE_SPEED
+                    P225_COMP_BLADE_DIAMETER
+                ]
+                itemsToReturn: P225_RECOM_BLADE_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-blade-cutting-speed-2 (
+        name: Set Recom Blade Cutting Speed 2
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: P225_RECOM1_BLD_SPINDLE_SPEED
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      IF :P225_COMP_BLADE_DIAMETER IS NOT NULL AND :P225_RECOM1_BLD_SPINDLE_SPEED IS NOT NULL THEN
+                        :P225_RECOM1_BLD_CUTTING_SPEED := (3.14 * NVL(:P225_COMP_BLADE_DIAMETER, 0) * NVL(:P225_RECOM1_BLD_SPINDLE_SPEED, 0))/1000;
+                      ELSE
+                        :P225_RECOM1_BLD_CUTTING_SPEED := NULL;
+                      END IF;
+                    END;
+                    ```
+                itemsToSubmit: P225_RECOM1_BLD_SPINDLE_SPEED
+                itemsToReturn: P225_RECOM1_BLD_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-cutting-speed (
+        name: Set Recom Cutting Speed
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P225_RECOM_SPINDLE_SPEED
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                    IF NVL(:P225_COMP_DIAMETER, 0) > 0 then
+                      :P225_RECOM_CUTTING_SPEED := (3.142 * NVL(:P225_COMP_DIAMETER, 0) * NVL(:P225_RECOM_SPINDLE_SPEED, 0))/1000;
+                    end if;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P225_RECOM_SPINDLE_SPEED
+                    P225_COMP_DIAMETER
+                ]
+                itemsToReturn: P225_RECOM_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-cutting-speed-2 (
+        name: Set Recom Cutting Speed 2
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P225_RECOM1_SPINDLE_SPEED
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                    IF NVL(:P225_COMP_DIAMETER, 0) > 0 then
+                      :P225_RECOM1_CUTTING_SPEED := (3.142 * NVL(:P225_COMP_DIAMETER, 0) * NVL(:P225_RECOM1_SPINDLE_SPEED, 0))/1000;
+                    END IF;  
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P225_RECOM1_SPINDLE_SPEED
+                    P225_COMP_DIAMETER
+                ]
+                itemsToReturn: P225_RECOM1_CUTTING_SPEED
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-depth-of-cut (
+        name: Set Recom Depth of Cut
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: [
+                P225_RECOM_TOTAL_MATERIAL_REMO
+                P225_RECOM_NO_OF_PASSES
+            ]
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    /* 24-Oct-18 Thamaraiselvan Added */
+                    IF :P225_RECOM_NO_OF_PASSES > 0 then
+                        :P225_RECOM_DEPTH_OF_CUT := round((:P225_RECOM_TOTAL_MATERIAL_REMO / :P225_RECOM_NO_OF_PASSES), 2);
+                    END IF;
+                    ```
+                itemsToSubmit: [
+                    P225_RECOM_TOTAL_MATERIAL_REMO
+                    P225_RECOM_NO_OF_PASSES
+                ]
+                itemsToReturn: P225_RECOM_DEPTH_OF_CUT
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-recom-depth-of-cut-2 (
+        name: Set Recom Depth of Cut - 2
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: [
+                P225_RECOM1_TOTAL_MAT_REMO
+                P225_RECOM1_NO_OF_PASSES
+            ]
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    IF :P225_RECOM1_NO_OF_PASSES > 0 then /* 24-Oct-18 Thamaraiselvan Added */
+                        :P225_RECOM1_DEPTH_OF_CUT := round((:P225_RECOM1_TOTAL_MAT_REMO / :P225_RECOM1_NO_OF_PASSES), 2);
+                    END IF;    
+                    ```
+                itemsToSubmit: [
+                    P225_RECOM1_TOTAL_MAT_REMO
+                    P225_RECOM1_NO_OF_PASSES
+                ]
+                itemsToReturn: P225_RECOM1_DEPTH_OF_CUT
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process save-trial-details (
+        name: Save Trial Details
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                /* Thamaraiselvan addedd P222_NEW_EXIST_DEV  column in insert query */
+                DECLARE
+                v_trial_no number;
+                v_edge NUMBER := 1;
+                v_trial_id NUMBER;
+                BEGIN
+                
+                IF :P222_PRODUCT_CLASS = 'Blades' then
+                    :P224_EXIST_TOOL_CHANGING_CRITE  := :P224_EXIST_BLADE_TOOL_CHANGE_C;
+                    :P224_EXIST_UNIT_PRICE           := :P224_EXIST_BLADE_UNIT_PRICE;
+                    :P224_EXIST_SPINDLE_SPEED        := :P224_EXIST_BLADE_SPINDLE_SPEED;
+                    :P224_EXIST_CUTTING_SPEED        := :P224_EXIST_BLADE_CUTTING_SPEED;
+                    :P224_EXIST_CYCLE_TIME           := :P224_EXIST_BLADE_CYCLE_TIME;    
+                    :P225_RECOM_TOOL_CHANGING_CRITE  := :P225_RECOM_BLADE_TOOL_CHANGE_C;
+                    :P225_RECOM_UNIT_PRICE           := :P225_RECOM_BLADE_UNIT_PRICE;    
+                    :P225_RECOM_SPINDLE_SPEED        := :P225_RECOM_BLADE_SPINDLE_SPEED;
+                    :P225_RECOM_CUTTING_SPEED        := :P225_RECOM_BLADE_CUTTING_SPEED;
+                    :P225_RECOM_CYCLE_TIME           := :P225_RECOM_BLADE_CYCLE_TIME;
+                	:P225_RECOM1_TOOL_CHANGING_C     := :P225_RECOM1_BLD_TOOL_CHANGE_C;
+                    :P225_RECOM1_UNIT_PRICE          := :P225_RECOM1_BLADE_UNIT_PRICE;    
+                    :P225_RECOM1_SPINDLE_SPEED       := :P225_RECOM1_BLD_SPINDLE_SPEED;
+                    :P225_RECOM1_CUTTING_SPEED       := :P225_RECOM1_BLD_CUTTING_SPEED;
+                    :P225_RECOM1_CYCLE_TIME          := :P225_RECOM1_BLADE_CYCLE_TIME;
+                END IF;
+                
+                select max(NVL(trial_no, 0)) + 1 into v_trial_no from XXEBA_TRIAL_DETAILS ;
+                
+                INSERT
+                INTO XXEBA_TRIAL_DETAILS
+                  (
+                    DEAL_ID,
+                    COMPONENT_NAME,
+                    PART_NUMBER,
+                    MATERIAL_TYPE,
+                    PROCESS_TYPE,
+                    INPUT_CONDITION,
+                    HARDNESS,
+                    HEAT_TREATMENT_TYPE,
+                    SURFACE_CONDITION,
+                    COMP_DIAMETER,
+                    COMP_LENGTH,
+                    COMP_WIDTH,
+                    COMP_THICKNESS,
+                    COMP_SHAPE,
+                    MACHINE_TYPE,
+                    MACHINE_BRAND,
+                    WORKHOLDING_TYPE,
+                    CHUCK_DIAMETER,
+                    SPINDLE_TAPER,
+                    THROUGH_COOLANT,
+                    TABLE_SIZE,
+                    NO_OF_TOOL_LOCATION,
+                    MAXIMUM_RPM,
+                    SPINDLE_TOOL_WEIGHT_LIMIT,
+                    EXIST_TOOL_SPEC,
+                    EXIST_TOOL_HOLDING_SPEC,
+                    EXIST_NO_OF_CUTTING_EDGES,
+                    EXIST_NO_OF_FLUTES,
+                    EXIST_TOOL_CHANGING_CRITERIA,
+                    EXIST_TYPE_OF_COATING,
+                    EXIST_NO_OF_REGRINDING_DONE,
+                    EXIST_AVERAGE_LIFE_PER_EDGE,
+                    EXIST_UNIT_PRICE,
+                    RECOM_TOOL_SPEC,
+                    RECOM_TOOL_HOLDING_SPEC,
+                    RECOM_NO_OF_CUTTING_EDGES,
+                    RECOM_NO_OF_FLUTES,
+                    RECOM_TOOL_CHANGING_CRITERIA,
+                    RECOM_TYPE_OF_COATING,
+                    RECOM_NO_OF_REGRINDING_DONE,
+                    RECOM_AVERAGE_LIFE_PER_EDGE,
+                    RECOM_UNIT_PRICE,
+                    EXIST_TOTAL_MATERIAL_REMOVAL,
+                    EXIST_NO_OF_PASSES,
+                    EXIST_DEPTH_OF_CUT,
+                    EXIST_WIDTH_OF_CUT,
+                    EXIST_SPINDLE_SPEED,
+                    EXIST_CUTTING_SPEED,
+                    EXIST_FEED_PER_TOOTH,
+                    EXIST_TABLE_FEED,
+                    EXIST_CYCLE_TIME,
+                    RECOM_TOTAL_MATERIAL_REMOVAL,
+                    RECOM_NO_OF_PASSES,
+                    RECOM_DEPTH_OF_CUT,
+                    RECOM_WIDTH_OF_CUT,
+                    RECOM_SPINDLE_SPEED,
+                    RECOM_CUTTING_SPEED,
+                    RECOM_FEED_PER_TOOTH,
+                    RECOM_TABLE_FEED,
+                    RECOM_CYCLE_TIME,
+                    NO_OF_SHIFT_PER_DAY,
+                    NO_OF_WORKING_DAYS_PER_WEEK,
+                    EXIST_COST_PER_COMPONENT,
+                    NO_OF_COMPONENTS_PROD_PER_HOUR,
+                    PRODUCT_CLASS_ID,
+                    TYPE_OF_COOLANT,
+                    EXIST_BLADE_SIZE,
+                    EXIST_BLADE_TPI,
+                    EXIST_BLADE_GRADE,
+                    EXIST_BLADE_PROFILE,
+                    EXIST_AVERAGE_LIFE_PER_BLADE,
+                    EXIST_BLADE_COST_CM2,
+                    RECOM_BLADE_SIZE,
+                    RECOM_BLADE_TPI,
+                    RECOM_BLADE_GRADE,
+                    RECOM_BLADE_PROFILE,
+                    RECOM_AVERAGE_LIFE_PER_BLADE,
+                    RECOM_BLADE_COST_CM2,
+                    EXIST_BLADE_INITIAL_FEED,
+                    EXIST_BLADE_NORMAL_FEED,
+                    RECOM_BLADE_INITIAL_FEED,
+                    RECOM_BLADE_NORMAL_FEED,
+                    EXIST_BLADE_AVG_LIFE_NO_OF_COM,
+                    ORIGINAL_EQUIP_MANUFACTURER,
+                    RECOM1_TOOL_SPEC,
+                    RECOM1_TOOL_HOLDING_SPEC,
+                    RECOM1_NO_OF_CUTTING_EDGES,
+                    RECOM1_NO_OF_FLUTES,
+                    RECOM1_TOOL_CHANGING_CRITERIA,
+                    RECOM1_TYPE_OF_COATING,
+                    RECOM1_NO_OF_REGRINDING_DONE,
+                    RECOM1_AVERAGE_LIFE_PER_EDGE,
+                    RECOM1_UNIT_PRICE,
+                    RECOM1_BLADE_SIZE,
+                    RECOM1_BLADE_TPI,
+                    RECOM1_BLADE_GRADE,
+                    RECOM1_BLADE_PROFILE,
+                    RECOM1_AVERAGE_LIFE_PER_BLADE,
+                    RECOM1_BLADE_COST_CM2,
+                    RECOM1_TOTAL_MATERIAL_REMOVAL,
+                    RECOM1_NO_OF_PASSES,
+                    RECOM1_DEPTH_OF_CUT,
+                    RECOM1_WIDTH_OF_CUT,
+                    RECOM1_SPINDLE_SPEED,
+                    RECOM1_CUTTING_SPEED,
+                    RECOM1_FEED_PER_TOOTH,
+                    RECOM1_TABLE_FEED,
+                    RECOM1_CYCLE_TIME,
+                    RECOM1_BLADE_INITIAL_FEED,
+                    RECOM1_BLADE_NORMAL_FEED,
+                    TRIAL_NO,
+                    TRIAL_OPERATION_NAME,
+                    CUTTING_TYPE,
+                    NEW_TRIAL_OR_EXISTING,
+                    EXIST_TOOL_BRAND
+                  )
+                  VALUES
+                  (
+                    :P222_DEAL_ID,
+                    :P223_COMPONENT_NAME,
+                    :P223_PART_NUMBER,
+                    :P223_MATERIAL_TYPE,
+                    :P223_PROCESS_TYPE,
+                    :P223_INPUT_CONDITION,
+                    :P223_HARDNESS,
+                    :P223_HEAT_TREATMENT_TYPE,
+                    :P223_SURFACE_CONDITION,
+                    :P223_COMP_DIAMETER,
+                    :P223_COMP_LENGTH,
+                    :P223_COMP_WIDTH,
+                    :P223_COMP_THICKNESS,
+                    :P223_COMP_SHAPE,
+                    :P223_MACHINE_TYPE,
+                    :P223_MACHINE_BRAND,
+                    :P223_WORKHOLDING_TYPE,
+                    :P223_CHUCK_DIAMETER,
+                    :P223_SPINDLE_TAPER,
+                    :P223_THROUGH_COOLANT,
+                    :P223_TABLE_SIZE,
+                    :P223_NO_OF_TOOL_LOCATION,
+                    :P223_MAXIMUM_RPM,
+                    :P223_SPINDLE_TOOL_WEIGHT_LIMIT,
+                    :P224_EXIST_TOOL_SPEC,
+                    :P224_EXIST_TOOL_HOLDING_SPEC,
+                    :P224_EXIST_NO_OF_CUTTING_EDGES,
+                    :P224_EXIST_NO_OF_FLUTES,
+                    :P224_EXIST_TOOL_CHANGING_CRITE,
+                    :P224_EXIST_TYPE_OF_COATING,
+                    :P224_EXIST_NO_OF_REGRINDING_DO,
+                    :P224_EXIST_AVERAGE_LIFE_PER_ED,
+                    :P224_EXIST_UNIT_PRICE,
+                    :P225_RECOM_TOOL_SPEC,
+                    :P225_RECOM_TOOL_HOLDING_SPEC,
+                    :P225_RECOM_NO_OF_CUTTING_EDGES,
+                    :P225_RECOM_NO_OF_FLUTES,
+                    :P225_RECOM_TOOL_CHANGING_CRITE,
+                    :P225_RECOM_TYPE_OF_COATING,
+                    :P225_RECOM_NO_OF_REGRINDING_DO,
+                    :P225_RECOM_AVERAGE_LIFE_PER_ED,
+                    :P225_RECOM_UNIT_PRICE,
+                    :P224_EXIST_TOTAL_MATERIAL_REMO,
+                    :P224_EXIST_NO_OF_PASSES,
+                    :P224_EXIST_DEPTH_OF_CUT,
+                    :P224_EXIST_WIDTH_OF_CUT,
+                    :P224_EXIST_SPINDLE_SPEED,
+                    :P224_EXIST_CUTTING_SPEED,
+                    :P224_EXIST_FEED_PER_TOOTH,
+                    :P224_EXIST_TABLE_FEED,
+                    :P224_EXIST_CYCLE_TIME,
+                    :P225_RECOM_TOTAL_MATERIAL_REMO,
+                    :P225_RECOM_NO_OF_PASSES,
+                    :P225_RECOM_DEPTH_OF_CUT,
+                    :P225_RECOM_WIDTH_OF_CUT,
+                    :P225_RECOM_SPINDLE_SPEED,
+                    :P225_RECOM_CUTTING_SPEED,
+                    :P225_RECOM_FEED_PER_TOOTH,
+                    :P225_RECOM_TABLE_FEED,
+                    :P225_RECOM_CYCLE_TIME,
+                    :P223_NO_OF_SHIFT_PER_DAY,
+                    :P223_NO_OF_WORKING_DAYS_PER_WE,
+                    :P224_EXIST_COST_PER_COMPONENT,
+                    :P223_NO_OF_COMP_PROD_PER_HOUR,
+                    :P222_PRODUCT_CLASS_ID,
+                    :P223_TYPE_OF_COOLANT,
+                    :P224_EXIST_BLADE_SIZE,
+                    :P224_EXIST_BLADE_TPI,
+                    :P224_EXIST_BLADE_GRADE,
+                    :P224_EXIST_BLADE_PROFILE,
+                    :P224_EXIST_AVG_LIFE_PER_BLADE,
+                    :P224_EXIST_BLADE_COST_CM2,
+                    :P225_RECOM_BLADE_SIZE,
+                    :P225_RECOM_BLADE_TPI,
+                    :P225_RECOM_BLADE_GRADE,
+                    :P225_RECOM_BLADE_PROFILE,
+                    :P225_RECOM_AVERAGE_LIFE_PER_BL,
+                    :P225_RECOM_BLADE_COST_CM2,
+                    :P224_EXIST_BLADE_INITIAL_FEED,
+                    :P224_EXIST_BLADE_NORMAL_FEED,
+                    :P225_RECOM_BLADE_INITIAL_FEED,
+                    :P225_RECOM_BLADE_NORMAL_FEED,
+                    :P224_EXIST_BL_AVG_LIFE_NO_OF_C,
+                    :P223_ORIG_EQUIP_MANUFACTURER,
+                    :P225_RECOM1_TOOL_SPEC,
+                    :P225_RECOM1_TOOL_HOLDING_SPEC,
+                    :P225_RECOM1_NO_OF_CUTTING_EDGE,
+                    :P225_RECOM1_NO_OF_FLUTES,
+                    :P225_RECOM1_TOOL_CHANGING_C,
+                    :P225_RECOM1_TYPE_OF_COATING,
+                    :P225_RECOM1_NO_OF_REGRIND_DO,
+                    :P225_RECOM1_AVG_LIFE_PER_ED,
+                    :P225_RECOM1_UNIT_PRICE,
+                    :P225_RECOM1_BLADE_SIZE,
+                    :P225_RECOM1_BLADE_TPI,
+                    :P225_RECOM1_BLADE_GRADE,
+                    :P225_RECOM1_BLADE_PROFILE,
+                    :P225_RECOM1_AVG_LIFE_PER_BL,
+                    :P225_RECOM1_BLADE_COST_CM2,
+                    :P225_RECOM1_TOTAL_MAT_REMO,
+                    :P225_RECOM1_NO_OF_PASSES,
+                    :P225_RECOM1_DEPTH_OF_CUT,
+                    :P225_RECOM1_WIDTH_OF_CUT,
+                    :P225_RECOM1_SPINDLE_SPEED,
+                    :P225_RECOM1_CUTTING_SPEED,
+                    :P225_RECOM1_FEED_PER_TOOTH,
+                    :P225_RECOM1_TABLE_FEED,
+                    :P225_RECOM1_CYCLE_TIME,
+                    :P225_RECOM1_BLADE_INITIAL_FEED,
+                    :P225_RECOM1_BLADE_NORMAL_FEED,
+                    v_trial_no,
+                    :P223_TRIAL_OPERATION_NAME,
+                    :P223_CUTTING_TYPE,
+                    :P222_NEW_EXIST_DEV,
+                    :P224_EXIST_TOOL_BRAND
+                  ) returning trial_id into v_trial_id;
+                
+                    
+                    BEGIN
+                        IF :p216_exist_no_of_cutting_edges IS NOT NULL THEN
+                         FOR i IN 1..:P224_EXIST_NO_OF_CUTTING_EDGES 
+                            LOOP
+                                INSERT INTO xxeba_trial_exists_results_t (
+                                    trial_id,
+                                    result_edge_number,
+                                    result_tool_life
+                                ) VALUES (
+                                    v_trial_id,
+                                    v_edge,
+                                    NULL
+                                );
+                
+                                v_edge := v_edge + 1;
+                            END LOOP;
+                        END IF;
+                    END;
+                EXCEPTION WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20001, SQLERRM);
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Trial Created Successfully!
+        }
+        advanced {
+            executionMappingIdentifier: 257377078514009976
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: FINISH,FINISH_1
+        }
+    )
+
+    branch (
+        name: Go To Page 224
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 224
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: PREVIOUS,PREVIOUS_1
+        }
+    )
+
+    branch (
+        name: Go To Page 217
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 217
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: FINISH,FINISH_1,CANCEL,CANCEL_1
+        }
+    )
+
+)
+

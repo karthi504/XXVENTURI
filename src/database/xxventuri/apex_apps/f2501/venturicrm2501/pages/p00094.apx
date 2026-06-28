@@ -1,0 +1,4090 @@
+page 94 (
+    name: Account
+    title: Account
+    pageGroup: @accounts
+    appearance {
+        pageTemplate: @marquee
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            .t-Footer{
+            	display:none;
+            
+            
+            }
+            
+            .t-Form-itemWrapper{
+                float: right;
+            }
+            
+            .t-Body-actions {
+                width: 215px;
+            }
+            
+            
+            
+            
+            
+            
+            ```
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: Manage an account's contact information, competitors, locations, links, attachments, and/or comments. You can also validate the account.
+    }
+
+    region account (
+        name: Account
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.id,
+                  c.row_key,C.CUSTOMER_CODE,
+                    case customer_is_key_account_yn
+                      when 'Y' then 'Yes'
+                      when 'N' then 'No'
+                    end key_account,
+                 -- c.customer_stock_symb,
+                --  c.customer_duns,
+                --  c.customer_sic,
+                  c.customer_web_site,
+                  c.LAST_UPDATED_LATITUDE LATITUDE, 
+                  c.LAST_UPDATED_LONGITUDE LONGITUDE,
+                  --c.customer_facebook,
+                  c.customer_linkedin,
+                 -- c.customer_twitter,
+                  c.customer_description,c.Account_source ,c.GST_NO, C.Classification_ID,
+                  c.tags,
+                  c.created,
+                  lower(c.created_by) created_by,
+                  c.updated,
+                  lower(c.updated_by) updated_by,
+                  t.id territory_id,
+                  t.territory_name,
+                  case
+                    when c.default_rep_id is not null
+                    then (
+                      select rep_first_name || ' ' || rep_last_name
+                      from eba_sales_salesreps sr
+                      where sr.id = c.default_rep_id and sr.status='Y'
+                    )
+                  end default_rep
+                from eba_sales_customers c
+                left join eba_sales_territories t
+                  on t.id = c.customer_territory_id
+                where c.id = :P94_ID
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            template: @value-attribute-pairs-column
+            templateOptions: [
+                #DEFAULT#
+                t-AVPList--leftAligned
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ACCOUNT_SOURCE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Account source
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-account-source
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column CLASSIFICATION_ID (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Classification "
+                alignment: center
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-classification-lov
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 17
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column CUSTOMER_CODE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Customer Code
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column CUSTOMER_DESCRIPTION (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column CUSTOMER_LINKEDIN (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 16
+            }
+        )
+
+        column CUSTOMER_WEB_SITE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column DEFAULT_REP (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            heading {
+                heading: Default Rep
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column GST_NO (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: GST Number
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column KEY_ACCOUNT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Key Account
+            }
+            layout {
+                sequence: 8
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LATITUDE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column LONGITUDE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column ROW_KEY (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 3
+            }
+        )
+
+        column TAGS (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Tags
+            }
+            layout {
+                sequence: 12
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TERRITORY_ID (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+        column TERRITORY_NAME (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression:
+                    ```plsql
+                    apex_util.get_build_option_status(
+                      p_application_id    => :APP_ID,
+                      p_build_option_name => 'Territories'
+                    ) = 'INCLUDE'
+                    ```
+            }
+        )
+
+        column UPDATED (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 19
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #UPDATED# by #UPDATED_BY#
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 20
+            }
+        )
+
+    )
+
+    region account-actions (
+        name: Account Actions
+        type: list
+        source {
+            list: @actions-account
+        }
+        layout {
+            sequence: 10
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            listTemplate: @links-list
+            templateOptions: [
+                #DEFAULT#
+                t-LinksList--actions
+                t-LinksList--showIcons
+            ]
+        }
+    )
+
+    region additional-details (
+        name: "Additional Details "
+        type: staticContent
+        layout {
+            sequence: 80
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region additional-details-2 (
+        name: "Additional Details "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "DETAILS_ID",
+                "CUSTOMER_ID",null edit ,
+                "MODE_OF_DELIVERY",
+                "CREDIT_DAYS",
+                "CREDIT_LIMIT",
+                "CREDIT_CURRENCY",
+                "GRACE_DAYS",
+                "ENQUIRY_CUSTOMER",
+                "ENQUIRY_SUPPLIER",
+                "ENQUIRY_COMPETITOR",
+                "ENQUIRY_EMPLOYEE",
+                "INTRODUCED_BY",
+                "VERIFIED_BY",
+                "EXPECTED_BUSINESS",
+                "EXPECTED_BUSINESS_CURRENCY",
+                "CREDIT_TERMS_REC",
+                "CREDIT_LIMIT_REC",
+                "CREDIT_LIMIT_CURRENCY",
+                "GRACE_DAYS_REC",
+                "VISIT_FREQUENCY_REC",
+                "ASSIGNED_TO",
+                "COMMENTS",
+                "RECOMMENDED_BY",
+                "CREATED_BY"
+                from "XXEBA_SALES_CUSTOMER_DETAILS"
+                where CUSTOMER_ID = :P94_ID
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @additional-details
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column ASSIGNED_TO (
+            reportColumnQueryId: 22
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 22
+            }
+        )
+
+        column COMMENTS (
+            reportColumnQueryId: 23
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 23
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 25
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 25
+            }
+        )
+
+        column CREDIT_CURRENCY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+        )
+
+        column CREDIT_DAYS (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Credit Days
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+        )
+
+        column CREDIT_LIMIT (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Credit Limit
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+        )
+
+        column CREDIT_LIMIT_CURRENCY (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 19
+            }
+        )
+
+        column CREDIT_LIMIT_REC (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column CREDIT_TERMS_REC (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column DETAILS_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 164
+                    items: {
+                        P164_DETAILS_ID: #DETAILS_ID#
+                        P164_FLAG: A
+                    }
+                    clearCache: 164
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column ENQUIRY_COMPETITOR (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Enquired Competitor
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column ENQUIRY_CUSTOMER (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Enquired Customer
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column ENQUIRY_EMPLOYEE (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Enquired Employee
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column ENQUIRY_SUPPLIER (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Enquired Supplier
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column EXPECTED_BUSINESS (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column EXPECTED_BUSINESS_CURRENCY (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 16
+            }
+        )
+
+        column GRACE_DAYS (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Grace Days
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+        )
+
+        column GRACE_DAYS_REC (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 20
+            }
+        )
+
+        column INTRODUCED_BY (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Introduced By
+            }
+            layout {
+                sequence: 13
+            }
+        )
+
+        column MODE_OF_DELIVERY (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Mode of Delivery
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column RECOMMENDED_BY (
+            reportColumnQueryId: 24
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 24
+            }
+        )
+
+        column VERIFIED_BY (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Verified By
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            }
+            layout {
+                sequence: 14
+            }
+        )
+
+        column VISIT_FREQUENCY_REC (
+            reportColumnQueryId: 21
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 21
+            }
+        )
+
+    )
+
+    region appointments (
+        name: Appointments
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT null edit, 
+                      appointment_id, 
+                      customer_id,
+                      appointment_type,
+                      appointment_date,
+                     contact_address,
+                      appointment_purpose,
+                      contact_person_id,
+                      contact_location_id
+                      comments 
+                FROM xxeba_sales_appointment where  customer_id = :P94_ID
+                ```
+        }
+        layout {
+            sequence: 70
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column APPOINTMENT_DATE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Appointment date
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column APPOINTMENT_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column APPOINTMENT_PURPOSE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Purpose
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column APPOINTMENT_TYPE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Fixed Through
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column COMMENTS (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CONTACT_ADDRESS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Contact address
+                alignment: center
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column CONTACT_PERSON_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Contact Person
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: Select CONTACT_NAME As d,id AS   r from EBA_SALES_CUSTOMER_CONTACTS
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 136
+                    items: {
+                        P136_APPOINTMENT_ID: #APPOINTMENT_ID#
+                    }
+                    clearCache: 136
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+    )
+
+    region bank-details (
+        name: "Bank Details "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "ID", Null Edit,
+                "CUSTOMER_ID",
+                "BANK_NAME",
+                "BRANCH_LOCATION",
+                "ACCOUNT_NUMBER",
+                "ACCOUNT_TYPE",
+                "IFSC_CODE",
+                "STATUS",
+                "CREATED_BY",
+                "CREATION_DATE",
+                "UPDATED_BY",
+                "UPDATE_DATE"
+                from "#OWNER#"."XXEBA_SALES_CUST_BANKS" 
+                  where CUSTOMER_ID = :P94_ID
+                
+                ```
+        }
+        layout {
+            sequence: 100
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+                t-Form--stretchInputs
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column ACCOUNT_NUMBER (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Account Number
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+        )
+
+        column ACCOUNT_TYPE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Account Type
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column BANK_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Bank Name
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select BANK_NAME as d,BANK_ID as r from XXEBA_SALES_BANKS_List
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column BRANCH_LOCATION (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Branch Location
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATION_DATE (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 3
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            link {
+                target: {
+                    page: 168
+                    items: {
+                        P168_ID: #ID#
+                    }
+                    clearCache: 168
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column IFSC_CODE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: IFSC Code
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 9
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column UPDATE_DATE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+    )
+
+    region breadcrumb-display (
+        name: &BREADCRUMB_DISPLAY.
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region competition (
+        name: Competition
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select NULL EDIT,id,
+                   (select COMPETITOR_NAME from EBA_SALES_COMPETITORS x where x.id = c.COMPETITOR_ID) competitor, 
+                   (select COMPETITOR_THREAT  from EBA_SALES_COMPETITOR_THREATS x where x.id = c.COMPETITOR_THREAT_ID) threat, 
+                   COMPETITION_DESC,
+                   created,
+                   lower(created_by) created_by
+                from EBA_SALES_ACT_COMPETITION c
+                where    CUSTOMER_ID = :P94_ID
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--labelsAbove
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        config {
+            buildOption: @competitors
+        }
+        reportLayout {
+            numberOfRows: 20
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: " "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No competitors identified, click "+" icon to add a competitor
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column COMPETITION_DESC (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column COMPETITOR (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Competitor
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Added
+            }
+            layout {
+                sequence: 5
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: end
+            }
+            link {
+                target: {
+                    page: 145
+                    items: {
+                        P145_ID: #ID#
+                    }
+                    clearCache: 145
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+        column THREAT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Threat
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+    region competitor-products (
+        name: Competitor Products
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT ID,
+                NULL as EDIT,
+                  PRODUCT_NAME,
+                  HSN_CODE,
+                  MONTHLY_VOLUME,
+                  UNIT_OF_MEASURES,
+                  UNIT_PRICE,
+                  REMARKS,
+                  BRAND_NAME,
+                  PRODUCT_TYPE
+                FROM XXEBA_SALES_COMPETITOR_PRODUCT 
+                where CUSTOMER_ID = :P94_ID;
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        reportLayout {
+            numberOfRows: 15000
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+
+        column BRAND_NAME (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Brand Name
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 2
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 235
+                    items: {
+                        P235_ID: #ID#
+                    }
+                    clearCache: 235
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column HSN_CODE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: HSN Code
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column MONTHLY_VOLUME (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Monthly Volume
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Product
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+        column PRODUCT_TYPE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Product Type
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column REMARKS (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Remarks
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column UNIT_OF_MEASURES (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Unit of Measures
+                alignment: center
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column UNIT_PRICE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+    )
+
+    region contact-images (
+        name: Contact Images
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: masterDetail
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            customAttributes: style="position: absolute; width: 70%;"
+        }
+    )
+
+    region contacts (
+        name: Contacts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,
+                	 "CONTACT_NAME" as "CONTACT",
+                	 "CONTACT_EMAIL" as "EMAIL",
+                	 "CONTACT_PHONE" as "PHONE",
+                	 "CONTACT_CELL" as "CELL",
+                     "KEY_CONTACT"  as "Key Contact",
+                	 "CONTACT_ADDRESS" as "CONTACT_ADDRESS",
+                     DEPARTMENT	,
+                     DATE_OF_BIRTH,
+                     ANNIVERSARY_DAY,
+                         created,
+                         lower(created_by) created_by,
+                         null Edit
+                 from	 "EBA_SALES_CUSTOMER_CONTACTS" c
+                where customer_id = :P94_ID and status='Y'
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--noPadding
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        config {
+            buildOption: @contacts
+        }
+        reportLayout {
+            numberOfRows: 500
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No contacts identified, click "+" icon to add a contact
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ANNIVERSARY_DAY (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Anniversary Day
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon
+            }
+        )
+
+        column CELL (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Cell
+                alignment: center
+            }
+            layout {
+                sequence: 9
+                columnAlignment: center
+            }
+        )
+
+        column CONTACT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Contact
+            }
+            layout {
+                sequence: 3
+            }
+            link {
+                target: {
+                    page: 24
+                    items: {
+                        P24_ID: #ID#
+                    }
+                    clearCache: 24
+                    action: resetPagination
+                }
+                linkText: #CONTACT#
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+        column CONTACT_ADDRESS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Added
+            }
+            layout {
+                sequence: 12
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column DATE_OF_BIRTH (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Date of Birth
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon
+            }
+        )
+
+        column DEPARTMENT (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Department
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 106
+                    items: {
+                        P106_ID: #ID#
+                    }
+                    clearCache: 106
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+            advanced {
+                cellWidth: 10
+            }
+        )
+
+        column EMAIL (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column "Key Contact" (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Key Contact
+            }
+            lov {
+                type: sharedComponent
+                lov: @yes-no-returns-y-n
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column PHONE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Phone
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+    )
+
+    region locations (
+        name: Locations
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,null edit ,
+                	CUSTOMER_LOCATION_NAME location,
+                	CUSTOMER_ADDRESS1||
+                        decode(CUSTOMER_ADDRESS2,null,null,' '|| CUSTOMER_ADDRESS2) address,
+                        CITY_ID	 city,
+                        STATE_ID state,
+                	COUNTRY_ID country,
+                        CUSTOMER_POSTAL_CODE,
+                        CUSTOMER_DESCRIPTION
+                        CUSTOMER_TERRITORY_ID,
+                        created,
+                        lower(created_by) created_by
+                 from	 "EBA_SALES_CUSTOMER_LOCATIONS"
+                where customer_id = :P94_ID
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 50
+        }
+        messages {
+            whenNoDataFound: No locations identified, click "+" icon to add a customer location
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ADDRESS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 4
+            }
+        )
+
+        column CITY (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: City
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: "select CITY_NAME as d,CITY_ID as r from XXEBA_SALES_CITIES_T "
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column COUNTRY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Country
+            }
+            lov {
+                type: sharedComponent
+                lov: @country-codes
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Added
+            }
+            layout {
+                sequence: 10
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column CUSTOMER_POSTAL_CODE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CUSTOMER_TERRITORY_ID (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 9
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 2
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 32
+                    items: {
+                        P32_ID: #ID#
+                    }
+                    clearCache: 32
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+            advanced {
+                cellWidth: 10
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column LOCATION (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Location
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+        column STATE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+    )
+
+    region machineries (
+        name: Machineries
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "ID", Null Edit,
+                "CUSTOMER_ID",
+                "CNC_COUNT",
+                "VMC_COUNT",
+                "HMC_COUNT",
+                "VTL_COUNT",
+                "TURN_MILL_COUNT",
+                "SPM_COUNT",NO_CIRCULAR_SAW,NO_OF_BANDSAW_BLADE
+                from "#OWNER#"."XXEBA_SALES_CUST_MACHINERIES" where CUSTOMER_ID = :P94_ID
+                  
+                ```
+        }
+        layout {
+            sequence: 90
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column CNC_COUNT (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: CNC Count
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 3
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            link {
+                target: {
+                    page: 166
+                    items: {
+                        P166_ID: #ID#
+                    }
+                    clearCache: 166
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column HMC_COUNT (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: HMC Count
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column NO_CIRCULAR_SAW (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Circular Saw  Count
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+        )
+
+        column NO_OF_BANDSAW_BLADE (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: " Bandsaw Blade Count"
+                alignment: center
+            }
+            layout {
+                sequence: 11
+                columnAlignment: center
+            }
+        )
+
+        column SPM_COUNT (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: SPM Count
+                alignment: center
+            }
+            layout {
+                sequence: 9
+                columnAlignment: center
+            }
+        )
+
+        column TURN_MILL_COUNT (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Turn Mill Count
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+        )
+
+        column VMC_COUNT (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: VMC Count
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+        )
+
+        column VTL_COUNT (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: VTL Count
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+        )
+
+    )
+
+    region open-opportunities (
+        name: Open Opportunities
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select	 
+                   d.id,
+                   (select sr."REP_LAST_NAME"||', '|| 
+                	     sr."REP_FIRST_NAME" x
+                	    from "EBA_SALES_SALESREPS" sr
+                	    where sr.id = d.salesrep_id_01) REP_NAME,
+                   d."DEAL_NAME",
+                   d."DEAL_CLOSE_DATE",
+                   (select sc."STATUS_CODE" 
+                    from "EBA_SALES_DEAL_STATUS_CODES" sc 
+                    where sc.id = d.DEAL_STATUS_CODE_ID) STATUS_CODE,
+                   decode(d."DEAL_PROBABILITY",0,'No',100,'No',
+                              decode(greatest(sysdate,d."DEAL_CLOSE_DATE"),
+                              sysdate,'Yes','No')) overdue,
+                    d.qtr as quarter
+                from	 
+                    "EBA_SALES_DEALS" d
+                where   
+                     d.CUSTOMER_ID = :P94_ID and
+                     d."DEAL_PROBABILITY" > 0 and 
+                     d."DEAL_PROBABILITY" < 100
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 50
+        }
+        messages {
+            whenNoDataFound: No open opportunities found for this account
+        }
+        breakFormatting {
+            reportSumLabel: &nbsp;
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column DEAL_CLOSE_DATE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 4
+            }
+        )
+
+        column DEAL_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Opportunity
+            }
+            layout {
+                sequence: 2
+            }
+            link {
+                target: {
+                    page: 80
+                    items: {
+                        P80_ID: #ID#
+                    }
+                    clearCache: 80
+                }
+                linkText: #DEAL_NAME#
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column OVERDUE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column QUARTER (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Quarter
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column REP_NAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: &REP_TITLE.
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+        column STATUS_CODE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Stage
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+    )
+
+    region products (
+        name: Products
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "ID", 
+                "CUSTOMER_ID", Null Edit,
+                "PRODUCT_GROUP_ID",
+                "HSN_CODE",
+                "MONTHLY_VOLUME",
+                "UNIT_OF_MEASURES",
+                "BRAND_ID",
+                "ORDER_FREQUENCY",
+                (select PRODUCT_NAME from EBA_SALES_PRODUCTS where ID=PRODUCT_ID) product_name,
+                PART_NUMBER,
+                "REMARKS"
+                from "#OWNER#"."XXEBA_SALES_ACC_PRODUCTS" where CUSTOMER_ID = :P94_ID
+                
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column BRAND_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Brand Name
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-brands-lov
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 172
+                    items: {
+                        P172_ID: #ID#
+                    }
+                    clearCache: 172
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column HSN_CODE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: HSN Code
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column MONTHLY_VOLUME (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Monthly Volume
+                alignment: center
+            }
+            layout {
+                sequence: 9
+                columnAlignment: center
+            }
+        )
+
+        column ORDER_FREQUENCY (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Order Frequency
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column PART_NUMBER (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Customer Part#
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column PRODUCT_GROUP_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Product Group
+            }
+            lov {
+                type: sharedComponent
+                lov: @product-families
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column REMARKS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Remarks
+                alignment: center
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column UNIT_OF_MEASURES (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Unit of Measures
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region rds (
+        name: RDS
+        type: regionDisplaySelector
+        layout {
+            sequence: 30
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: false
+        }
+    )
+
+    region recommended-details (
+        name: "Recommended Details "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "DETAILS_ID",
+                "CUSTOMER_ID",null edit ,
+                "EXPECTED_BUSINESS",
+                "EXPECTED_BUSINESS_CURRENCY",
+                "CREDIT_TERMS_REC",
+                "CREDIT_LIMIT_REC",
+                "CREDIT_LIMIT_CURRENCY",
+                "GRACE_DAYS_REC",
+                "VISIT_FREQUENCY_REC",
+                "ASSIGNED_TO",
+                "COMMENTS",
+                "RECOMMENDED_BY",
+                "CREATED_BY"
+                from "XXEBA_SALES_CUSTOMER_DETAILS"
+                where CUSTOMER_ID = :P94_ID
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @additional-details
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column ASSIGNED_TO (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Assigned To
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column COMMENTS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 13
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column CREDIT_LIMIT_CURRENCY (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+        )
+
+        column CREDIT_LIMIT_REC (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Credit Limit
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+        )
+
+        column CREDIT_TERMS_REC (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Credit Terms
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column DETAILS_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 164
+                    items: {
+                        P164_DETAILS_ID: #DETAILS_ID#
+                        P164_FLAG: R
+                    }
+                    clearCache: 164
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column EXPECTED_BUSINESS (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Expected Business
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+        )
+
+        column EXPECTED_BUSINESS_CURRENCY (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+        )
+
+        column GRACE_DAYS_REC (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Grace Days
+                alignment: center
+            }
+            layout {
+                sequence: 9
+                columnAlignment: center
+            }
+        )
+
+        column RECOMMENDED_BY (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Recommended By
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column VISIT_FREQUENCY_REC (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Visit Frequency "
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: select VISIT_FREQUENCY as d, ID as r from XXEBA_SALES_VISIT_FREQUENCY
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+    )
+
+    region usage-metrics-90-days (
+        name: Usage Metrics - 90 days
+        type: plugin/badgeList
+        source {
+            sqlQuery:
+                ```sql
+                select count(*) c,
+                  'Views' l,
+                  1 disp
+                from eba_sales_clicks
+                where cust_id = :P94_ID 
+                  and view_timestamp > sysdate - 90
+                union all
+                select count(distinct(app_username)) c,
+                    'Users' l,
+                    2 disp
+                from eba_sales_clicks
+                where cust_id = :P94_ID 
+                  and view_timestamp > sysdate - 90
+                order by disp
+                ```
+        }
+        layout {
+            sequence: 100
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        config {
+            buildOption: @usage-metrics
+        }
+        settings {
+            badgeStyle: circular
+            value: C
+            bottomLabel: L
+            linkTarget: {
+                page: 138
+                items: {
+                    P138_ENTITY_TYPE: ACCOUNT
+                    P138_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 138
+            }
+            layout: 2Columns
+        }
+    )
+
+    region validations (
+        name: Validations
+        type: plugin/contentValidator
+        source {
+            sqlQuery:
+                ```sql
+                select v.verified_by,
+                  v.created
+                from eba_sales_verifications v
+                where cust_id = :P94_ID
+                order by v.created desc
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--stacked
+                t-Region--hiddenOverflow
+            ]
+            cssClasses: js-validateRegion
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 'Y' from EBA_SALES_CUSTOMERS where ID=:P94_ID and STATUS='V'
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @validations
+        }
+        settings {
+            validationLink: {
+                page: 146
+                items: {
+                    P146_ENTITY_TYPE: ACCOUNT
+                    P146_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 146
+            }
+            previousValidationsLink: {
+                page: 147
+                items: {
+                    P147_ENTITY_TYPE: ACCOUNT
+                    P147_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 147
+                action: resetPagination
+            }
+        }
+    )
+
+    pageItem P94_CUSTOMER_DETAILS_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select DETAILS_ID from XXEBA_SALES_CUSTOMER_DETAILS where CUSTOMER_ID = :P94_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P94_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @account
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P94_MACHINERY_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select ID  from XXEBA_SALES_CUST_MACHINERIES where CUSTOMER_ID =:P94_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P94_PHOTO (
+        type: displayImage
+        label {
+            alignment: left
+        }
+        settings {
+            basedOn: blobColSql
+            sqlQuery:
+                ```sql
+                select FILE_BLOB from (select f.FILE_BLOB from EBA_SALES_FILES f,EBA_SALES_CUSTOMER_CONTACTS cc,EBA_SALES_CUSTOMERS c
+                where cc.CUSTOMER_ID=c.id and cc.ID =f.CONTACT_ID and KEY_CONTACT='Y'and c.id=:P94_ID
+                order by f.CREATED desc) where  rownum = 1
+                
+                /*select FILE_BLOB from (select f.FILE_BLOB from EBA_SALES_FILES f,EBA_SALES_CUSTOMER_CONTACTS cc,EBA_SALES_CUSTOMERS c
+                where cc.CUSTOMER_ID=c.id and f.ACCOUNT_ID=CC.CUSTOMER_ID and KEY_CONTACT='Y'and c.id=140306149349797948707380504941910019519 
+                order by f.CREATED desc) where  rownum = 1*/
+                ```
+        }
+        layout {
+            sequence: 20
+            region: @contact-images
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+            ]
+        }
+        advanced {
+            customAttributes: "style=\"height: 210px; width: 200px; border: 3px solid #16C4E6; border-radius: 7px; margin-right: 3px;\" "
+        }
+    )
+
+    pageItem P94_ROW_KEY (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select row_key
+                from eba_sales_customers
+                where id = :P94_ID
+                ```
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P94_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @breadcrumb-display
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                select STATUS
+                from eba_sales_customers
+                where id = :P94_ID
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P94_TERRITORY_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select customer_territory_id from EBA_SALES_CUSTOMERS where id = :P94_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button add-appointment (
+        buttonName: ADD_APPOINTMENT
+        label: Add appointment
+        layout {
+            sequence: 10
+            region: @appointments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 136
+                items: {
+                    P136_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 136
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button add-banks (
+        buttonName: ADD_BANKS
+        label: Add banks
+        layout {
+            sequence: 10
+            region: @bank-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 168
+                items: {
+                    P168_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 168
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button add-contact (
+        buttonName: ADD_CONTACT
+        label: Add Contact
+        layout {
+            sequence: 140
+            region: @contacts
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 106
+                items: {
+                    P106_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 106
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button add-details (
+        buttonName: ADD_DETAILS
+        label: Add details
+        layout {
+            sequence: 10
+            region: @additional-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 164
+                items: {
+                    P164_CUSTOMER_ID: &P94_ID.
+                    P164_FLAG: A
+                }
+                clearCache: 164
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button add-machineries (
+        buttonName: ADD_Machineries
+        label: Add machineries
+        layout {
+            sequence: 10
+            region: @machineries
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 166
+                items: {
+                    P166_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 166
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button edit-account (
+        buttonName: EDIT_ACCOUNT
+        label: Edit Account
+        layout {
+            sequence: 30
+            region: @breadcrumb-display
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--padRight
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 3
+                items: {
+                    P3_ID: &P94_ID.
+                }
+                clearCache: 3
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            language: sql
+            sqlExpression:
+                ```sql
+                :P94_STATUS <> 'A' or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE
+                            and SR.ROLE_NAME in ('Administrator'))
+                ```
+        }
+    )
+
+    button new (
+        buttonName: New
+        label: New
+        layout {
+            sequence: 10
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 172
+                items: {
+                    P172_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 172
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button pop-add-comp (
+        buttonName: POP_ADD_COMP
+        label: Add Competition
+        layout {
+            sequence: 230
+            region: @competition
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 145
+                items: {
+                    P145_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 145
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button pop-add-location (
+        buttonName: POP_ADD_LOCATION
+        label: Add Location
+        layout {
+            sequence: 270
+            region: @locations
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 32
+                items: {
+                    P32_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 32
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button pop-link (
+        buttonName: POP_LINK
+        label: Add Link
+        layout {
+            sequence: 240
+            region: @/links
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: ACCOUNT
+                    P114_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 114
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button popattachment (
+        buttonName: POPATTACHMENT
+        label: Add Attachment
+        layout {
+            sequence: 10
+            region: @/attachments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: ACCOUNT
+                    P99_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 99
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button popcomment (
+        buttonName: POPCOMMENT
+        label: Add Comment
+        layout {
+            sequence: 350
+            region: @/comments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: ACCOUNT
+                    P22_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 22
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button update-credit-terms (
+        buttonName: UPDATE_CREDIT_TERMS
+        label: Update Credit Terms
+        layout {
+            sequence: 40
+            region: @breadcrumb-display
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--padRight
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 236
+                items: {
+                    P236_CUSTOMER_DETAILS_ID: &P94_CUSTOMER_DETAILS_ID.
+                    P236_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 236
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @xxeba-team-lead
+        }
+    )
+
+    button view-attachments (
+        buttonName: VIEW_ATTACHMENTS
+        label: View Attachments
+        layout {
+            sequence: 20
+            region: @/attachments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 92
+                items: {
+                    P92_ENTITY_TYPE: ACCOUNT
+                    P92_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 92
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-comments (
+        buttonName: VIEW_COMMENTS
+        label: View Comments
+        layout {
+            sequence: 360
+            region: @/comments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 88
+                items: {
+                    P88_ENTITY_TYPE: ACCOUNT
+                    P88_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 88
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-comp (
+        buttonName: VIEW_COMP
+        label: View Competitors
+        layout {
+            sequence: 240
+            region: @competition
+            slot: edit
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 98
+                items: {
+                    P98_ID: &P94_ID.
+                }
+                clearCache: 98
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-contacts (
+        buttonName: VIEW_contacts
+        label: View Contacts
+        layout {
+            sequence: 150
+            region: @contacts
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: f?p=&APP_ID.:105:&SESSION.::::P105_ID:&P94_ID.
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-links (
+        buttonName: VIEW_LINKS
+        label: View Links
+        layout {
+            sequence: 250
+            region: @/links
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 89
+                items: {
+                    P89_ENTITY_TYPE: ACCOUNT
+                    P89_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 89
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-location (
+        buttonName: VIEW_LOCATION
+        label: View Location
+        layout {
+            sequence: 20
+            region: @breadcrumb-display
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 186
+                items: {
+                    P186_ID: &P94_ID.
+                }
+                clearCache: 186
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                   lv_latitude varchar2(100);
+                   
+                begin
+                
+                  select LAST_UPDATED_LATITUDE into lv_latitude from EBA_SALES_CUSTOMERS where ID = :P94_ID;
+                  if lv_latitude is not null then
+                      return true;
+                  else
+                      return false;
+                  end if;
+                
+                  exception when others then return false;
+                
+                end;
+                ```
+        }
+    )
+
+    button view-locations (
+        buttonName: VIEW_LOCATIONS
+        label: View Locations
+        layout {
+            sequence: 280
+            region: @locations
+            slot: edit
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: f?p=&APP_ID.:107:&SESSION.::::P107_ID:&P94_ID.
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-open-opportunities (
+        buttonName: VIEW_OPEN_OPPORTUNITIES
+        label: View Open Opportunities
+        layout {
+            sequence: 330
+            region: @open-opportunities
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 1
+                items: {
+                    IR_OPEN: Yes
+                    IR_ACCOUNT_ID: &P94_ID.
+                }
+                clearCache: [
+                    1
+                    RIR
+                ]
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction account-region-refresh (
+        name: Account Region Refresh
+        execution {
+            sequence: 100
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @account
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction dialog-closed (
+        name: Dialog Closed
+        execution {
+            sequence: 80
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('Action Processed.');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction link-details-dialog-closed (
+        name: Link Details dialog closed
+        execution {
+            sequence: 40
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 114
+        }
+    )
+
+    dynamicAction refresh (
+        name: refresh
+        execution {
+            sequence: 90
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 229
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @account
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-account-details (
+        name: Refresh Account Details
+        execution {
+            sequence: 5
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 32
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @account
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-appointment (
+        name: Refresh Appointment
+        execution {
+            sequence: 30
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 136
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @appointments
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-competitors (
+        name: Refresh Competitors
+        execution {
+            sequence: 60
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 145
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @competition
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-contacts (
+        name: Refresh Contacts
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 106
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @contacts
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-locations (
+        name: Refresh Locations
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 32
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @locations
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-notes (
+        name: Refresh Notes
+        execution {
+            sequence: 50
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 21
+        }
+    )
+
+    dynamicAction refresh-validations (
+        name: Refresh Validations
+        execution {
+            sequence: 70
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 102
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @validations
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process init-page (
+        name: Init page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                insert into eba_sales_clicks (
+                  entity_type,
+                  cust_id,
+                    app_username
+                ) values (
+                  'ACCOUNT',
+                  :P94_ID,
+                    lower(:APP_USER)
+                );
+                
+                delete from eba_sales_clicks 
+                where view_timestamp < (sysdate - 90) 
+                  and cust_id = :P94_ID;
+                ```
+        }
+        execution {
+            sequence: 70
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 1573688903382118028
+        }
+    )
+
+)
+

@@ -1,0 +1,690 @@
+page 143 (
+    name: New Appointments
+    title: New Appointments
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region appointments (
+        name: Appointments
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region new-appointments (
+        name: New Appointments
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select APPOINTMENT_ID,
+                       ROW_VERSION_NUMBER,
+                       CUSTOMER_ID,
+                       APPOINTMENT_TYPE,
+                       APPOINTMENT_DATE,
+                       CONTACT_ADDRESS,
+                       APPOINTMENT_PURPOSE,
+                       CREATED,
+                       CREATED_BY,
+                       UPDATED,
+                       UPDATED_BY,
+                       CONTACT_PERSON,
+                       CONTACT_LOCATION,
+                       COMMENTS,
+                       LEAD_ID,
+                       OPPORTUNITY_ID,
+                       ACCOUNT,
+                       SOURCE,
+                       APPOINTMENT_STATUS,
+                       STATUS_COMMENTS,
+                       CONTACT_ID
+                  from XXEBA_SALES_APPOINTMENT 
+                  where CREATED BETWEEN :P143_FROM_DATE AND :P143_TO_DATE
+                /*  and    (case
+                     when :P143_STATUS = 'All' then APPOINTMENT_STATUS = APPOINTMENT_STATUS 
+                     when :P143_STATUS = 'Scheduled' then APPOINTMENT_STATUS not in ('Visited','Cancel') 
+                     else APPOINTMENT_STATUS = :P143_STATUS
+                     end) */
+                                 
+                                 
+                                 
+                                 
+                ```
+            pageItemsToSubmit: [
+                P143_FROM_DATE
+                P143_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 20
+            parentRegion: @appointments
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 126622314601214630
+        }
+
+        column ACCOUNT (
+            type: hidden
+            heading {
+                heading: Account
+            }
+            layout {
+                sequence: 117
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column APPOINTMENT_DATE (
+            type: plainText
+            heading {
+                heading: Scheduled Date
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column APPOINTMENT_ID (
+            type: hidden
+            heading {
+                heading: Appointment Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column APPOINTMENT_PURPOSE (
+            type: plainText
+            heading {
+                heading: Purpose
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column APPOINTMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 17
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column APPOINTMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Source
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column COMMENTS (
+            type: hidden
+            heading {
+                heading: Comments
+            }
+            layout {
+                sequence: 87
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CONTACT_ADDRESS (
+            type: hidden
+            heading {
+                heading: Contact Address
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CONTACT_ID (
+            type: hidden
+            heading {
+                heading: Contact Id
+            }
+            layout {
+                sequence: 147
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: U
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CONTACT_LOCATION (
+            type: plainText
+            heading {
+                heading: Location
+            }
+            layout {
+                sequence: 77
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column CONTACT_PERSON (
+            type: plainText
+            heading {
+                heading: Contact Person
+            }
+            layout {
+                sequence: 67
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Fixed On
+                alignment: center
+            }
+            layout {
+                sequence: 27
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 37
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Account Name
+            }
+            lov {
+                lov: @accounts
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column LEAD_ID (
+            type: hidden
+            heading {
+                heading: Lead Id
+            }
+            layout {
+                sequence: 97
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column OPPORTUNITY_ID (
+            type: hidden
+            heading {
+                heading: Opportunity Id
+            }
+            layout {
+                sequence: 107
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ROW_VERSION_NUMBER (
+            type: hidden
+            heading {
+                heading: Row Version Number
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SOURCE (
+            type: hidden
+            heading {
+                heading: Source
+            }
+            layout {
+                sequence: 127
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS_COMMENTS (
+            type: hidden
+            heading {
+                heading: Status Comments
+            }
+            layout {
+                sequence: 137
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED (
+            type: hidden
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 47
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 57
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1266312 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APPOINTMENT_DATE (
+                sequence: 7
+            )
+
+            displayColumn APPOINTMENT_PURPOSE (
+                sequence: 2
+            )
+
+            displayColumn APPOINTMENT_STATUS (
+                sequence: 8
+            )
+
+            displayColumn APPOINTMENT_TYPE (
+                sequence: 6
+            )
+
+            displayColumn CONTACT_LOCATION (
+                sequence: 4
+            )
+
+            displayColumn CONTACT_PERSON (
+                sequence: 3
+            )
+
+            displayColumn CREATED (
+                sequence: 5
+            )
+
+            displayColumn CUSTOMER_ID (
+                sequence: 1
+            )
+
+        )
+
+    )
+
+    pageItem P143_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: Date
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @new-appointments
+            slot: regionBody
+            alignment: left
+            column: 1
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P143_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:All;All,Visited;Visited, Scheduled;Scheduled
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @new-appointments
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P143_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: "To "
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new-appointments
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: Go
+        label: Go
+        layout {
+            sequence: 40
+            region: @new-appointments
+            slot: regionBody
+            startNewRow: false
+            column: 7
+            columnSpan: 2
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="margin-top: 4px; "
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @new-appointments
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

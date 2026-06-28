@@ -1,0 +1,767 @@
+page 74 (
+    name: Create Opportunity
+    title: Create Opportunity
+    pageGroup: @opportunities
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @wizard-modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        authorizationScheme: @contribution-rights
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region button-container (
+        name: Button container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: wizardButtons
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region create-opportunity (
+        name: Create Opportunity
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: wizardBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideHeader
+                t-Region--hiddenOverflow
+            ]
+        }
+    )
+
+    region create-opportunity-train (
+        name: create opportunity train
+        type: list
+        source {
+            list: @create-opportunity-train
+        }
+        layout {
+            sequence: 10
+            slot: wizardProgressBar
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+            templateOptions: [
+                #DEFAULT#
+                t-WizardSteps--displayLabels
+            ]
+        }
+    )
+
+    pageItem P74_ACCOUNT (
+        type: displayOnly
+        label {
+            label: Account
+            alignment: left
+        }
+        settings {
+            basedOn: lov
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @accounts
+        }
+        layout {
+            sequence: 30
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_ACCOUNT
+            used: always
+        }
+        serverSideCondition {
+            type: item=value
+            item: P71_NEW_OR_EXISTING
+            value: EXISTING
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_AMOUNT (
+        type: displayOnly
+        label {
+            label: Amount
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_AMOUNT
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P71_AMOUNT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_CLOSE_DATE (
+        type: displayOnly
+        label {
+            label: Close Date
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 70
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_CLOSE_DATE
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P71_CLOSE_DATE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_COMPETITION (
+        type: displayOnly
+        label {
+            label: Competition
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  t            varchar2(32767) := null;
+                  l_vc_arr2    APEX_APPLICATION_GLOBAL.VC_ARR2;
+                  l_id         number;
+                begin
+                  if :P72_COMPETITION is not null then
+                      l_vc_arr2 := APEX_UTIL.STRING_TO_TABLE(:P72_COMPETITION);
+                          FOR z IN 1..l_vc_arr2.count LOOP
+                              l_id := l_vc_arr2(z);
+                              for c1 in (select COMPETITOR_NAME
+                                         from eba_sales_competitors
+                                         where id = l_id) loop
+                                  t := t||apex_escape.html(c1.COMPETITOR_NAME)||', ';
+                              end loop;
+                          END LOOP;
+                  end if;
+                  return RTRIM(t,', ');
+                end;
+                ```
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_NEW_ACCOUNT (
+        type: displayOnly
+        label {
+            label: Account
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 40
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_CUSTOMER_NAME
+            used: always
+        }
+        serverSideCondition {
+            type: item=value
+            item: P71_NEW_OR_EXISTING
+            value: NEW
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_OPPORTUNITY (
+        type: displayOnly
+        label {
+            label: Opportunity Name
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_OPPORTUNITY_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_OPP_ID (
+        type: hidden
+        layout {
+            sequence: 120
+            region: @create-opportunity
+            slot: regionBody
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            sessionStateProtection: restricted
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_PRODUCTS (
+        type: displayOnly
+        label {
+            label: Products
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 110
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  t            varchar2(32767) := null;
+                  l_vc_arr2    APEX_APPLICATION_GLOBAL.VC_ARR2;
+                  l_id         number;
+                begin
+                  if :P73_PRODUCTS is not null then
+                      l_vc_arr2 := APEX_UTIL.STRING_TO_TABLE(:P73_PRODUCTS);
+                          FOR z IN 1..l_vc_arr2.count LOOP
+                              l_id := l_vc_arr2(z);
+                              for c1 in (select PRODUCT_NAME
+                                         from eba_sales_products
+                                         where id = l_id) loop
+                                  t := t||apex_escape.html(c1.PRODUCT_NAME)||', ';
+                              end loop;
+                          END LOOP;
+                  end if;
+                  return RTRIM(t,', ');
+                end;
+                ```
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_SALESREP (
+        type: displayOnly
+        label {
+            label: Primary &REP_TITLE.
+            alignment: left
+        }
+        settings {
+            basedOn: lov
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @primary-sales-rep
+        }
+        layout {
+            sequence: 50
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_SALESREP
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P71_SALESREP
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_STATUS (
+        type: displayOnly
+        label {
+            label: Status
+            alignment: left
+        }
+        settings {
+            basedOn: lov
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @steps-to-close-status-code
+        }
+        layout {
+            sequence: 80
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_TEAM (
+        type: displayOnly
+        label {
+            label: Extended Team
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 90
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  t varchar2(32767) := null;
+                  l_vc_arr2    APEX_APPLICATION_GLOBAL.VC_ARR2;
+                  l_id number;
+                begin
+                  if :P72_TEAM is not null then
+                      l_vc_arr2 := APEX_UTIL.STRING_TO_TABLE(:P72_TEAM);
+                          FOR z IN 1..l_vc_arr2.count LOOP
+                              l_id := l_vc_arr2(z);
+                              for c1 in (select REP_EMAIL, rep_last_name, rep_first_name
+                                         from eba_sales_salesreps
+                                          where id = l_id) loop
+                                  t := t||apex_escape.html(trim(lower(c1.rep_email)))||', ';
+                              end loop;
+                          END LOOP;
+                  end if;
+                  return RTRIM(t,', ');
+                end;
+                ```
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P74_TERRITORY (
+        type: displayOnly
+        label {
+            label: Territory
+            alignment: left
+        }
+        settings {
+            basedOn: lov
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sharedComponent
+            lov: @territory
+        }
+        layout {
+            sequence: 20
+            region: @create-opportunity
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P71_TERRITORY_ID
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P71_TERRITORY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @button-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button finish (
+        buttonName: FINISH
+        label: Create Opportunity
+        layout {
+            sequence: 30
+            region: @button-container
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 10
+            region: @button-container
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction cancel-clicked (
+        name: Cancel clicked
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process create-opportunity (
+        name: create opportunity
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    l_account_id   number;
+                    l_opp_id       number;
+                    
+                    la_product     apex_application_global.vc_arr2;
+                    la_team        apex_application_global.vc_arr2;
+                    la_competition apex_application_global.vc_arr2;
+                begin
+                    if :P71_NEW_OR_EXISTING = 'NEW' then
+                        insert into eba_sales_customers (
+                        customer_name,
+                        customer_territory_id,
+                        customer_web_site,
+                        customer_duns,
+                        customer_sic,
+                        customer_stock_symb,
+                        customer_is_key_account_yn,
+                        default_rep_id,
+                        customer_description,
+                        tags              
+                        )
+                        values (
+                        :P71_CUSTOMER_NAME,
+                        :P71_TERRITORY_ID,
+                        :P71_CUSTOMER_WEB_SITE,
+                        :P71_CUSTOMER_DUNS,
+                        :P71_CUSTOMER_SIC,
+                        :P71_CUSTOMER_STOCK_SYMB,
+                        :P71_CUSTOMER_IS_KEY_ACCOUNT_YN,
+                        :P71_DEFAULT_REP_ID,
+                        :P71_CUSTOMER_DESCRIPTION,
+                        :P71_TAGS
+                        ) returning id into l_account_id;
+                    else
+                        l_account_id := :P71_ACCOUNT;
+                    end if;
+                    
+                    insert into EBA_SALES_DEALS (
+                    DEAL_NAME,
+                    CUSTOMER_ID,
+                    SALESREP_ID_01,
+                    DEAL_AMOUNT,
+                    DEAL_CLOSE_DATE,
+                    DEAL_STATUS_CODE_ID
+                    )
+                    values (
+                    :P71_OPPORTUNITY_NAME,
+                    l_account_id,
+                    :P71_SALESREP,
+                    :P71_AMOUNT,
+                    :P71_CLOSE_DATE,
+                    :P71_STATUS
+                    )
+                    returning id into l_opp_id;
+                    
+                    :P74_OPP_ID := l_opp_id; -- used to branch later
+                    
+                -- The code below is remarked out because this functionality was removed from the wizard
+                -- Allan 21-NOV-2016
+                /*
+                    -- add products
+                    if :P73_PRODUCTS is not null then
+                        la_product := apex_util.string_to_table(:P73_PRODUCTS);
+                        for i in 1..la_product.count
+                        loop
+                            insert into eba_sales_deal_products (deal_id, product_id) values (l_opp_id, la_product(i));
+                        end loop;
+                    end if;
+                  
+                    -- team
+                    if :P72_TEAM is not null then
+                        la_team := apex_util.string_to_table(:P72_TEAM);
+                        for i in 1..la_team.count
+                        loop
+                            insert into eba_sales_deal_team (deal_id, REP_ID) values (l_opp_id, la_team(i));
+                        end loop;
+                    end if;
+                
+                    -- competition
+                    if :P72_COMPETITION is not null then
+                        la_competition := apex_util.string_to_table(:P72_COMPETITION);
+                        for i in 1..la_competition.count
+                        loop
+                            insert into eba_sales_deal_competition (deal_id, competitor_id) values (l_opp_id, la_competition(i));
+                        end loop;
+                    end if;
+                */
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Opportunity Created
+        }
+        error {
+            errorMessage: Unable to create opportunity
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4448890010336858202
+        }
+        serverSideCondition {
+            whenButtonPressed: @finish
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 20
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 73
+            }
+            saveStateBeforeBranching: true
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        name: Go To Page 1
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 80
+                items: {
+                    P80_ID: &P74_OPP_ID.
+                }
+                clearCache: 80
+            }
+            saveStateBeforeBranching: true
+        }
+        serverSideCondition {
+            whenButtonPressed: @finish
+        }
+    )
+
+)
+

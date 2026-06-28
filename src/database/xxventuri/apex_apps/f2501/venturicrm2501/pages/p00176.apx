@@ -1,0 +1,403 @@
+page 176 (
+    name: Reset Password
+    title: Reset Password
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region reset-password (
+        name: Reset Password
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P176_CONFIRM (
+        type: password
+        label {
+            label: "Confirm Password "
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @reset-password
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P176_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @reset-password
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P176_RESET_PASSWORD (
+        type: password
+        label {
+            label: Reset Password
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @reset-password
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Reset
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P176_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 91251155185371875
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-eba-sales-salesreps (
+        name: Fetch Row from EBA_SALES_SALESREPS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_SALESREPS
+            pkColumn: ID
+            pkItem: P176_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 91249938271371870
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process process-row-of-eba-sales-salesreps (
+        name: Process Row of EBA_SALES_SALESREPS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_SALESREPS
+            pkColumn: ID
+            pkItem: P176_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 91250303832371875
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 91250695552371875
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process reset-password (
+        name: Reset Password
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                if :P176_RESET_PASSWORD <> :P176_CONFIRM then
+                      raise_application_error(-20100,'Reset Password and Confirm Password does not match');
+                   end if;
+                update EBA_SALES_SALESREPS set PASSWORD = XXEBS_SALES_SECURITY_PKG.get_password_hash_value(:P176_RESET_PASSWORD) where ID=:P176_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 91184088789983106
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process reset-password-send-mail (
+        name: Reset password send mail
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                   lv_v_body          CLOB;
+                   lv_v_body_html     CLOB;
+                   lv_v_name          varchar2(100) ;
+                   lv_v_rep_email     varchar2(100);
+                   lv_v_rep_name      varchar2(100);
+                   lv_v_rep_lname     varchar2(100);
+                   lv_v_rep_user_name varchar2(100);
+                   lv_v_introtext  varchar2(100);
+                
+                   lv_v_crlf VARCHAR2(2) := chr(13)||chr(10);
+                
+                BEGIN
+                select REP_EMAIL ,REP_FIRST_NAME ,REP_LAST_NAME ,USER_NAME into lv_v_rep_email ,lv_v_rep_name  ,lv_v_rep_lname ,   lv_v_rep_user_name   from EBA_SALES_SALESREPS where id  = :P176_ID;
+                                     lv_v_name  := lv_v_rep_name||' '|| lv_v_rep_lname;            
+                                              
+                   lv_v_introtext := '<br/><br/>Your Password has changed.';
+                
+                   lv_v_body :=  'To view the content of this message, please use an HTML enabled mail client.'      || lv_v_crlf;
+                   lv_v_body_html := '<html><head>
+                
+                           <style type="text/css">
+                                body{font-family: Tahoma, Arial, Helvetica, sans-serif;
+                                    font-size:10pt;
+                                    color:#002060;
+                                    margin:30px;
+                                    background-color:#ffffff;}
+                                span.sig{font-style:italic;
+                                    font-weight:bold;
+                                    color:#811919;}
+                             </style>
+                
+                         </head><body>Dear '
+                
+                      || lv_v_name || ','
+                
+                      || lv_v_introtext
+                
+                      || '<table border="0"><tr height="20"><td>User Name</td><td width="15">:</td><td>'               || lv_v_rep_user_name 
+                      || '</td></tr><tr height="20"><td>New Password</td><td width="15">:</td><td>'                        || :P176_CONFIRM
+                      || '</td></table><br/>'
+                      || '<br/><br/> Regards,<br/>CRM Desk'
+                      || lv_v_crlf;
+                
+                   apex_mail.send (p_to             => lv_v_rep_email,
+                                   p_cc             =>'rajan@venturitool.com',
+                                   p_from           => 'CRM Desk "@" 4i Apps <CRM_Desk@4iapps.com>',
+                                   p_subj           => 'Reset Password Notification',
+                                   p_body           => lv_v_body,
+                                   p_body_html      => lv_v_body_html
+                                  );
+                
+                    apex_mail.push_queue(P_SMTP_HOSTNAME => '4iapps-com.mail.protection.outlook.com', P_SMTP_PORTNO => 25);
+                    
+                
+                    exception when others then
+                          raise_application_error(-20100,'Error in sending Email...'||sqlerrm);
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 91184206200983107
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: never
+        }
+    )
+
+)
+

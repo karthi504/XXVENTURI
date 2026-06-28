@@ -1,0 +1,436 @@
+page 531 (
+    name: Customers Reports
+    title: Customers Reports
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region active-customers (
+        name: Active Customers
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT distinct
+                    ord.customer_id,
+                    cus.customer_name,
+                    cus.CUSTOMER_CODE,
+                    cus.CUSTOMER_TERRITORY_ID,
+                    cus.default_rep_id,
+                    count(ord.order_id) as no_of_orders
+                FROM
+                    xxeba_sales_order ord,
+                    eba_sales_customers cus
+                WHERE
+                    ord.customer_id = cus.id and
+                    ord.customer_id IS NOT NULL
+                    AND ord.status = 'Y'
+                    AND ord.UPDATED_IN_TALLY = 'Y'
+                    AND to_char(ord.ORDER_DATE,'DD-Mon-YYYY') >  add_months(trunc(sysdate,'MM'),-3)
+                GROUP BY
+                    ord.customer_id,
+                    cus.customer_name,
+                    cus.CUSTOMER_CODE,
+                    cus.CUSTOMER_TERRITORY_ID,
+                    cus.default_rep_id
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688364884073551749
+        }
+
+        column CUSTOMER_CODE (
+            type: plainText
+            heading {
+                heading: Customer Code
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainText
+            heading {
+                heading: Customer Id
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column CUSTOMER_TERRITORY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Territory "
+            }
+            lov {
+                lov: @territory
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column DEFAULT_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Sales Rep
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column NO_OF_ORDERS (
+            type: plainText
+            heading {
+                heading: No. of Orders
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6887787 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_CODE (
+                sequence: 3
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 2
+            )
+
+            displayColumn CUSTOMER_TERRITORY_ID (
+                sequence: 1
+            )
+
+            displayColumn DEFAULT_REP_ID (
+                sequence: 4
+            )
+
+            displayColumn NO_OF_ORDERS (
+                sequence: 5
+            )
+
+            sort (
+                column: CUSTOMER_TERRITORY_ID
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: CUSTOMER_NAME
+                sort {
+                    sequence: 2
+                }
+            )
+
+        )
+
+    )
+
+    region customers-reports (
+        name: Customers Reports
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1230
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region inactive-customers (
+        name: Inactive Customers
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select customer_name,CUSTOMER_CODE,CUSTOMER_TERRITORY_ID,default_rep_id from eba_sales_customers 
+                 where id not in (
+                SELECT distinct
+                    customer_id
+                FROM
+                    xxeba_sales_order
+                WHERE
+                    customer_id IS NOT NULL
+                    AND status = 'Y'
+                    AND UPDATED_IN_TALLY = 'Y'
+                    AND to_char(ORDER_DATE,'DD-Mon-YYYY') >  add_months(trunc(sysdate,'MM'),-3)
+                    )
+                    
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @reports
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688766054439952104
+        }
+
+        column CUSTOMER_CODE (
+            type: plainText
+            heading {
+                heading: Customer Code
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column CUSTOMER_TERRITORY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Territory "
+            }
+            lov {
+                lov: @territory
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column DEFAULT_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Sales Rep "
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6887793 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_CODE (
+                sequence: 2
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 1
+            )
+
+            displayColumn CUSTOMER_TERRITORY_ID (
+                sequence: 3
+            )
+
+            displayColumn DEFAULT_REP_ID (
+                sequence: 4
+            )
+
+        )
+
+    )
+
+    region reports (
+        name: Reports
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

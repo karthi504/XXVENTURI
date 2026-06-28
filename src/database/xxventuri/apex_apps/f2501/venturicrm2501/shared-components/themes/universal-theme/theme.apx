@@ -1,0 +1,210 @@
+theme universal-theme (
+    name: Universal Theme
+    themeNumber: 101
+    version: 23.2
+    style {
+        currentThemeStyle: @redwood-light-fouraai
+    }
+    javaScript {
+        fileUrls: [
+            #APEX_FILES#libraries/apex/#MIN_DIRECTORY#widget.stickyWidget#MIN#.js?v=#APEX_VERSION#
+            #THEME_FILES#js/theme42#MIN#.js?v=#APEX_VERSION#
+        ]
+    }
+    css {
+        fileUrls: #THEME_FILES#css/Core#MIN#.css?v=#APEX_VERSION#
+    }
+    componentDefaults {
+        page: @standard
+        navigationBarList: @navigation-bar
+        navigationMenuListPosition: side
+        navigationMenuListTop: @top-navigation-menu
+        navigationMenuListSide: @side-navigation-menu
+        loginPage: @login
+        errorPage: @login
+        printerFriendlyPage: @standard
+        breadcrumb: @breadcrumb
+        button: @text
+        defaultLabel: @optional
+        optionalLabel: @optional
+        requiredLabel: @required
+        list: @links-list
+        region: @standard
+        classicReport: @standard
+    }
+    regionDefaults {
+        breadcrumbs: @title-bar
+        charts: @standard
+        forms: @standard
+        lists: @standard
+        reports: @standard
+        wizards: @standard
+        interactiveReports: @interactive-report
+    }
+    dialogDefaults {
+        dialogContentRegion: @blank-with-attributes
+        dialogButtonRegion: @buttons-container
+        dialogPage: @modal-dialog
+    }
+    icons {
+        library: fontApex
+        customLibraryFileUrls: //use.fontawesome.com/releases/v5.8.2/css/all.css
+    }
+    advanced {
+        filePrefix: #APEX_FILES#themes/theme_42/23.2/
+        identifier: UNIVERSAL_THEME
+    }
+
+    style fouraai (
+        name: Fouraai1
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_DB_IMAGES#43509009304984499.css
+            jsonConfig: {"customCSS":"div {\n    font-family: Poppins-Regular;\n     font-size: 13px;\n}\n\n.t-Button {\n   font-family:   Poppins-Regular;\n    font-size: 12px !important;\n}\n\n.t-TreeNav .a-TreeView-node--topLevel>.a-TreeView-content .a-TreeView-label {\n   font-family:   Poppins-Regular;\n    font-size: 13px !important;\n}\n\n.a-TreeView-label {\n    font-size: 11.9px !important;\n    font-family:   Poppins-Regular;\n}\n","vars":{"@g_Accent-BG":"#368ae4","@g_Link-Base":"#368ae4","@g_Nav-BG":"#368ae4","@g_Nav-Active-BG":"#368ae4"}}
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style redwood-light (
+        name: Redwood Light
+        css {
+            fileUrls: [
+                #APEX_FILES#libraries/oracle-fonts/oraclesans-apex#MIN#.css?v=#APEX_VERSION#
+                #THEME_FILES#css/Redwood#MIN#.css?v=#APEX_VERSION#
+            ]
+        }
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_FILES#less/theme/Redwood-Theme.less
+            outputCssFileUrl: #THEME_FILES#css/Redwood-Theme#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style redwood-light-fouraai (
+        name: Redwood Light (Fouraai)
+        css {
+            fileUrls: [
+                #IMAGE_PREFIX#libraries/oracle-fonts/oraclesans-apex#MIN#.css?v=#APEX_VERSION#
+                #THEME_IMAGES#css/Redwood#MIN#.css?v=#APEX_VERSION#
+            ]
+            cssClasses: " rw-mode-header--pillar rw-mode-nav--dark rw-mode-body-header--light rw-mode-body--dark rw-layout--edge-to-edge rw-pillar--teal"
+        }
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Redwood-Theme.less
+            outputCssFileUrl: #THEME_DB_FILES#25409701113910497.css
+            jsonConfig: "{\"classes\":[\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-mode-header--pillar\",\"rw-mode-nav--dark\",\"rw-mode-body-header--light\",\"rw-mode-body--dark\",\"rw-layout--fixed t-PageBody--scrollTitle\",\"rw-layout--edge-to-edge\",\"rw-pillar--teal\"],\"vars\":{},\"customCSS\":\".t-Header-branding {\\n    background-color: #555555;\\n  }\\n\\n//.t-Region-header {\\n //   background-color: //#555555;\\n    //color: white;\\n//}\\n\\n.tbody {\\nfont-size: 11px;\\ncolor: black;\\nfont-family: 'Inter';\\n}\\n\\n.a-IRR-controlsLabel {\\nfont-size: 11px;\\ncolor: black;\\nfont-family: 'Inter';\\n}\\n\\n.a-IRR-reportSummary {\\nfont-size: 11px;\\ncolor: black;\\nfont-family: 'Inter';\\n}\\n\\n.a-IRR-header {\\n    font-size: 14px;\\n    font-weight: bold;\\ncolor: black;\\nfont-family: 'Inter';\\n}\\n\\n.a-Menu-statusCol{\\ndisplay:none !important;\\n}\\n\\n.a-Menu-label, .a-Menu-label:hover{\\npadding: 5px 0px !important;\\nfont-size:13px !important;\\nfont-family: 'Inter';\\n}\\n.a-Menu-labelContainer{\\nmargin-left: calc(var(--a-menu-icon-spacing-x, 2px) * 2);\\nmargin-right: 0px !important;\\n}\\n\\n.a-Menu-inner{\\nmin-height:0px !important;\\n}\\n.u-warning-text {\\n    color: #ffff00;\\n}\\n\",\"useCustomLess\":\"N\"}"
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita (
+        name: Vita
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_FILES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_FILES#css/Vita#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style vita-brown (
+        name: Vita (Brown)
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_DB_IMAGES#751631379302692724.css
+            jsonConfig: {"customCSS":"div {\n    font-family: Poppins-Regular;\n     font-size: 13px;\n}\n\n.t-Button {\n   font-family:   Poppins-Regular;\n    font-size: 12px !important;\n}\n\n.t-TreeNav .a-TreeView-node--topLevel>.a-TreeView-content .a-TreeView-label {\n   font-family:   Poppins-Regular;\n    font-size: 13px !important;\n}\n\n.a-TreeView-label {\n    font-size: 11.9px !important;\n    font-family:   Poppins-Regular;\n}\n","vars":{"@g_Accent-BG":"#7a2049"}}
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style vita-dark (
+        name: Vita - Dark
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_FILES#less/theme/Vita-Dark.less
+            outputCssFileUrl: #THEME_FILES#css/Vita-Dark#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita-green (
+        name: Vita (Green)
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_DB_IMAGES#12994441458367890.css
+            jsonConfig: {"customCSS":"div {\n    font-family: Poppins-Regular;\n     font-size: 13px;\n}\n\n.t-Button {\n   font-family:   Poppins-Regular;\n    font-size: 12px !important;\n}\n\n.t-TreeNav .a-TreeView-node--topLevel>.a-TreeView-content .a-TreeView-label {\n   font-family:   Poppins-Regular;\n    font-size: 13px !important;\n}\n\n.a-TreeView-label {\n    font-size: 11.9px !important;\n    font-family:   Poppins-Regular;\n}\n","vars":{"@g_Accent-BG":"#288516"}}
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style vita-pink (
+        name: Vita (Pink)
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_DB_IMAGES#512604146340322332.css
+            jsonConfig: {"customCSS":"","vars":{"@g_Accent-BG":"#fec7d0","@g_Accent-OG":"#fcfcfc","@g_Link-Base":"#af1c63","@g_Region-Header-BG":"#d11e60","@g_Region-BG":"#fdfdfd"}}
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+    style vita-red (
+        name: Vita - Red
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_FILES#less/theme/Vita-Red.less
+            outputCssFileUrl: #THEME_FILES#css/Vita-Red#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita-slate (
+        name: Vita - Slate
+        themeRollerAttributes {
+            readOnly: true
+            inputParameterFileUrls: #THEME_FILES#less/theme/Vita-Slate.less
+            outputCssFileUrl: #THEME_FILES#css/Vita-Slate#MIN#.css?v=#APEX_VERSION#
+        }
+        advanced {
+            endUserCanPick: true
+        }
+    )
+
+    style vita-turquoise (
+        name: Vita (Turquoise)
+        themeRollerAttributes {
+            inputParameterFileUrls: #THEME_IMAGES#less/theme/Vita.less
+            outputCssFileUrl: #THEME_DB_IMAGES#97193486698756925.css
+            jsonConfig: {"customCSS":"","vars":{"@g_Accent-BG":"#4ecdc5"}}
+        }
+        advanced {
+            endUserCanPick: true
+            accessibilityTested: true
+        }
+    )
+
+)
+

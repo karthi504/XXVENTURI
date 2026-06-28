@@ -1,0 +1,513 @@
+page 259 (
+    name: Permission Request
+    title: Permission Request
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                REQUEST_ID, 
+                SALES_REP_ID,
+                PERMISSION_DATE,
+                FROM_TIME,
+                TO_TIME,
+                TOTAL_HOURS,
+                PERMISSION_REASON,
+                decode(trim(PERMISSION_STATUS),'S','Submitted','A','Approved','R','Rejected') as PERMISSION_STATUS,
+                STATUS,
+                CREATED_BY,
+                CREATION_DATE,
+                UPDATED_BY,
+                UPDATE_DATE,
+                APPROVED_BY,
+                APPROVED_DATE,
+                APPROVER_COMMENTS,
+                decode(TRIM(PERMISSION_STATUS), 'S','#404040', 'A','#09B509', 'R','#FF7755') COLOR_CODE
+                from XXEBA_SALES_PERMISSIONS_T where SALES_REP_ID =:USER_ID
+                  
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 260
+                items: {
+                    P260_REQUEST_ID: #REQUEST_ID#
+                    P260_SOURCE_PAGE: 259
+                }
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="Edit">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 299132230132260387
+        }
+
+        column APPROVED_BY (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Approved By
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column APPROVED_DATE (
+            type: hidden
+            heading {
+                heading: Approved Date
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column APPROVER_COMMENTS (
+            type: hidden
+            heading {
+                heading: Approver Comments
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column COLOR_CODE (
+            type: hidden
+            heading {
+                heading: Color code
+            }
+            layout {
+                sequence: 45
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column CREATION_DATE (
+            type: plainText
+            heading {
+                heading: Requested On
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column FROM_TIME (
+            type: plainText
+            heading {
+                heading: From Time
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column PERMISSION_DATE (
+            type: plainText
+            heading {
+                heading: Permission Date
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PERMISSION_REASON (
+            type: plainText
+            heading {
+                heading: Reason
+            }
+            layout {
+                sequence: 25
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column PERMISSION_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 7
+            }
+            columnFormatting {
+                htmlExpression: <span style="color:#COLOR_CODE#">#PERMISSION_STATUS#</span>
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column REQUEST_ID (
+            type: plainText
+            heading {
+                heading: Request Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column SALES_REP_ID (
+            type: hidden
+            heading {
+                heading: Sales Rep Id
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Status
+                alignment: center
+            }
+            lov {
+                lov: @xx-status-lov
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TOTAL_HOURS (
+            type: plainText
+            heading {
+                heading: Total Hours
+                alignment: center
+            }
+            layout {
+                sequence: 35
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column TO_TIME (
+            type: plainText
+            heading {
+                heading: To Time
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column UPDATE_DATE (
+            type: plainText
+            heading {
+                heading: Update Date
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2991680 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APPROVED_BY (
+                sequence: 7
+            )
+
+            displayColumn CREATION_DATE (
+                sequence: 6
+            )
+
+            displayColumn FROM_TIME (
+                sequence: 2
+            )
+
+            displayColumn PERMISSION_DATE (
+                sequence: 1
+            )
+
+            displayColumn PERMISSION_REASON (
+                sequence: 5
+            )
+
+            displayColumn PERMISSION_STATUS (
+                sequence: 8
+            )
+
+            displayColumn TOTAL_HOURS (
+                sequence: 4
+            )
+
+            displayColumn TO_TIME (
+                sequence: 3
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 260
+                clearCache: 260
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction create-button-dialog-closed (
+        name: Create Button - Dialog Closed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @create
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction edit-report-dialog-closed (
+        name: Edit Report - Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @report
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

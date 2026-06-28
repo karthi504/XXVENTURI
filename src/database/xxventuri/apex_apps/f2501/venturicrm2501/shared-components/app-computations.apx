@@ -1,0 +1,190 @@
+appComputation amt-hdr (
+    itemName: AMT_HDR
+    execution {
+        sequence: 10
+    }
+    computation {
+        staticValue: Annual Recurring Revenue
+    }
+    config {
+        buildOption: @opportunity-amount-set-at-product-level
+    }
+)
+
+appComputation amt-hdr-2 (
+    itemName: AMT_HDR
+    execution {
+        sequence: 10
+    }
+    computation {
+        staticValue: Amount
+    }
+    config {
+        buildOption: 2564105947780700774
+    }
+)
+
+appComputation app-notification (
+    itemName: APP_NOTIFICATION
+    execution {
+        sequence: 10
+        point: beforeHeader
+    }
+    computation {
+        type: sqlQuerySingleValue
+        sqlQuery:
+            ```sql
+            SELECT sord.no_of_orders + act.no_of_act + lev.no_of_leave
+            FROM
+              (SELECT COUNT(*)no_of_leave
+              FROM XXEBA_SALES_LEAVE_REQUESTS_T L,
+                EBA_SALES_SALESREPS S
+              WHERE LEAVE_STATUS   ='S'
+              AND L.SALES_REP_ID   =S.ID
+              AND S.REP_MANAGER_ID =:USER_ID
+              ORDER BY FROM_DATE DESC
+              ) lev,
+              (SELECT COUNT(*) no_of_orders
+              FROM XXEBA_SALES_ORDER SO,
+                EBA_SALES_DEALS SD,
+                EBA_SALES_CUSTOMERS SC,
+                EBA_SALES_SALESREPS SR,
+                EBA_SALES_CUSTOMER_LOCATIONS CL,
+                EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                (SELECT ORDER_ID,
+                  SUM(order_value) order_value,
+                  MIN(DELIVERY_DATE) DELIVERY_DATE
+                FROM
+                  (SELECT ORDER_ID,
+                    QUANTITY,
+                    PRODUCT_PRICE,
+                    (QUANTITY * PRODUCT_PRICE)order_value,
+                    DELIVERY_DATE
+                  FROM XXEBA_ORDER_PRODUCTS
+                  )
+                GROUP BY ORDER_ID
+                )value
+              WHERE SO.DEAL_ID = SD.ID
+                -- and SO.CUSTOMER_ID = SC.ID(+)
+              AND SO.CUSTOMER_ID = SC.ID
+                -- and SO.SALES_REP = SR.ID(+)
+              AND SO.SALES_REP               = SR.ID
+              AND SO.DELIVERY_LOCATION       = CL.ID(+)
+              AND SO.BILLING_LOCATION        = CL2.ID (+)
+              AND SO.ORDER_ID                = value.ORDER_ID(+)
+              AND (upper(SC.DEFAULT_REP_ID) IN
+                (SELECT upper(r.ID)
+                FROM eba_sales_salesreps r
+                  START WITH r.id      =:USER_ID
+                  CONNECT BY PRIOR r.id= r.REP_MANAGER_ID
+                )
+              OR EXISTS
+                (SELECT 'Y'
+                FROM EBA_SALES_SALESREPS R,
+                  EBA_SALES_SALESREP_ROLES SR
+                WHERE R.id       = :USER_ID
+                AND SR.ID        = R.REP_ROLE
+                AND SR.ROLE_NAME = 'Administrator'
+                )
+              OR EXISTS
+                (SELECT 'Y'
+                FROM EBA_SALES_SALESREPS R,
+                  EBA_SALES_SALESREP_ROLES SR
+                WHERE R.id       = :USER_ID
+                AND SR.ID        = R.REP_ROLE
+                AND SR.ROLE_NAME = 'Sales Co-Ordinator'
+                ))
+              AND SO.STATUS IN ('N')
+              ORDER BY SO.ORDER_ID
+              ) sord,
+              (SELECT COUNT(*) no_of_act
+              FROM eba_sales_customers c
+              LEFT JOIN eba_sales_territories t
+              ON c.customer_territory_id = t.id
+              WHERE :P2_DISPLAY_AS       = 'GRID'
+              AND c.status               ='V'
+                --  and(upper(c.CREATED_BY) in (SELECT  upper(r.USER_NAME)
+              AND(upper(c.DEFAULT_REP_ID) IN
+                (SELECT upper(r.ID)
+                FROM eba_sales_salesreps r
+                  START WITH r.id      =:USER_ID
+                  CONNECT BY PRIOR r.id= r.REP_MANAGER_ID
+                )
+              OR EXISTS
+                (SELECT 'Y'
+                FROM EBA_SALES_SALESREPS R,
+                  EBA_SALES_SALESREP_ROLES SR
+                WHERE R.id        = :USER_ID
+                AND SR.ID         = R.REP_ROLE
+                AND SR.ROLE_NAME IN ('Administrator','Sales Co-Ordinator')
+                ) )
+              ) act
+            
+            ```
+    }
+)
+
+appComputation application-title (
+    itemName: APPLICATION_TITLE
+    execution {
+        sequence: 10
+    }
+    computation {
+        type: functionBody
+        plsqlFunctionBody:
+            ```plsql
+            declare
+                l_app_name varchar2(255) := 'VenturiTool CRM';
+            begin
+               /* select nvl(preference_value,:APP_NAME)
+                  into l_app_name
+                  from eba_sales_preferences
+                 where preference_name = 'APPLICATION_TITLE'; */
+                return l_app_name;
+            exception
+                when others then
+                    return :APP_NAME;
+            end;
+            ```
+    }
+    error {
+        errorMessage: An error was encountered while in the application title computation.
+    }
+)
+
+appComputation last-page (
+    itemName: LAST_PAGE
+    execution {
+        sequence: 10
+    }
+    computation {
+        staticValue: 1
+    }
+    error {
+        errorMessage: Error
+    }
+)
+
+appComputation rep-title (
+    itemName: REP_TITLE
+    execution {
+        sequence: 10
+    }
+    computation {
+        type: functionBody
+        plsqlFunctionBody: return eba_sales_fw.get_preference_value('REP_TITLE');
+    }
+)
+
+appComputation user-id (
+    itemName: USER_ID
+    execution {
+        sequence: 10
+        point: afterAuthentication
+    }
+    computation {
+        type: sqlQuerySingleValue
+        sqlQuery: select ID from EBA_SALES_SALESREPS where upper(USER_NAME) = upper(:APP_USER)
+    }
+)
+

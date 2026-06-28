@@ -1,0 +1,998 @@
+page 106 (
+    name: Contact Details
+    title: Contact Details
+    pageGroup: @accounts
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+    config {
+        buildOption: @contacts
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region contact-details (
+        name: Contact Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P106_ANNIVERSARY_DAY (
+        type: datePickerJquery
+        label {
+            label: Anniversary Date
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 7
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ANNIVERSARY_DAY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_ADDRESS (
+        type: textarea
+        label {
+            label: Address
+            alignment: left
+        }
+        settings {
+            resizable: false
+            trimSpaces: none
+        }
+        layout {
+            sequence: 190
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_ADDRESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_CELL (
+        type: textField
+        label {
+            label: Mobile Number
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 150
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-mobile
+            width: 69
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_CELL
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        settings {
+            resizable: false
+            trimSpaces: none
+        }
+        layout {
+            sequence: 200
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_DESCRIPTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 130
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-envelope
+            width: 69
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_EMAIL
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_FACEBOOK (
+        type: hidden
+        layout {
+            sequence: 180
+            region: @contact-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_FACEBOOK
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_LINKEDIN (
+        type: hidden
+        layout {
+            sequence: 170
+            region: @contact-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_LINKEDIN
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 10
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 69
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CONTACT_PHONE (
+        type: textField
+        label {
+            label: Phone Number
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 160
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-phone
+            width: 69
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_PHONE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_CUSTOMER_ID (
+        type: selectList
+        label {
+            label: Account
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.customer_name display_value,c.id return_value  from eba_sales_customers c where c.status='A' and 
+                (upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    )                 
+                order by 1
+                ```
+            nullDisplayValue: - Select Account -
+        }
+        layout {
+            sequence: 30
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw440
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_DATE_OF_BIRTH (
+        type: datePickerJquery
+        label {
+            label: Date of Birth
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 14
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DATE_OF_BIRTH
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_DELETE_BRANCH_PAGE_ID (
+        type: hidden
+        layout {
+            sequence: 230
+            region: @contact-details
+            slot: regionBody
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_DEPARTMENT (
+        type: selectList
+        label {
+            label: Department
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @customer-department
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 90
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw150
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DEPARTMENT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_DESIGNATION (
+        type: textField
+        label {
+            label: Designation
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 69
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DESIGNATION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @contact-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_KEY_CONTACT (
+        type: switch
+        label {
+            label: Key contact
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: KEY_CONTACT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_OTHER_DEPT (
+        type: textField
+        label {
+            label: Department Name
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 7
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            maxLength: 100
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_SHOW_ACCOUNT (
+        type: hidden
+        layout {
+            sequence: 220
+            region: @contact-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P106_TAGS (
+        type: plugin/tagEntry
+        label {
+            label: Tags
+            alignment: left
+        }
+        settings {
+            validationFailureMessage: Tags may not contain the following characters: : ; \ / ? &
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tag
+                  from eba_sales_tags_type_sum
+                 where content_type = 'CONTACT'
+                
+                ```
+        }
+        layout {
+            sequence: 210
+            region: @contact-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 70
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TAGS
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Contact
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P106_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--danger
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P106_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P106_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction other-dept (
+        name: other_dept
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P106_DEPARTMENT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P106_DEPARTMENT
+            value: Others
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P106_OTHER_DEPT
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P106_OTHER_DEPT
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction p106-show-account (
+        name: P106_SHOW_ACCOUNT
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P106_SHOW_ACCOUNT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P106_SHOW_ACCOUNT
+            value: Y
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P106_CUSTOMER_ID
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P106_CUSTOMER_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            itemsToReturn: P106_CONTACT_NAME
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 758393506509099585
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                :REQUEST != 'DELETE'
+                  or :P106_DELETE_BRANCH_PAGE_ID is null
+                ```
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE EBA_SALES_CUSTOMER_CONTACTS SET STATUS ='X' WHERE ID=:P106_ID;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  raise_application_error(-20001,SQLERRM);
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 26668507442805447
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process fetch-row-from-eba-sales-customer-contacts (
+        name: Fetch Row from eba_sales_CUSTOMER_CONTACTS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_CUSTOMER_CONTACTS
+            pkColumn: ID
+            pkItem: P106_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 3096558977662740449
+        }
+    )
+
+    process key-account-process (
+        name: Key account Process
+        type: executeCode
+        source {
+            plsqlCode: update EBA_SALES_CUSTOMER_CONTACTS set KEY_CONTACT ='N' where CUSTOMER_ID =:P106_CUSTOMER_ID and ID !=:P106_ID;
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 91186594037983131
+        }
+        serverSideCondition {
+            type: item=value
+            item: P106_KEY_CONTACT
+            value: Y
+        }
+    )
+
+    process others-department-process (
+        name: "Others Department Process "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                --raise_application_error(-20010,:P106_DEPARTMENT);
+                if :P106_DEPARTMENT = 'Others' then
+                    Update EBA_SALES_CUSTOMER_CONTACTS SET  DEPARTMENT =:P106_OTHER_DEPT where ID=:P106_ID;
+                end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 66284614164372213
+        }
+    )
+
+    process process-row-of-eba-sales-customer-contacts (
+        name: Process Row of eba_sales_CUSTOMER_CONTACTS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_CUSTOMER_CONTACTS
+            pkColumn: ID
+            pkItem: P106_ID
+            returnKeyIntoItem: P106_ID
+            supportedOperations: [
+                insert
+                update
+            ]
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_CUSTOMER_CONTACTS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 3096559191217740451
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        clear {
+            type: pages
+            pages: 24
+        }
+        execution {
+            sequence: 60
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 3096559404742740451
+        }
+    )
+
+    branch (
+        name: Branch to P106_DELETE_BRANCH_PAGE_ID on delete
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: &P106_DELETE_BRANCH_PAGE_ID.
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,546 @@
+page 267 (
+    name: Payment Receipt
+    title: Payment Receipt
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region payment-receipt (
+        name: Payment Receipt
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                    distinct INV.INVOICE_ID,(-1 * INV.INVOICE_VALUE) as INVOICE_VALUE,
+                    INV.LAST_RECEIPT_DATE,
+                    INV.CUSTOMER_ID,
+                    INV.CUSTOMER_NAME,
+                    INV.LAST_RECEIPT_AMOUNT,
+                    C .DEFAULT_REP_ID,
+                   TO_NUMBER(TO_CHAR(INV.LAST_RECEIPT_DATE,'YYYYMM')) AS MONTH_NUMBER,
+                   to_char(INV.LAST_RECEIPT_DATE,'Mon-YY') AS MONTH
+                
+                from
+                    XXEBA_TALLY_INVOICES_T INV,
+                    EBA_SALES_CUSTOMERS C
+                where
+                    INV.LAST_RECEIPT_DATE between :P267_FROM_DATE
+                    and :P267_TO_DATE
+                    and C .ROW_KEY = INV.CUSTOMER_ID
+                    and (
+                        C .DEFAULT_REP_ID in (
+                            SELECT
+                                upper(r.ID)
+                            FROM
+                                eba_sales_salesreps r
+                            START WITH
+                                r.id = :USER_ID
+                            CONNECT BY
+                                PRIOR r.id = r.REP_MANAGER_ID
+                        )
+                        or EXISTS(
+                            select
+                                'Y'
+                            from
+                                EBA_SALES_SALESREPS R,
+                                EBA_SALES_SALESREP_ROLES SR
+                            where
+                                R.id = :USER_ID
+                                and SR.ID = R.REP_ROLE
+                                and SR.ROLE_NAME in ('Administrator', 'Sales Co-Ordinator')
+                        )
+                    )
+                ```
+            pageItemsToSubmit: [
+                P267_FROM_DATE
+                P267_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 470051860411913915
+        }
+
+        column CUSTOMER_ID (
+            type: plainText
+            heading {
+                heading: Customer id
+                alignment: center
+            }
+            layout {
+                sequence: 290
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CC
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CD
+            }
+        )
+
+        column DEFAULT_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Sales Rep
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: CG
+            }
+        )
+
+        column INVOICE_ID (
+            type: plainText
+            heading {
+                heading: Invoice id
+                alignment: center
+            }
+            layout {
+                sequence: 320
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CF
+            }
+        )
+
+        column INVOICE_VALUE (
+            type: plainText
+            heading {
+                heading: Invoice Amount
+                alignment: center
+            }
+            layout {
+                sequence: 280
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: CB
+            }
+        )
+
+        column LAST_RECEIPT_AMOUNT (
+            type: plainText
+            heading {
+                heading: Last Receipt Amount
+                alignment: center
+            }
+            layout {
+                sequence: 340
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CH
+            }
+        )
+
+        column LAST_RECEIPT_DATE (
+            type: plainText
+            heading {
+                heading: Last Receipt Date
+                alignment: center
+            }
+            layout {
+                sequence: 270
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: BZ
+            }
+        )
+
+        column MONTH (
+            type: plainText
+            heading {
+                heading: Month
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CJ
+            }
+        )
+
+        column MONTH_NUMBER (
+            type: plainText
+            heading {
+                heading: Month Number
+                alignment: center
+            }
+            layout {
+                sequence: 370
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: CK
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 4700635 (
+            visibility: primaryDefault
+            view {
+                pivot: true
+                default: pivot
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 2
+            )
+
+            displayColumn DEFAULT_REP_ID (
+                sequence: 5
+            )
+
+            displayColumn INVOICE_VALUE (
+                sequence: 3
+            )
+
+            displayColumn LAST_RECEIPT_DATE (
+                sequence: 4
+            )
+
+            displayColumn MONTH (
+                sequence: 1
+            )
+
+            sort (
+                column: LAST_RECEIPT_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: MONTH_NUMBER
+                sort {
+                    direction: desc
+                    sequence: 2
+                }
+            )
+
+            controlBreak (
+                column: MONTH
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotColumn (
+                column: MONTH
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotRowColumn (
+                column: DEFAULT_REP_ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotAggregate ir-pivot-agg (
+                aggregate {
+                    function: sum
+                    column: INVOICE_VALUE
+                }
+                appearance {
+                    formatMask: 999G999G999G999G990
+                }
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region payment-receipt-2 (
+        name: Payment Receipt
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 20
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P267_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 10
+            region: @payment-receipt
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P267_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: To
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 20
+            region: @payment-receipt
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 30
+            region: @payment-receipt
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @payment-receipt
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation not-null-from-date (
+        name: not null from date
+        execution {
+            sequence: 20
+        }
+        validation {
+            plsqlExpression: :P267_FROM_DATE is null
+        }
+        error {
+            errorMessage:
+                ```
+                #LABEL# must have some value.
+                
+                ```
+            associatedItem: @P267_FROM_DATE
+        }
+        serverSideCondition {
+            whenButtonPressed: @go
+            type: never
+        }
+    )
+
+    validation not-null-to-date (
+        name: Not null to date
+        execution {
+            sequence: 10
+        }
+        validation {
+            plsqlExpression: :P267_TO_DATE is null
+        }
+        error {
+            errorMessage:
+                ```
+                #LABEL# must have some value.
+                
+                
+                ```
+            associatedItem: @P267_TO_DATE
+        }
+        serverSideCondition {
+            whenButtonPressed: @go
+            type: never
+        }
+    )
+
+    validation to-date-validations (
+        name: To Date Validations
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                IF TO_DATE(:P267_TO_DATE) < TO_DATE(:P267_FROM_DATE) THEN
+                  RETURN 'To Date should be Greater than From Date.';
+                ELSE 
+                  RETURN null;
+                END IF;
+                ```
+        }
+        error {
+            associatedItem: @P267_TO_DATE
+        }
+        serverSideCondition {
+            whenButtonPressed: @go
+        }
+    )
+
+)
+

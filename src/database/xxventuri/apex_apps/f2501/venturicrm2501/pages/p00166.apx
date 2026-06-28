@@ -1,0 +1,723 @@
+page 166 (
+    name: Machinery Details
+    title: Machinery Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region machinery-details (
+        name: "Machinery Details "
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P166_CNC_COUNT (
+        type: numberField
+        label {
+            label: CNC Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CNC_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_CREATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_CREATION_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATION_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_HMC_COUNT (
+        type: numberField
+        label {
+            label: HMC Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HMC_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_NO_CIRCULAR_SAW (
+        type: numberField
+        label {
+            label: Circularsaw Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: NO_CIRCULAR_SAW
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_NO_OF_BANDSAW_BLADE (
+        type: numberField
+        label {
+            label: Bandsaw Blade Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: NO_OF_BANDSAW_BLADE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_SPM_COUNT (
+        type: numberField
+        label {
+            label: SPM Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SPM_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_TURN_MILL_COUNT (
+        type: numberField
+        label {
+            label: Turn Mill Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TURN_MILL_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_UPDATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_UPDATE_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @machinery-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATE_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_VMC_COUNT (
+        type: numberField
+        label {
+            label: VMC Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VMC_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P166_VTL_COUNT (
+        type: numberField
+        label {
+            label: VTL Count
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @machinery-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VTL_COUNT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P166_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P166_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p166-creation-date-must-be-timestamp (
+        name: P166_CREATION_DATE must be timestamp
+        execution {
+            sequence: 110
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P166_CREATION_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P166_CREATION_DATE
+        }
+    )
+
+    validation p166-update-date-must-be-timestamp (
+        name: P166_UPDATE_DATE must be timestamp
+        execution {
+            sequence: 130
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P166_UPDATE_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P166_UPDATE_DATE
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 70760221143828972
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-cust-machineries (
+        name: Fetch Row from XXEBA_SALES_CUST_MACHINERIES
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_CUST_MACHINERIES
+            pkColumn: ID
+            pkItem: P166_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 70759006174828971
+        }
+    )
+
+    process process-row-of-xxeba-sales-cust-machineries (
+        name: Process Row of XXEBA_SALES_CUST_MACHINERIES
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_CUST_MACHINERIES
+            pkColumn: ID
+            pkItem: P166_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 70759387219828972
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 70759788232828972
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    branch (
+        name: Goto 94
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 94
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

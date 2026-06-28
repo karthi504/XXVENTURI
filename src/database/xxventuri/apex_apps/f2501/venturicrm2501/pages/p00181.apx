@@ -1,0 +1,594 @@
+page 181 (
+    name: Schedule Appointments
+    title: Appointments
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        executeWhenPageLoads:
+            ```javascript-browser
+            $('button.fc-month-button').text('Month'); 
+            
+            $('button.fc-list-button').text('List'); 
+            
+            $('button.fc-today-button').text('Today');
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .fc-content{
+                font-size: 11px;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region appointments (
+        name: Appointments
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1230
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region appointments-2 (
+        name: Appointments
+        type: calendar
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                Select DISTINCT APPT_ID,APPOINTMENT_TYPE, APPOINTMENT_DATE,
+                --to_date(to_char(APPOINTMENT_DATE,'DD-Mon-YYYY HH:MI AM'), 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE,
+                TO_CHAR (APPOINTMENT_DATE, 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE_PASS,
+                        --   (case when CREATED_BY != :APP_USER then CREATED_BY||' - '||APPOINTMENT_PURPOSE else APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE, -- if same user login show only purpos else show with name
+                             (case when SALESREP_ID != :USER_ID then C.CUSTOMER_NAME||' ['||trim(SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME)||'] - '||APPOINTMENT_PURPOSE else C.CUSTOMER_NAME||' - '||APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE, -- if same user login show only purpos else show with name
+                
+                          APPOINTMENT_STATUS,
+                           'D' TYPE,
+                 Case APPOINTMENT_STATUS 
+                      --     when 'Prepone'    then 'apex-cal-bluesky'
+                     --      when 'Postpone' then 'apex-cal-bluesky'
+                           When 'scheduled' then 'apex-cal-black'
+                           when 'Visited'  then 'apex-cal-green'
+                           when 'Cancelled' then 'apex-cal-red'
+                           when 'Postponed' then 'apex-cal-orange'
+                           when 'Preponed' then 'apex-cal-cyan'
+                           else 'apex-cal-bluesky'
+                       end as css_class
+                from XXEBA_SALES_CRM_APPOINTMENTS,
+                EBA_SALES_SALESREPS SR,
+                EBA_SALES_CUSTOMERS C
+                where SR.ID = SALESREP_ID 
+                and CUSTOMER_ID = C.ID and c.status IN ('A')
+                and (upper(SALESREP_ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'));
+                ```
+        }
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            displayColumn: APPOINTMENT_PURPOSE
+            startDateColumn: APPOINTMENT_DATE
+            supplementalInfo: &APPOINTMENT_STATUS.
+            additionalCalendarViews: [
+                list
+                navigation
+            ]
+            createLink: {
+                page: 185
+                items: {
+                    P185_SOURCE_PAGE: 181
+                }
+                clearCache: 185
+                action: resetPagination
+            }
+            viewEditLink: {
+                page: 185
+                items: {
+                    P185_APPOINTMENT_ID: &APPT_ID.
+                    P185_SOURCE_PAGE: 181
+                    P185_APPOINTMENT_DATE_VAL: &APPOINTMENT_DATE_PASS.
+                    P185_MEETING_TYPE: &TYPE.
+                    P185_PASS_DATE: &APPOINTMENT_DATE_PASS.
+                }
+                clearCache: 185
+                action: resetPagination
+            }
+            cssClass: CSS_CLASS
+        }
+        performance {
+            lazyLoading: true
+        }
+    )
+
+    region schedule-plan-appointments-creation (
+        name: Schedule Plan - Appointments Creation
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            htmlDomId: POPUP_APPOINTMENT
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P181_APPOINTMENT_COUNT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @schedule-plan-appointments-creation
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P181_SCHEDULE_MONTHS (
+        type: selectList
+        label {
+            label: Month
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select to_char(sysdate,'Mon-YYYY') D, to_char(sysdate,'MON-YYYY') R from dual
+                union all
+                select to_char(ADD_MONTHS(sysdate,1),'Mon-YYYY') D, to_char(ADD_MONTHS(sysdate,1),'MON-YYYY') R from dual
+                union all
+                select to_char(ADD_MONTHS(sysdate,2),'Mon-YYYY') D, to_char(ADD_MONTHS(sysdate,2),'MON-YYYY') R from dual;
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @schedule-plan-appointments-creation
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @appointments-2
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: " style=\"background-color:#d91e18; margin: 10px 5px;\""
+        }
+    )
+
+    button cancel-2 (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @schedule-plan-appointments-creation
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:closeModal()
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create-schedule (
+        buttonName: CREATE_SCHEDULE
+        label: Create Schedule
+        layout {
+            sequence: 30
+            region: @schedule-plan-appointments-creation
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button customer-visit (
+        buttonName: CUSTOMER_VISIT
+        label: Customer Visits
+        layout {
+            sequence: 50
+            region: @appointments-2
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 162
+                clearCache: 162
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button data-change (
+        buttonName: Data_Change
+        label: Scheduled
+        layout {
+            sequence: 10
+            region: @appointments-2
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="background-color:#6bb9f0; margin: 10px 5px;"
+        }
+    )
+
+    button delete-schedule (
+        buttonName: DELETE_SCHEDULE
+        label: Delete Schedule
+        layout {
+            sequence: 20
+            region: @schedule-plan-appointments-creation
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button schedule-visit (
+        buttonName: SCHEDULE_VISIT
+        label: Schedule Plan
+        layout {
+            sequence: 40
+            region: @appointments-2
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button visited (
+        buttonName: Visited
+        label: Visited
+        layout {
+            sequence: 20
+            region: @appointments-2
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="background-color:#2ecc71; margin: 10px 5px;"
+        }
+    )
+
+    dynamicAction check-validation (
+        name: Check Validation
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @create-schedule
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P181_APPOINTMENT_COUNT') == 0 ){
+                        apex.submit( 'CREATE_SCHEDULE');
+                    }
+                    else{
+                        $('#P181_SCHEDULE_MONTHS_error_placeholder').html('<span class="t-Form-error">Sorry! Plan has been already created for the selected month.</span>');
+                    }
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction delete-schedule (
+        name: Delete Schedule
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @delete-schedule
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.confirm('All Appointments created using Schedule Plan, except Visited, will be Deleted. Please click OK to Delete', 'DELETE');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction get-appointment-count (
+        name: Get Appointment Count
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P181_SCHEDULE_MONTHS
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select count(*) from XXEBA_SALES_CRM_APPOINTMENTS where to_char(APPOINTMENT_DATE,'MON-YYYY') =  :P181_SCHEDULE_MONTHS and APPOINTMENT_SOURCE = 'P'
+                    and trunc(APPOINTMENT_DATE) >= trunc(sysdate)
+                    ```
+                itemsToSubmit: P181_SCHEDULE_MONTHS
+            }
+            affectedElements {
+                selectionType: items
+                items: P181_APPOINTMENT_COUNT
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction open-model (
+        name: Open Model
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @schedule-visit
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: " openModal('POPUP_APPOINTMENT');"
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process delete-schedules (
+        name: Delete Schedules
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                lv_appt_count number;
+                begin
+                select count(*)  into lv_appt_count from XXEBA_SALES_CRM_APPOINTMENTS  where TRUNC(CREATED) = trunc(sysdate);
+                
+                if lv_appt_count > 0 then 
+                
+                delete from XXEBA_SALES_CRM_APPOINTMENTS 
+                     where to_char(APPOINTMENT_DATE, 'MON-YYYY') = :P181_SCHEDULE_MONTHS 
+                          and APPOINTMENT_SOURCE = 'P'
+                          and APPOINTMENT_STATUS = 'Scheduled' 
+                         AND TRUNC(CREATED) = trunc(sysdate);
+                          --and  trunc(APPOINTMENT_DATE)  >= trunc(sysdate);
+                          
+                elsif lv_appt_count=0 then 
+                
+                delete from XXEBA_SALES_CRM_APPOINTMENTS 
+                     where to_char(APPOINTMENT_DATE, 'MON-YYYY') = :P181_SCHEDULE_MONTHS 
+                          and APPOINTMENT_SOURCE = 'P'
+                          and APPOINTMENT_STATUS = 'Scheduled' and  trunc(APPOINTMENT_DATE)  >=  trunc(sysdate);
+                         end if;
+                          end;
+                
+                
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Planned Appointments have been deleted successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 208667221021509553
+        }
+        serverSideCondition {
+            type: request=Value
+            value: DELETE
+        }
+        comments {
+            comments:
+                ```
+                delete from XXEBA_SALES_CRM_APPOINTMENTS 
+                     where to_char(APPOINTMENT_DATE, 'MON-YYYY') = :P181_SCHEDULE_MONTHS 
+                          and APPOINTMENT_SOURCE = 'P'
+                          and APPOINTMENT_STATUS = 'Scheduled';
+                ```
+        }
+    )
+
+    process schedule-appointment (
+        name: Schedule Appointment
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin 
+                XXEBA_SALES_ENGINEER_VISIT_PKG.DAILY_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.MONTHLY_ONCE_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.MONTHLY_TWICE_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.MONTHLY_THRICE_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.WEEKLY_ONCE_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.WEKKLY_TWICE_VISIT(:P181_SCHEDULE_MONTHS);
+                XXEBA_SALES_ENGINEER_VISIT_PKG.VISIT_TIME(:P181_SCHEDULE_MONTHS);
+                END;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Visit Plan has been created successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 203777605267265548
+        }
+        serverSideCondition {
+            type: request=Value
+            value: CREATE_SCHEDULE
+        }
+        comments {
+            comments:
+                ```
+                begin
+                  XXEBS_MSK_APPOINTMENT_PKG.xxeba_schedule_appointment(:P181_SCHEDULE_MONTHS);
+                end;
+                ```
+        }
+    )
+
+)
+

@@ -1,0 +1,1067 @@
+page 162 (
+    name: Customers Visit Details
+    title: Customers Visit Details
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .a-IRR-header--group {
+                background-color: #368ae4;
+                color: white;
+            }
+            
+            .a-IRR-header--group:hover {
+                background-color: #368ae4;
+                color: white;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region customers-visit-details (
+        name: Customers Visit Details
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select CUSTOMER_NAME, SALESREPS, TERRITORY_NAME, NEXT_VISIT_DATE, LAST_SCHEDULE_DATE, LAST_VISITED_DATE, (case when LAST_SCHEDULE_DATE <= LAST_VISITED_DATE then 'Yes' else 'No' end) VISIT_DUE
+                from (select C.CUSTOMER_NAME, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, CT.TERRITORY_NAME, get_nextappointment(A.APPOINTMENT_ID)  NEXT_VISIT_DATE, get_lastschedule(A.APPOINTMENT_ID) LAST_SCHEDULE_DATE,
+                	   (select max(A.APPOINTMENT_DATE) from XXEBA_SALES_APPOINTMENT A where A.CUSTOMER_ID = c.ID and A.APPOINTMENT_STATUS = 'Visited')  LAST_VISITED_DATE
+                from XXEBA_SALES_CUSTOMER_DETAILS CD, 
+                	 EBA_SALES_CUSTOMERS C, 
+                	 EBA_SALES_SALESREPS SR,
+                	 EBA_SALES_TERRITORIES CT,
+                     XXEBA_SALES_APPOINTMENT A
+                where c.ID = CD.CUSTOMER_ID
+                  and C.DEFAULT_REP_ID = SR.ID
+                  and C.CUSTOMER_TERRITORY_ID = CT.ID
+                  and CD.VISIT_FREQUENCY_REC is not null
+                  and A.CUSTOMER_ID = c.ID
+                  and A.CUSTOMER_DETAIL_ID is not null)
+                /*select C.CUSTOMER_NAME, VF.FREQUENCY_DAYS, VF.VISIT_FREQUENCY, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, CT.TERRITORY_NAME,
+                	   (select max(A.APPOINTMENT_DATE) from XXEBA_SALES_APPOINTMENT A where A.CUSTOMER_ID = c.ID and A.APPOINTMENT_STATUS = 'Visited')  LAST_VISITED_DATE,
+                	   (select max(A.APPOINTMENT_DATE) from XXEBA_SALES_APPOINTMENT A where A.CUSTOMER_ID = c.ID and A.APPOINTMENT_STATUS = 'Visited')+VF.FREQUENCY_DAYS  NEXT_VISIT_DATE,
+                       (case when trunc((select max(A.APPOINTMENT_DATE) from XXEBA_SALES_APPOINTMENT A where A.CUSTOMER_ID = c.ID and A.APPOINTMENT_STATUS = 'Visited')+VF.FREQUENCY_DAYS) < trunc(sysdate) then 'Yes' else 'No' end) VISIT_DUE
+                from XXEBA_SALES_CUSTOMER_DETAILS CD, 
+                	 EBA_SALES_CUSTOMERS C, 
+                	 XXEBA_SALES_VISIT_FREQUENCY VF,
+                	 EBA_SALES_SALESREPS SR,
+                	 EBA_SALES_TERRITORIES CT
+                where c.ID = CD.CUSTOMER_ID
+                  and CD.VISIT_FREQUENCY_REC = VF.ID
+                  and C.DEFAULT_REP_ID = SR.ID
+                  and C.CUSTOMER_TERRITORY_ID = CT.ID
+                  and CD.VISIT_FREQUENCY_REC is not null;
+                 */
+                 ;
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 202369916599393523
+        }
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LAST_SCHEDULE_DATE (
+            type: plainText
+            heading {
+                heading: Last schedule date
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column LAST_VISITED_DATE (
+            type: plainText
+            heading {
+                heading: Last Visited Date
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column NEXT_VISIT_DATE (
+            type: plainText
+            heading {
+                heading: Next Visit Date
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column SALESREPS (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column VISIT_DUE (
+            type: plainText
+            heading {
+                heading: Visit due
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 2024822 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 1
+            )
+
+            displayColumn LAST_SCHEDULE_DATE (
+                sequence: 7
+            )
+
+            displayColumn LAST_VISITED_DATE (
+                sequence: 4
+            )
+
+            displayColumn NEXT_VISIT_DATE (
+                sequence: 5
+            )
+
+            displayColumn SALESREPS (
+                sequence: 2
+            )
+
+            displayColumn TERRITORY_NAME (
+                sequence: 3
+            )
+
+            displayColumn VISIT_DUE (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+    region tabset (
+        name: Tabset
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            includeShowAll: false
+            rememberSelection: bySession
+        }
+    )
+
+    region visit-report (
+        name: Visit Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select DISTINCT A.APPT_ID, C.CUSTOMER_NAME, A.SALESREP_ID, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, T.TERRITORY_NAME, A.APPOINTMENT_TYPE, A.APPOINTMENT_DATE, A.APPOINTMENT_PURPOSE, A.APPOINTMENT_STATUS, A.VISITED_ON, 
+                decode(A.APPOINTMENT_SOURCE, 'P','Planned', 'D','Direct') APPOINTMENT_SOURCE, A.LIMIT_EXISTED
+                from XXEBA_SALES_CRM_APPOINTMENTS A,
+                        EBA_SALES_CUSTOMERS C,
+                        EBA_SALES_SALESREPS SR,
+                        EBA_SALES_TERRITORIES T
+                where c.ID = A.CUSTOMER_ID
+                and C.DEFAULT_REP_ID = SR.ID
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                       FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    ) 
+                and trunc(A.APPOINTMENT_DATE) < trunc(sysdate)
+                /*select CD.CUSTOMER_ID,C.CUSTOMER_NAME, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, T.TERRITORY_NAME,
+                (select max(A.VISITED_ON) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID) last_visit,
+                (select max(A.APPOINTMENT_DATE) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID and A.APPOINTMENT_DATE < sysdate) last_schedule, 
+                (select min(A.APPOINTMENT_DATE) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID and A.APPOINTMENT_DATE > sysdate) next_visit 
+                from XXEBA_SALES_CUSTOMER_DETAILS CD,
+                EBA_SALES_CUSTOMERS C,
+                EBA_SALES_SALESREPS SR,
+                EBA_SALES_TERRITORIES T
+                where CD.VISIT_FREQUENCY_REC is not null
+                and c.ID = CD.CUSTOMER_ID
+                and C.DEFAULT_REP_ID = SR.ID
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                       FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    )    */
+                    ;
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @tabset
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 148215211170724265
+        }
+
+        column APPOINTMENT_DATE (
+            type: plainText
+            heading {
+                heading: Scheduled Date
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                htmlDomId: IRCSS110
+                endUserAlias: Q
+            }
+        )
+
+        column APPOINTMENT_PURPOSE (
+            type: plainText
+            heading {
+                heading: Purpose
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column APPOINTMENT_SOURCE (
+            type: plainText
+            heading {
+                heading: Source
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column APPOINTMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column APPOINTMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Fixed Through
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column APPT_ID (
+            type: hidden
+            heading {
+                heading: Appt id
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIMIT_EXISTED (
+            type: plainText
+            heading {
+                heading: Limit existed
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column SALESREPS (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SALESREP_ID (
+            type: hidden
+            heading {
+                heading: Salesrep id
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column VISITED_ON (
+            type: plainText
+            heading {
+                heading: Visited On
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1482181 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APPOINTMENT_DATE (
+                sequence: 2
+            )
+
+            displayColumn APPOINTMENT_PURPOSE (
+                sequence: 6
+            )
+
+            displayColumn APPOINTMENT_SOURCE (
+                sequence: 5
+            )
+
+            displayColumn APPOINTMENT_STATUS (
+                sequence: 7
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 3
+            )
+
+            displayColumn SALESREPS (
+                sequence: 1
+            )
+
+            displayColumn TERRITORY_NAME (
+                sequence: 4
+            )
+
+            displayColumn VISITED_ON (
+                sequence: 8
+            )
+
+            sort (
+                column: APPOINTMENT_DATE
+                sort {
+                    sequence: 1
+                }
+            )
+
+            controlBreak (
+                column: SALESREPS
+                layout {
+                    sequence: 1
+                }
+            )
+
+            highlight ir-condition (
+                name: Not Visited
+                condition {
+                    column: APPOINTMENT_STATUS
+                    operator: !=
+                    value: Visited
+                }
+                highlight {
+                    type: cell
+                }
+                colors {
+                    background: #FFDD44
+                }
+                execution {
+                    sequence: 10
+                }
+            )
+
+        )
+
+    )
+
+    region visit-schedule (
+        name: Visit Schedule
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select A.APPT_ID, C.CUSTOMER_NAME, A.SALESREP_ID, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, T.TERRITORY_NAME, A.APPOINTMENT_TYPE, A.APPOINTMENT_DATE, A.APPOINTMENT_PURPOSE, A.APPOINTMENT_STATUS, A.VISITED_ON, 
+                decode(A.APPOINTMENT_SOURCE, 'P','Planned', 'D','Direct') APPOINTMENT_SOURCE, A.LIMIT_EXISTED
+                from XXEBA_SALES_CRM_APPOINTMENTS A,
+                        EBA_SALES_CUSTOMERS C,
+                        EBA_SALES_SALESREPS SR,
+                        EBA_SALES_TERRITORIES T
+                where c.ID = A.CUSTOMER_ID
+                and C.DEFAULT_REP_ID = SR.ID 
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                       FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    ) 
+                and trunc(A.APPOINTMENT_DATE) >= trunc(sysdate)
+                /*select CD.CUSTOMER_ID,C.CUSTOMER_NAME, SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME SALESREPS, T.TERRITORY_NAME,
+                --(select max(A.VISITED_ON) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID) last_visit,
+                --(select max(A.APPOINTMENT_DATE) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID and A.APPOINTMENT_DATE < sysdate) last_schedule, 
+                (select min(A.APPOINTMENT_DATE) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID and A.APPOINTMENT_DATE > sysdate) next_visit 
+                from XXEBA_SALES_CUSTOMER_DETAILS CD,
+                EBA_SALES_CUSTOMERS C,
+                EBA_SALES_SALESREPS SR,
+                EBA_SALES_TERRITORIES T
+                where CD.VISIT_FREQUENCY_REC is not null
+                and c.ID = CD.CUSTOMER_ID
+                and C.DEFAULT_REP_ID = SR.ID
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                       FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    ) 
+                and (select min(A.APPOINTMENT_DATE) from XXEBA_SALES_CRM_APPOINTMENTS A where A.CUSTOMER_ID = C.ID and A.APPOINTMENT_DATE >= sysdate) is not null
+                */
+                ;
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @tabset
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 198559572819453033
+        }
+
+        column APPOINTMENT_DATE (
+            type: plainText
+            heading {
+                heading: Scheduled Date
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                htmlDomId: IRCSS110
+                endUserAlias: K
+            }
+        )
+
+        column APPOINTMENT_PURPOSE (
+            type: plainText
+            heading {
+                heading: Purpose
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column APPOINTMENT_SOURCE (
+            type: plainText
+            heading {
+                heading: Source
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column APPOINTMENT_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column APPOINTMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Fixed Through
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column APPT_ID (
+            type: hidden
+            heading {
+                heading: Appt id
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column LIMIT_EXISTED (
+            type: plainText
+            heading {
+                heading: Limit existed
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column SALESREPS (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column SALESREP_ID (
+            type: hidden
+            heading {
+                heading: Salesrep id
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column VISITED_ON (
+            type: plainText
+            heading {
+                heading: Visited On
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 2065261 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APPOINTMENT_DATE (
+                sequence: 2
+            )
+
+            displayColumn APPOINTMENT_PURPOSE (
+                sequence: 5
+            )
+
+            displayColumn APPOINTMENT_STATUS (
+                sequence: 6
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 3
+            )
+
+            displayColumn SALESREPS (
+                sequence: 1
+            )
+
+            displayColumn TERRITORY_NAME (
+                sequence: 4
+            )
+
+            sort (
+                column: APPOINTMENT_DATE
+                sort {
+                    sequence: 1
+                }
+            )
+
+            controlBreak (
+                column: SALESREPS
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    button appointments (
+        buttonName: Appointments
+        label: Appointments
+        layout {
+            sequence: 10
+            region: @tabset
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 181
+                clearCache: 181
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button appointments-2 (
+        buttonName: Appointments_1
+        label: Appointments
+        layout {
+            sequence: 10
+            region: @customers-visit-details
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 140
+                clearCache: 140
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

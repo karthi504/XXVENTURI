@@ -1,0 +1,308 @@
+page 198 (
+    name: Accounts
+    title: Accounts
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region account (
+        name: Account
+        type: list
+        source {
+            list: @mail-chimp-wizard
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region account-2 (
+        name: Account
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @account
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region accounts (
+        name: Accounts
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P198_DEPARTMENT (
+        type: shuttle
+        label {
+            label: Department
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select DISTINCT DEPARTMENT,DEPARTMENT as dep from EBA_SALES_CUSTOMER_CONTACTS
+                where DEPARTMENT is not null
+                ```
+        }
+        layout {
+            sequence: 20
+            region: @account-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 5
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P198_INDUSTRY (
+        type: shuttle
+        label {
+            label: Industry
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    industry_name   AS d,
+                    id              AS r
+                FROM
+                    eba_sales_industries
+                order by 1
+                ```
+        }
+        layout {
+            sequence: 10
+            region: @account-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 5
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P198_NEW_CONTACT_ONLY (
+        type: checkboxGroup
+        label {
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:New Contacts Only to Sync with Mailchimp;N
+        }
+        layout {
+            sequence: 30
+            region: @account-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @account
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 198
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @account
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    process add-member (
+        name: Add Member
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    CURSOR l_cursor IS
+                    SELECT
+                        cont.contact_name    AS contact_name,
+                        cont.contact_email   AS contact_email,
+                        ind.industry_name    AS industry_name,
+                        cust.customer_name   AS account,
+                        nvl(cont.first_name,cont.contact_name) AS first_name,
+                        cont.last_name AS last_name,
+                        cont.is_sync         AS sync,
+                        cont.id              AS id,
+                        nvl(cont.contact_cell,cont.CONTACT_PHONE) AS phone,
+                        cont.department    as dep
+                    FROM
+                        eba_sales_customer_contacts   cont,
+                        eba_sales_customers           cust,
+                        eba_sales_industries          ind
+                    WHERE
+                        cust.id = cont.customer_id
+                        AND ind.id = cust.industry_id
+                        AND ( instr(':'
+                                    || :P198_INDUSTRY
+                                    || ':', ':'
+                                            || ind.id
+                                            || ':') > 0 )
+                        AND ( instr(':'
+                                    || :P198_DEPARTMENT
+                                    || ':', ':'
+                                            || cont.DEPARTMENT
+                                            || ':') > 0 )
+                        AND cont.is_sync = nvl(:P198_NEW_CONTACT_ONLY,cont.is_sync)
+                        AND cont.contact_email IS NOT NULL;
+                
+                
+                begin
+                  
+                  APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(
+                        p_collection_name => 'MAILCHIMP_COLLECTION');
+                    
+                for r_cursor in l_cursor 
+                loop 
+                	BEGIN
+                    APEX_COLLECTION.ADD_MEMBER(
+                                            p_Collection_name => 'MAILCHIMP_COLLECTION',
+                                            p_C001 => r_cursor.CONTACT_NAME,
+                                            p_C002 => r_cursor.CONTACT_EMAIL,
+                                            P_C003 => r_cursor.INDUSTRY_NAME,
+                                            P_C004 => r_cursor.ACCOUNT,
+                                            p_C005 => r_cursor.SYNC,
+                                            p_C006 => r_cursor.FIRST_NAME,
+                                            p_C007 => r_cursor.LAST_NAME,
+                                            p_C008 => r_cursor.ID,
+                                            p_c009 => r_cursor.PHONE,
+                                            p_c010 => r_cursor.dep
+                                        );
+                			EXCEPTION
+                            WHEN OTHERS THEN
+                              Raise_application_error(-20001, SQLERRM);
+                        END;
+                end loop;
+                End;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 200379255544525905
+        }
+    )
+
+    branch (
+        name: Go To Page 199
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 199
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

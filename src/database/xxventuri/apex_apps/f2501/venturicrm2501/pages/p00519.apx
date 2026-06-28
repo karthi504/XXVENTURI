@@ -1,0 +1,343 @@
+page 519 (
+    name: Email Template Details
+    title: Email Template Details
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region email-template-details (
+        name: Email Template Details
+        type: form
+        source {
+            location: localDatabase
+            tableName: XXEBA_EMAIL_TEMPLATES_T
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        edit {
+            enabled: true
+            allowedOperations: [
+                add
+                update
+                delete
+            ]
+        }
+    )
+
+    pageItem P519_MAIL_CONTENT (
+        type: richTextEditor
+        label {
+            label: Message
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: full
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 50
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @email-template-details
+            column: MAIL_CONTENT
+            dataType: clob
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P519_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @email-template-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @email-template-details
+            column: STATUS
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P519_SUBJECT (
+        type: textField
+        label {
+            label: Subject
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 1000
+        }
+        source {
+            formRegion: @email-template-details
+            column: SUBJECT
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P519_TEMPLATE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @email-template-details
+            slot: regionBody
+        }
+        source {
+            formRegion: @email-template-details
+            column: TEMPLATE_ID
+            dataType: number
+            primaryKey: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P519_TEMPLATE_NAME (
+        type: textField
+        label {
+            label: Template
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @email-template-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            formRegion: @email-template-details
+            column: TEMPLATE_NAME
+            dataType: varchar2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @email-template-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 518
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @email-template-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P519_TEMPLATE_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @email-template-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P519_TEMPLATE_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @email-template-details
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P519_TEMPLATE_ID
+        }
+    )
+
+    process delete (
+        name: DELETE
+        type: executeCode
+        source {
+            plsqlCode: update XXEBA_EMAIL_TEMPLATES_T set status = 'X' where template_id = :P519_TEMPLATE_ID;
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 155195884369706929
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process initialize-form-email-template-details (
+        name: Initialize form Email Template Details
+        type: formInitialization
+        formRegion: @email-template-details
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 157227387489363489
+        }
+    )
+
+    process process-form-email-template-details (
+        name: Process form Email Template Details
+        type: formAutoRowProcessing
+        formRegion: @email-template-details
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 157227840669363493
+        }
+    )
+
+)
+

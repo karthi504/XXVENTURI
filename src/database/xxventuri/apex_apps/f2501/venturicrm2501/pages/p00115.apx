@@ -1,0 +1,448 @@
+page 115 (
+    name: Manage Access Control List
+    title: Manage Access Control List
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    security {
+        authorizationScheme: @administration-rights
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText:
+            ```html
+            <p>When Access Control is enabled, Administrators have the ability to restrict access to certain application features, for authenticated users. This application supports the following 5 access levels; Reader, Contributor, Administrator, Pending Approval, and No Access.</p>
+            <ul>
+              <li><strong>Readers</strong> have read-only access and can also view reports.</li>
+              <li><strong>Contributors</strong> can create, edit and delete opportunities and view reports.</li>
+              <li><strong>Administrators</strong>, in addition to Contributor's capability, can also perform configuration of access control, and installing or uninstalling sample data.</li>
+              <li><strong>Pending Approval</strong>, cannot login or use the application until account is approved.</li>
+              <li><strong>No Access</strong>, cannot login or use the application.</li>
+            </ul>
+            </p>
+            <p>Click the <strong>Add User</strong> button to add a single user. Click the <strong>Add Multiple Users</strong> button to add multiple users. Click the pencil icon next to any user to edit that specific user. Click the <strong>Reset</strong> button to reset the interactive report. Click the <strong>Actions ∨</strong> button to define the number of rows displayed per page, filter, format, download, and/or save the interactive report.</p>
+            ```
+    }
+
+    region manage-access-control-list (
+        name: "Manage Access Control List  "
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,
+                    username,
+                    access_level_id,
+                    case 
+                        when account_locked = 'Y' then 'Yes' 
+                        else 'No'
+                    end account_locked,
+                    created_by,
+                    created
+                from eba_sales_users
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 119
+                items: {
+                    P119_ID: #ID#
+                }
+                clearCache: 119
+                action: resetPagination
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 100000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: This query returns more than #MAX_ROW_COUNT# rows, please filter your data to ensure complete results.
+        }
+        actionsMenu {
+            savePublicReport: true
+        }
+        download {
+            formats: [
+                csv
+                html
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 2532225428270180689
+        }
+
+        column ACCESS_LEVEL_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Access Level
+            }
+            lov {
+                lov: @access-levels
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ACCOUNT_LOCKED (
+            type: plainText
+            heading {
+                heading: Account Locked
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 7
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: Id
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column USERNAME (
+            type: plainText
+            heading {
+                heading: Username
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        savedReport 25322262 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACCESS_LEVEL_ID (
+                sequence: 2
+            )
+
+            displayColumn ACCOUNT_LOCKED (
+                sequence: 3
+            )
+
+            displayColumn CREATED (
+                sequence: 5
+            )
+
+            displayColumn CREATED_BY (
+                sequence: 4
+            )
+
+            displayColumn USERNAME (
+                sequence: 1
+            )
+
+            sort (
+                column: CREATED
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region manage-access-control-list-b (
+        name: Manage Access Control List B
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 50
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region username-format-email (
+        name: Username Format (Email)
+        type: plugin/translatedMessage
+        source {
+            sqlQuery:
+                ```sql
+                select
+                    :APP_ID as app_id,
+                    '15' as page_id,
+                    :APP_SESSION as session_id
+                from
+                    dual
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: eba_sales_fw.get_preference_value ('USERNAME_FORMAT') = 'EMAIL'
+        }
+        settings {
+            textMessage: EMAIL_USERNAME_FORMAT_MSG
+            substitutionColumn00: APP_ID
+            substitutionColumn11: PAGE_ID
+            substitutionColumn22: SESSION_ID
+        }
+    )
+
+    region username-format-string (
+        name: Username Format (String)
+        type: plugin/translatedMessage
+        source {
+            sqlQuery:
+                ```sql
+                select
+                    :APP_ID as app_id,
+                    '15' as page_id,
+                    :APP_SESSION as session_id
+                from
+                    dual
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: eba_sales_fw.get_preference_value ('USERNAME_FORMAT') = 'STRING'
+        }
+        settings {
+            textMessage: STRING_USERNAME_FORMAT_MSG
+            substitutionColumn00: APP_ID
+            substitutionColumn11: PAGE_ID
+            substitutionColumn22: SESSION_ID
+        }
+    )
+
+    button bulk-add-users (
+        buttonName: BULK_ADD_USERS
+        label: Add Multiple Users
+        layout {
+            sequence: 20
+            region: @manage-access-control-list-b
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 153
+                clearCache: [
+                    153
+                    154
+                ]
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Add User
+        layout {
+            sequence: 30
+            region: @manage-access-control-list-b
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 119
+                clearCache: 119
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button reset (
+        buttonName: RESET
+        label: Reset
+        layout {
+            sequence: 10
+            region: @manage-access-control-list
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-undo-alt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: &APP_PAGE_ID.
+                clearCache: &APP_PAGE_ID.
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction dialog-closed (
+        name: Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('Action Processed.');
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @manage-access-control-list
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

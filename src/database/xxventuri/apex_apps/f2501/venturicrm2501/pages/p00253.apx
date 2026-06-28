@@ -1,0 +1,793 @@
+page 253 (
+    name: "Sales Engineer Efficiency "
+    title: Engineer Efficiency
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region engineer-efficiency (
+        name: "Engineer Efficiency "
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 'Finding New Customer'                                                                                                               AS item,
+                  'Identification'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'Identification',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Finding New Customer'                                                                                                            AS item,
+                  'First Order'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'First Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Finding New Customer'                                                                                                             AS item,
+                  'Repeat Order'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'Repeat Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Customer Visit'                                                                                                             AS item,
+                  '100% Plan'                                                                                                                       AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'100% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Customer Visit'                                                                                                            AS item,
+                  '90% Plan'                                                                                                                       AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'90% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Customer Visit'                                                                                                            AS item,
+                  '75% Plan'                                                                                                                       AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'75% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Customer Visit'                                                                                                        AS item,
+                  '<50% Plan'                                                                                                                  AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'<50%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Quotation Submission'                                                                                                          AS item,
+                  'Tooling Up'                                                                                                                         AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_QUOTE_SUBMISSION(:P253_SALES_REP,'Tooling Up',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Quotation Submission'                                                                                                       AS item,
+                  'Project'                                                                                                                         AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_QUOTE_SUBMISSION(:P253_SALES_REP,'Project',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Negotiation'                                                                                                               AS item,
+                  'New Product'                                                                                                                    AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'New Product',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Negotiation'                                                                                                           AS item,
+                  'Project'                                                                                                                    AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'Project',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Negotiation'                                                                                                                  AS item,
+                  'Price Increase'                                                                                                                    AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'Price Increase',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Purchase Order Collection'                                                                                                   AS item,
+                  'First Order'                                                                                                                      AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'First Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Purchase Order Collection'                                                                                                    AS item,
+                  'Annual Order'                                                                                                                      AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'Annual Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Purchase Order Collection'                                                                                                      AS item,
+                  'Schedule Order'                                                                                                                      AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'Schedule Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Sales Order'                                                                                                 AS item,
+                  '>50000'                                                                                                           AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'>50000',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Sales Order'                                                                                                  AS item,
+                  '>100000'                                                                                                           AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'>100000',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Sales Order'                                                                                                             AS item,
+                  'Repeat Sales Order'                                                                                                           AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'Repeat Sales Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Margin'                                                                                                        AS item,
+                  '<20%'                                                                                                               AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'<20%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Margin'                                                                                                        AS item,
+                  '>20%'                                                                                                               AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>20%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Margin'                                                                                                        AS item,
+                  '>30%'                                                                                                               AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>30%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Margin'                                                                                                        AS item,
+                  '>50%'                                                                                                               AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>50%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Planning'                                                                                                           AS item,
+                  'Monthly'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'Monthly',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Planning'                                                                                                            AS item,
+                  '3 Months'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'3 Months',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Planning'                                                                                                            AS item,
+                  '6 Months'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'6 Months',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Planning'                                                                                                          AS item,
+                  'Annual'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'Annual',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Supply'                                                                                                           AS item,
+                  'On Time'                                                                                                                        AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'On Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Supply'                                                                                                           AS item,
+                  'Delayed'                                                                                                                        AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'Delayed',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Material Supply'                                                                                                                        AS item,
+                  'Delay More Than Week'                                                                                                                        AS sub_item ,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'Delay More Than Week',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Conducting Trials'                                                                                                               AS item,
+                  'New Product Trial'                                                                                                                    AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'New Product',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Conducting Trials'                                                                                                               AS item,
+                  'Improvement'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'Improvement',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Conducting Trials'                                                                                                                           AS item,
+                  'Competition Replacement'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'Competition Replacement',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Discipline'                                                                                                                           AS item,
+                  'No Leave'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'No Leave',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Discipline'                                                                                                                           AS item,
+                  '2 Days'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'2 Days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Discipline'                                                                                                                           AS item,
+                  '>2 Days'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'>2 Days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Discipline'                                                                                                                           AS item,
+                  'Late Arrival'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'Late Arrival',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Report Submission'                                                                                                                           AS item,
+                  'On-Time'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REPORT_SUBMIT(:P253_SALES_REP,'On-Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                FROM dual
+                UNION
+                SELECT 'Report Submission'                                                                                                                           AS item,
+                  'Delayed'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REPORT_SUBMIT(:P253_SALES_REP,'Delayed',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                  FROM dual
+                  UNION
+                  SELECT 'Rewards'                                                                                                                           AS item,
+                  'Reward Points'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REWARDS(:P253_SALES_REP,'',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                 FROM dual
+                 UNION
+                SELECT 'Payment Collection'                                                                                                                           AS item,
+                  'On Time'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'On Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                  FROM dual
+                  UNION
+                  SELECT 'Payment Collection'                                                                                                                           AS item,
+                  '>75 days'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>75 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                 FROM dual
+                 UNION
+                SELECT 'Payment Collection'                                                                                                                           AS item,
+                  '>90 days'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>90 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                  FROM dual
+                  UNION
+                  SELECT 'Payment Collection'                                                                                                                           AS item,
+                  '>120 days'                                                                                                                          AS sub_item,
+                  XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>120 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) AS weightage
+                  from dual;
+                ```
+            pageItemsToSubmit: [
+                P253_SALES_REP
+                P253_FROM_DATE
+                P253_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 483807380292477582
+        }
+
+        column ITEM (
+            type: plainText
+            heading {
+                heading: Type
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BG
+            }
+        )
+
+        column SUB_ITEM (
+            type: plainText
+            heading {
+                heading: Assessment Item
+                alignment: center
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BH
+            }
+        )
+
+        column WEIGHTAGE (
+            type: plainText
+            heading {
+                heading: Weightage
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BI
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2889709 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn GREATER_501234567 (
+                sequence: 2
+            )
+
+            displayColumn ITEM (
+                sequence: 3
+            )
+
+            displayColumn SCHEDULE_ORDER000 (
+                sequence: 1
+            )
+
+            displayColumn SUB_ITEM (
+                sequence: 4
+            )
+
+            displayColumn WEIGHTAGE (
+                sequence: 5
+            )
+
+            controlBreak (
+                column: ITEM
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region sales-engineer-efficiency (
+        name: Sales Engineer Efficiency
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 40
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P253_DEFAULT_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @engineer-efficiency
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select Last_Day(ADD_MONTHS(SYSDATE,-1))+1 as DEFAULT_DATE from dual;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From
+            alignment: left
+        }
+        settings {
+            minDate: &P253_DEFAULT_DATE.
+            maxDate: &P253_DEFAULT_DATE.
+        }
+        layout {
+            sequence: 20
+            region: @engineer-efficiency
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 10
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_from_date date;
+                begin
+                select Last_Day(ADD_MONTHS(SYSDATE,-1))+1 into v_from_date  from dual;
+                
+                return v_from_date;
+                end;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_SALES_REP (
+        type: plugin/select2
+        label {
+            label: Sales Reps
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS where STATUS='Y' and USER_NAME <>'admin'
+                order by 1
+                ```
+        }
+        layout {
+            sequence: 10
+            region: @engineer-efficiency
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_SCORE1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @engineer-efficiency
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_SCORE2 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @engineer-efficiency
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_TOTAL_SCORE (
+        type: textField
+        label {
+            label: Score
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @engineer-efficiency
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        advanced {
+            customAttributes: style="height: auto;  font-size: 20px;"
+        }
+        source {
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P253_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: "To "
+            alignment: left
+        }
+        settings {
+            minDate: +0d
+            maxDate: -0d
+        }
+        layout {
+            sequence: 30
+            region: @engineer-efficiency
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-right-lg
+            ]
+            formatMask: DD-Mon-YYYY
+            width: 10
+        }
+        source {
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_to_date date;
+                begin
+                select sysdate into v_to_date  from dual;
+                
+                return v_to_date;
+                end;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 50
+            region: @engineer-efficiency
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--padTop
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @engineer-efficiency
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-value (
+        name: Set Value
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    select 
+                    XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'Identification',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'First Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_FIND_NEW_CUSTOMER(:P253_SALES_REP,'Repeat Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'100% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'90% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'75% Plan',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CUSTOMER_VISIT(:P253_SALES_REP,'<50%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))      
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_QUOTE_SUBMISSION(:P253_SALES_REP,'Tooling Up',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_QUOTE_SUBMISSION(:P253_SALES_REP,'Project',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'New Product',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'Project',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_NEGOTIATION(:P253_SALES_REP,'Price Increase',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'First Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'Annual Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PO_COLLECTION(:P253_SALES_REP,'Schedule Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'>50000',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'>100000',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_SO(:P253_SALES_REP,'Repeat Sales Order',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'<20%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>20%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>30%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MARGIN(:P253_SALES_REP,'>50%',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    into  :P253_SCORE1 from dual;
+                    ```
+                itemsToSubmit: [
+                    P253_SALES_REP
+                    P253_FROM_DATE
+                    P253_TO_DATE
+                ]
+                itemsToReturn: P253_SCORE1
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    select
+                     XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'Monthly',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'3 Months',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'6 Months',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_PLANNING(:P253_SALES_REP,'Annual',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'On Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'Delayed',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_MATERIAL_SUPPLY(:P253_SALES_REP,'Delay More Than Week',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'New Product',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'Improvement',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_CONDUCTING_TRIALS(:P253_SALES_REP,'Competition Replacement',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'No Leave',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'2 Days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))  
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'>2 Days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))   
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_DISCIPLINE(:P253_SALES_REP,'Late Arrival',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REPORT_SUBMIT(:P253_SALES_REP,'On-Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REPORT_SUBMIT(:P253_SALES_REP,'Delayed',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY'))
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_REWARDS(:P253_SALES_REP,'',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'On Time',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>75 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>90 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                    +XXEBA_SALES_ENGINEER_EFFI_PKG.XXEBA_SALES_PAYMENT_COLLECTION(:P253_SALES_REP,'>120 days',TO_DATE(:P253_FROM_DATE,'DD-MM-YYYY'),TO_DATE(:P253_TO_DATE,'DD-MM-YYYY')) 
+                     into  :P253_SCORE2 from dual;
+                    ```
+                itemsToSubmit: [
+                    P253_SALES_REP
+                    P253_FROM_DATE
+                    P253_TO_DATE
+                ]
+                itemsToReturn: P253_SCORE2
+                showProcessing: true
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code-3 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: select (:P253_SCORE1 + :P253_SCORE2) into :P253_TOTAL_SCORE from dual;
+                itemsToSubmit: [
+                    P253_SCORE1
+                    P253_SCORE2
+                ]
+                itemsToReturn: P253_TOTAL_SCORE
+                showProcessing: true
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation date-validations (
+        name: Date Validations
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                IF TO_DATE(:P253_TO_DATE,'DD-Mon-YYYY') < TO_DATE(:P253_FROM_DATE,'DD-Mon-YYYY') THEN
+                  RETURN 'To Date should be Greater than From Date.';
+                ELSE 
+                  RETURN null;
+                END IF;
+                ```
+            alwaysExecute: true
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @go
+        }
+    )
+
+)
+

@@ -1,0 +1,476 @@
+page 189 (
+    name: Mailchimp Campaign Report
+    title: Mailchimp Campaign Report
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region mailchimp-campaign-report (
+        name: Mailchimp Campaign Report
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1240
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region report (
+        name: Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 SELECT SEQ_ID ,
+                         C001 as opens_total,
+                         C002 as clicks_total,
+                         c003 as hard_bounces,
+                         c004 as soft_bounces,
+                         c005 as unsubscribed,
+                         c006 as emails_sent,
+                		 c007 as campign_title,
+                		 c008 as subject,
+                         c003+c004 as bounces
+                      FROM   apex_collections
+                      WHERE  collection_name = 'MAILCHIMP_REPORT';
+                ```
+        }
+        layout {
+            sequence: 1230
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 443797634099727618
+        }
+
+        column BOUNCES (
+            type: plainText
+            heading {
+                heading: Bounced
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CAMPIGN_TITLE (
+            type: plainText
+            heading {
+                heading: Campign Title
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column CLICKS_TOTAL (
+            type: plainText
+            heading {
+                heading: Clicked
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column EMAILS_SENT (
+            type: plainText
+            heading {
+                heading: Emails Sent
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column HARD_BOUNCES (
+            type: plainText
+            heading {
+                heading: Hard Bounces
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column OPENS_TOTAL (
+            type: plainText
+            heading {
+                heading: Opened
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SEQ_ID (
+            type: plainText
+            heading {
+                heading: S.no
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SOFT_BOUNCES (
+            type: plainText
+            heading {
+                heading: Soft Bounces
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column SUBJECT (
+            type: plainText
+            heading {
+                heading: Subject
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        column UNSUBSCRIBED (
+            type: plainText
+            heading {
+                heading: Unsubscribed
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+            enableUsersTo {
+                sort: false
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 4438828 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn BOUNCES (
+                sequence: 7
+            )
+
+            displayColumn CAMPIGN_TITLE (
+                sequence: 2
+            )
+
+            displayColumn CLICKS_TOTAL (
+                sequence: 6
+            )
+
+            displayColumn EMAILS_SENT (
+                sequence: 4
+            )
+
+            displayColumn OPENS_TOTAL (
+                sequence: 5
+            )
+
+            displayColumn SEQ_ID (
+                sequence: 1
+            )
+
+            displayColumn SUBJECT (
+                sequence: 3
+            )
+
+            displayColumn UNSUBSCRIBED (
+                sequence: 8
+            )
+
+        )
+
+    )
+
+    button refresh (
+        buttonName: REFRESH
+        label: Refresh
+        layout {
+            sequence: 10
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        l_response CLOB;
+                        ll_res     CLOB;
+                        a          NUMBER;
+                        total_item NUMBER;
+                        l_process  VARCHAR2(500);
+                        l_values   apex_json.t_values;
+                    BEGIN
+                        apex_web_service.G_request_headers(1).name := 'Content-Type';
+                    
+                        apex_web_service.G_request_headers(1).value := 'application/json';
+                    
+                        apex_web_service.G_request_headers(2).name := 'Authorization';
+                    
+                        apex_web_service.G_request_headers(2).value :=
+                        'Bearer 96977c29dc23ab7af30100c3b63d6153-us2';
+                    
+                        l_response := apex_web_service.Make_rest_request(p_url =>
+                                                    'https://us2.api.mailchimp.com/3.0/campaigns',
+                                                    p_http_method => 'GET');
+                    
+                        apex_json.Parse(l_response);
+                    
+                        total_item := apex_json.Get_number('total_items');
+                    
+                        apex_collection.Create_or_truncate_collection(
+                        p_collection_name => 'MAILCHIMP_REPORT');
+                    
+                        FOR a IN 1 .. total_item LOOP
+                            l_process := 'https://us2.api.mailchimp.com/3.0/reports/'
+                                         ||apex_json.Get_varchar2('campaigns['
+                                                                  ||a
+                                                                  ||'].id');
+                    
+                            ll_res := apex_web_service.Make_rest_request(p_url => l_process,
+                                      p_http_method => 'GET');
+                    
+                            apex_json.Parse(p_values => l_values, p_source => ll_res);
+                    
+                            apex_collection.Add_member(p_collection_name => 'MAILCHIMP_REPORT',
+                            p_c001 => apex_json.Get_varchar2(p_values => l_values,
+                                      p_path => 'opens.opens_total'
+                                      ), p_c002 => apex_json.Get_varchar2(p_values => l_values,
+                                                   p_path => 'clicks.clicks_total'
+                            ), p_c003 => apex_json.Get_varchar2(p_values => l_values,
+                                         p_path => 'bounces.hard_bounces'), p_c004 =>
+                            apex_json.Get_varchar2(p_values => l_values,
+                            p_path => 'bounces.soft_bounces'
+                            ), p_c005 =>
+                            apex_json.Get_varchar2(
+                            p_values => l_values, p_path => 'unsubscribed'), p_c006 =>
+                            apex_json.Get_varchar2(p_values => l_values, p_path => 'emails_sent'),
+                            p_c007 => apex_json.Get_varchar2(p_values => l_values,
+                                      p_path => 'campaign_title'
+                            ), p_c008 => apex_json.Get_varchar2(p_values => l_values,
+                                         p_path => 'subject_line'));
+                        END LOOP;
+                    END; 
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    dynamicAction refresh-the-region (
+        name: Refresh the Region
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @refresh
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.submit('REFRESH');
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

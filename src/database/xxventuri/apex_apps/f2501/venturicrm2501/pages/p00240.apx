@@ -1,0 +1,437 @@
+page 240 (
+    name: Efficiency Details
+    title: Efficiency Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-efficiency-t (
+        name: Form on XXEBA_SALES_EFFICIENCY_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P240_DISPLAY_SEQUENCE (
+        type: textField
+        label {
+            label: Display Sequence
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-efficiency-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DISPLAY_SEQUENCE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P240_EFFICIENCY_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-efficiency-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EFFICIENCY_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P240_ITEM_NAME (
+        type: textarea
+        label {
+            label: Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-efficiency-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            valueRequired: true
+            maxLength: 300
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ITEM_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P240_MAX_SCORE (
+        type: numberField
+        label {
+            label: Max Score
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-sales-efficiency-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MAX_SCORE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P240_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-status-lov
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-efficiency-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P240_EFFICIENCY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Add
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P240_EFFICIENCY_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P240_EFFICIENCY_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation duplicate-validation (
+        name: Duplicate Validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                    CURSOR c is select ITEM_NAME from XXEBA_SALES_EFFICIENCY_T;
+                BEGIN
+                    FOR rec in c
+                    LOOP
+                     IF UPPER(trim(rec.ITEM_NAME))=UPPER(trim(:P240_ITEM_NAME)) THEN 
+                      return 'Item Name already exist.';
+                     END IF;
+                    END LOOP;
+                END;
+                ```
+        }
+        error {
+            associatedItem: @P240_ITEM_NAME
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 105152149883383845
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-efficiency-t (
+        name: Fetch Row from XXEBA_SALES_EFFICIENCY_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_EFFICIENCY_T
+            pkColumn: EFFICIENCY_ID
+            pkItem: P240_EFFICIENCY_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 105151014542383844
+        }
+    )
+
+    process process-row-of-xxeba-sales-efficiency-t (
+        name: Process Row of XXEBA_SALES_EFFICIENCY_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_EFFICIENCY_T
+            pkColumn: EFFICIENCY_ID
+            pkItem: P240_EFFICIENCY_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 105151358559383844
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 105151742041383845
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

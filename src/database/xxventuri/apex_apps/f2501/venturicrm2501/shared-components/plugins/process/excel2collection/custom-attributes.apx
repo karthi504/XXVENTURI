@@ -1,0 +1,98 @@
+customAttribute attribute_01 (
+    apexlangName: browseItem
+    attribute: 1
+    name: Browse Item
+    appearance {
+        sequence: 10
+    }
+)
+
+customAttribute attribute_02 (
+    apexlangName: collectionName
+    attribute: 2
+    name: Collection name
+    appearance {
+        sequence: 20
+    }
+    help {
+        helpText:
+            ```
+            The name of the Collection in which the first sheet is placed.
+            <br/>Eventually, other sheets are placed in Colections with a sequence number attached to this name: <br/>
+            <br/>&lt;Collection name&gt;2
+            <br/>&lt;Collection name&gt;3
+            <br/>&lt;Collection name&gt;4
+            ```
+    }
+)
+
+customAttribute attribute_03 (
+    apexlangName: sheets
+    attribute: 3
+    name: Sheets
+    appearance {
+        sequence: 30
+    }
+    help {
+        helpText:
+            ```
+            A colon separated list of sheets which should loaded.
+            <br/>When left empty all sheets are loaded.<br/>
+            A sheet is identified by its name or positional number.
+            <br/><br/>For instance
+            <br/>
+            &nbsp;&nbsp;1:3 will load the first and the third sheet<br/>
+            &nbsp;&nbsp;Sheet1:Sheet2 will load the sheets with the names "Sheet1" and "Sheet2"
+            ```
+    }
+)
+
+customAttribute attribute_04 (
+    apexlangName: csvSeparator
+    attribute: 4
+    name: CSV Separator
+    appearance {
+        sequence: 40
+    }
+    default {
+        value: ;
+    }
+)
+
+customAttribute attribute_05 (
+    apexlangName: csvEnclosedBy
+    attribute: 5
+    name: CSV Enclosed By
+    appearance {
+        sequence: 50
+    }
+    default {
+        value: "
+    }
+    help {
+        helpText:
+            ```
+            A delimiter character used for CSV-files. This character is used to delineate the starting and ending boundary of a data value.
+            The default value is ".
+            The same character is used as the escape character.
+            ```
+    }
+)
+
+customAttribute attribute_06 (
+    apexlangName: csvCharacterSet
+    attribute: 6
+    name: CSV Character set
+    appearance {
+        sequence: 60
+    }
+    help {
+        helpText:
+            ```
+            The character set used for loading a CSV file.
+            <br/>When left empty the database character set is used.
+            <br/>Use the Oracle name for the character set, for instance WE8MSWIN1252 and not Windows-1252
+            ```
+    }
+)
+

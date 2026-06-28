@@ -1,0 +1,633 @@
+page 268 (
+    name: Billing Report
+    title: Billing Report
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region billing-report (
+        name: Billing Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT distinct BATCH_NUMBER,	
+                INVOICE_ID,	
+                INVOICE_NUMBER,
+                INVOICE_DATE,	
+                tal.CUSTOMER_ID	,
+                tal.CUSTOMER_NAME,	
+                PO_REFERENCE,	
+                BILLING_LOCATION,	
+                SALES_ORDER_ID	,
+                --SALES_ORDER_NUMBER,	
+                ---SALES_ORDER_DATE,	
+                (-1* INVOICE_VALUE) as INVOICE_VALUE,	
+                /*
+                PRODUCT_ID	,
+                PRODUCT_CODE,	
+                CUSTOMER_PART_REF,	
+                INVOICE_QTY	,
+                INVOICE_UNIT_PRICE,
+                INVOICE_UOM	,
+                TAX_AMOUNT,	
+                TOTAL_AMOUNT,	
+                tal.CREATED_BY,	
+                tal.CREATED_DATE,	
+                tal.UPDATED_BY,	 
+                tal.UPDATED_DATE,	
+                tal.STATUS	,
+                */
+                BATCH_SEQUENCE,	
+                LAST_RECEIPT_DATE,	
+                LAST_RECEIPT_AMOUNT,
+                c.DEFAULT_REP_ID,
+                to_number(to_char(tal.invoice_date,'YYYYMM')) as MONTH_NUMBER,
+                to_char(tal.invoice_date,'Mon-YYYY') as MONTH_TEXT
+                ----to_char(tal.invoice_date,'MM')||'-'||to_char(tal.invoice_date,'Mon') AS MONTH
+                from XXEBA_TALLY_INVOICES_T tal , EBA_SALES_CUSTOMERS c
+                where  tal.BATCH_SEQUENCE = (select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T)  
+                AND INVOICE_DATE between :P268_FROM_DATE and :P268_TO_DATE 
+                AND c.ROW_KEY=tal.CUSTOMER_ID
+                and ( c.DEFAULT_REP_ID in (SELECT  upper(r.ID)
+                                       FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE
+                            and SR.ROLE_NAME in ('Administrator','Sales Co-Ordinator')))
+                
+                ```
+            pageItemsToSubmit: [
+                P268_FROM_DATE
+                P268_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 942360574170109220
+        }
+
+        column BATCH_NUMBER (
+            type: plainText
+            heading {
+                heading: Batch number
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CH
+            }
+        )
+
+        column BATCH_SEQUENCE (
+            type: plainText
+            heading {
+                heading: Batch sequence
+            }
+            layout {
+                sequence: 550
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: DD
+            }
+        )
+
+        column BILLING_LOCATION (
+            type: plainText
+            heading {
+                heading: Billing location
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CL
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainText
+            heading {
+                heading: Customer id
+                alignment: center
+            }
+            layout {
+                sequence: 290
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CC
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CD
+            }
+        )
+
+        column DEFAULT_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Sales Rep
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 570
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: DF
+            }
+        )
+
+        column INVOICE_DATE (
+            type: plainText
+            heading {
+                heading: Invoice Date
+                alignment: center
+            }
+            layout {
+                sequence: 350
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: CJ
+            }
+        )
+
+        column INVOICE_ID (
+            type: plainText
+            heading {
+                heading: Invoice id
+                alignment: center
+            }
+            layout {
+                sequence: 320
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CF
+            }
+        )
+
+        column INVOICE_NUMBER (
+            type: plainText
+            heading {
+                heading: Invoice Number
+                alignment: center
+            }
+            layout {
+                sequence: 340
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CI
+            }
+        )
+
+        column INVOICE_VALUE (
+            type: plainText
+            heading {
+                heading: Invoice Value
+                alignment: center
+            }
+            layout {
+                sequence: 560
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 99G99G99G99G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: DE
+            }
+        )
+
+        column LAST_RECEIPT_AMOUNT (
+            type: plainText
+            heading {
+                heading: Last Receipt Amount
+                alignment: center
+            }
+            layout {
+                sequence: 580
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DG
+            }
+        )
+
+        column LAST_RECEIPT_DATE (
+            type: plainText
+            heading {
+                heading: Last Receipt Date
+                alignment: center
+            }
+            layout {
+                sequence: 270
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: BZ
+            }
+        )
+
+        column MONTH_NUMBER (
+            type: plainText
+            heading {
+                heading: Month Number
+                alignment: center
+            }
+            layout {
+                sequence: 590
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: DK
+            }
+        )
+
+        column MONTH_TEXT (
+            type: plainText
+            heading {
+                heading: Month of Billing
+            }
+            layout {
+                sequence: 600
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: DL
+            }
+        )
+
+        column PO_REFERENCE (
+            type: plainText
+            heading {
+                heading: PO reference
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: CK
+            }
+        )
+
+        column SALES_ORDER_ID (
+            type: plainText
+            heading {
+                heading: Sales order id
+                alignment: center
+            }
+            layout {
+                sequence: 380
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: CM
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 4723121 (
+            visibility: primaryDefault
+            view {
+                pivot: true
+                default: pivot
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 4
+            )
+
+            displayColumn DEFAULT_REP_ID (
+                sequence: 7
+            )
+
+            displayColumn INVOICE_DATE (
+                sequence: 3
+            )
+
+            displayColumn INVOICE_NUMBER (
+                sequence: 2
+            )
+
+            displayColumn LAST_RECEIPT_DATE (
+                sequence: 5
+            )
+
+            displayColumn MONTH_TEXT (
+                sequence: 1
+            )
+
+            displayColumn PO_REFERENCE (
+                sequence: 6
+            )
+
+            sort (
+                column: MONTH_NUMBER
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: INVOICE_DATE
+                sort {
+                    direction: desc
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: LAST_RECEIPT_DATE
+                sort {
+                    direction: desc
+                    sequence: 3
+                }
+            )
+
+            controlBreak (
+                column: MONTH_TEXT
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotColumn (
+                column: MONTH_TEXT
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotRowColumn (
+                column: DEFAULT_REP_ID
+                layout {
+                    sequence: 1
+                }
+            )
+
+            pivotAggregate ir-pivot-agg (
+                aggregate {
+                    function: sum
+                    column: INVOICE_VALUE
+                }
+                appearance {
+                    formatMask: 999G999G999G999G990
+                }
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region billing-report-2 (
+        name: Billing Report
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 20
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P268_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 10
+            region: @billing-report
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P268_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: To
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 20
+            region: @billing-report
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 30
+            region: @billing-report
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @billing-report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation to-date-validations (
+        name: To date Validations
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                IF TO_DATE(:P268_TO_DATE) < TO_DATE(:P268_FROM_DATE) THEN
+                  RETURN 'To Date should be Greater than From Date.';
+                ELSE 
+                  RETURN null;
+                END IF;
+                ```
+        }
+        error {
+            associatedItem: @P268_TO_DATE
+        }
+    )
+
+)
+

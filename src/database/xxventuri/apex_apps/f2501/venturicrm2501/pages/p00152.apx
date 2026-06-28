@@ -1,0 +1,77 @@
+page 152 (
+    name: Organization Chart
+    title: Organization Chart
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: plugin/googleOrganizationChart
+        source {
+            sqlQuery:
+                ```sql
+                select null link, 
+                 -- r.id  as key_value, 
+                  rep_first_name || ' ' || rep_last_name as key_value,
+                --  r.rep_last_name||', '|| 
+                  rep_first_name || ' ' || rep_last_name as display_value,
+                  ( select rep_first_name || ' ' || rep_last_name
+                    from eba_sales_salesreps m
+                    where m.id = r.rep_manager_id ) as parent_key
+                 from eba_sales_salesreps r
+                  where status = 'Y'
+                ```
+        }
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            size: medium
+        }
+    )
+
+    region organization-chart (
+        name: Organization Chart
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+)
+

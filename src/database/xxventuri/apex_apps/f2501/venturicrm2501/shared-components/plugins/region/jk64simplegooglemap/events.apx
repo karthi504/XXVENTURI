@@ -1,0 +1,16 @@
+event address (
+    name: address
+)
+
+event geolocate (
+    name: geolocate
+)
+
+event mapclick (
+    name: mapClick
+)
+
+event maploaded (
+    name: mapLoaded
+)
+

@@ -1,0 +1,1239 @@
+page 1003 (
+    name: Notification Page
+    title: Notification Page
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 1200
+        height: 650
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region accounts (
+        name: Accounts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT c.id,
+                  c.row_key,
+                  C.CUSTOMER_CODE,
+                  C.GST_NO,
+                  C.CLASSIFICATION_ID,
+                  c.customer_name,
+                  c.default_rep_id,
+                  t.territory_name,
+                  c.customer_territory_id,
+                  CASE c.status
+                    WHEN 'Y'
+                    THEN 'New'
+                    WHEN 'R'
+                    THEN 'Validated'
+                    WHEN 'U'
+                    THEN 'Validated'
+                    WHEN 'N'
+                    THEN 'Recommended'
+                    WHEN 'V'
+                    THEN 'Verified'
+                    WHEN 'A'
+                    THEN 'Approved'
+                  END customer_status,
+                  CASE c.customer_is_key_account_yn
+                    WHEN 'Y'
+                    THEN 'Yes'
+                    WHEN 'N'
+                    THEN 'No'
+                  END customer_is_key_account_yn,
+                  c.tags,
+                  ( SELECT COUNT(*) FROM eba_sales_links WHERE account_id = c.id
+                  ) links,
+                  ( SELECT COUNT(*) FROM eba_sales_files WHERE account_id = c.id
+                  ) attachments,
+                  ( SELECT COUNT(*) FROM eba_sales_comments WHERE account_id = c.id
+                  ) comments,
+                  ( SELECT COUNT(*) FROM eba_sales_verifications WHERE cust_id = c.id
+                  ) validations,
+                  ( SELECT MAX(created) FROM eba_sales_verifications WHERE cust_id = c.id
+                  ) last_validation,
+                  (SELECT COUNT(*)
+                  FROM eba_sales_clicks
+                  WHERE cust_id       = c.id
+                  AND view_timestamp >= sysdate - 90
+                  ) views_90_days,
+                  (SELECT COUNT(DISTINCT(app_username))
+                  FROM eba_sales_clicks
+                  WHERE cust_id       = c.id
+                  AND view_timestamp >= sysdate - 90
+                  ) users_90_days,
+                  c.created,
+                  c.created_by,
+                  c.updated,
+                  c.updated_by,
+                  (SELECT COUNT(*)
+                  FROM eba_sales_deals dx
+                  WHERE dx.customer_id    = c.id
+                  AND dx.deal_probability > 0
+                  AND dx.deal_probability < 100
+                  ) open_deals,
+                  (SELECT COUNT(*)
+                  FROM eba_sales_deals
+                  WHERE customer_id     = c.id
+                  AND deal_close_date   < sysdate
+                  AND deal_probability != 0
+                  AND deal_probability != 100
+                  ) past_due,
+                  (SELECT COUNT(*)
+                  FROM eba_sales_leads
+                  WHERE account_id = c.id
+                  ) leads
+                FROM eba_sales_customers c
+                LEFT JOIN eba_sales_territories t
+                ON c.customer_territory_id = t.id
+                WHERE :P2_DISPLAY_AS       = 'GRID'
+                AND c.status               ='V'
+                  --  and(upper(c.CREATED_BY) in (SELECT  upper(r.USER_NAME)
+                AND(upper(c.DEFAULT_REP_ID) IN
+                  (SELECT upper(r.ID)
+                  FROM eba_sales_salesreps r
+                    START WITH r.id      = :USER_ID
+                    CONNECT BY PRIOR r.id= r.REP_MANAGER_ID
+                  )
+                OR EXISTS
+                  (SELECT 'Y'
+                  FROM EBA_SALES_SALESREPS R,
+                    EBA_SALES_SALESREP_ROLES SR
+                  WHERE R.id        = :USER_ID
+                  AND SR.ID         = R.REP_ROLE
+                  AND SR.ROLE_NAME IN ('Administrator','Sales Co-Ordinator')
+                  ) )
+                
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @nbsp
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                i-h480
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        reportLayout {
+            numberOfRows: 20
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        messages {
+            whenNoDataFound: <p style="text-align:center;">No Data Found.</p>
+        }
+
+        column ATTACHMENTS (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+        column CLASSIFICATION_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Classification "
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-classification-lov
+            }
+            layout {
+                sequence: 7
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column COMMENTS (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 10
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 21
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 23
+            }
+        )
+
+        column CUSTOMER_CODE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Customer code
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CUSTOMER_IS_KEY_ACCOUNT_YN (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Key Account
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CUSTOMER_NAME (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: link
+            heading {
+                heading: "Account "
+            }
+            layout {
+                sequence: 1
+            }
+            link {
+                target: {
+                    page: 94
+                    items: {
+                        P94_ID: #ID#
+                    }
+                    clearCache: 94
+                    action: resetPagination
+                }
+                linkText: #CUSTOMER_NAME#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CUSTOMER_STATUS (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CUSTOMER_TERRITORY_ID (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column DEFAULT_REP_ID (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: "Default Rep "
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column GST_NO (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: GST Number
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column LAST_VALIDATION (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 20
+            }
+        )
+
+        column LEADS (
+            reportColumnQueryId: 26
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column LINKS (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 16
+            }
+        )
+
+        column OPEN_DEALS (
+            reportColumnQueryId: 24
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 26
+            }
+        )
+
+        column PAST_DUE (
+            reportColumnQueryId: 25
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 27
+            }
+        )
+
+        column ROW_KEY (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column TAGS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column TERRITORY_NAME (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Territory name
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column UPDATED (
+            reportColumnQueryId: 22
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 24
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 23
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 25
+            }
+        )
+
+        column USERS_90_DAYS (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 22
+            }
+        )
+
+        column VALIDATIONS (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 19
+            }
+        )
+
+        column VIEWS_90_DAYS (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 21
+            }
+        )
+
+    )
+
+    region leave (
+        name: Leave
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                ( select  REP_FIRST_NAME||' '|| REP_LAST_NAME from EBA_SALES_SALESREPS sal where sal.id = L.SALES_REP_ID) as "Sales Rep ",
+                L.LEAVE_REQUEST_ID, 
+                L.FROM_DATE,
+                L.TO_DATE,
+                DECODE(TRIM(L.FROM_PERIOD),'FD','Full Day','FN','Forenoon','AN','Afternoon') as FROM_PERIOD,
+                DECODE(TRIM(L.TO_PERIOD),'FD','Full Day','FN','Forenoon','AN','Afternoon') as TO_PERIOD,
+                L.NO_OF_DAYS,
+                L.CONTACT_NUMBER,
+                L.LEAVE_REASON,
+                decode(TRIM(L.LEAVE_STATUS), 'S','Submitted', 'A','Approved', 'R','Rejected')  LEAVE_STATUS,
+                L.STATUS,
+                L.APPROVED_BY,
+                L.APPROVED_DATE,
+                L.APPROVER_COMMENTS,
+                L.LEAVE_TYPE_ID
+                from XXEBA_SALES_LEAVE_REQUESTS_T L,EBA_SALES_SALESREPS S 
+                where LEAVE_STATUS='S'
+                and L.SALES_REP_ID=S.ID 
+                and S.REP_MANAGER_ID =:USER_ID order by FROM_DATE desc ;
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @nbsp
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                i-h480
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        messages {
+            whenNoDataFound: <p style="text-align:center;">No Data Found.</p>
+        }
+
+        column APPROVED_BY (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column APPROVED_DATE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column APPROVER_COMMENTS (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column CONTACT_NUMBER (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Contact number
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column FROM_DATE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: From date
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            columnFormatting {
+                htmlExpression: <span style="white-space:nowrap;">#FROM_DATE#</span>
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column FROM_PERIOD (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: From period
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LEAVE_REASON (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Leave reason
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LEAVE_REQUEST_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column LEAVE_STATUS (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LEAVE_TYPE_ID (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column NO_OF_DAYS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: No of days
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column "Sales Rep " (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                heading: "Sales rep "
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            link {
+                target: {
+                    page: 257
+                    items: {
+                        P257_LEAVE_REQUEST_ID: #LEAVE_REQUEST_ID#
+                        P257_PAGE_SOURCE: 258
+                    }
+                    clearCache: 257
+                    action: resetPagination
+                }
+                linkText: #Sales Rep #
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TO_DATE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: To date
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            columnFormatting {
+                htmlExpression: <span style="white-space:nowrap;">#FROM_DATE#</span>
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TO_PERIOD (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: To period
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region nbsp (
+        name: &nbsp
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region nbsp-2 (
+        name: &nbsp
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region sales-orders (
+        name: Sales Orders
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                SO.ORDER_ID, 
+                SO.ORDER_NUMBER,
+                SO.DEAL_ID,
+                SD.DEAL_NAME,
+                SO.CUSTOMER_ID,
+                SC.CUSTOMER_NAME,
+                SO.TERRITORY_ID,
+                SO.SALES_REP,
+                SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME REP_NAME,
+                SO.ORDER_DATE,
+                SO.PO_NUMBER,
+                SO.PO_DATE,
+                SO.REFERENCE,
+                (select CUSTOMER_LOCATION_NAME from  EBA_SALES_CUSTOMER_LOCATIONS  where ID=SO.BILLING_LOCATION) BILLING_LOCATION,
+                --SO.BILLING_LOCATION,
+                CL.CUSTOMER_LOCATION_NAME BILLING,
+                SO.DELIVERY_LOCATION,
+                CL2.CUSTOMER_LOCATION_NAME DELIVERY,
+                SO.ORDER_FREQUENCY,
+                SO.NEXT_ORDER_DATE,
+                (
+                  CASE
+                     WHEN SO.STATUS='Y'
+                    THEN 'New'
+                     WHEN SO.STATUS='R'
+                    THEN 'Rejected'
+                    ELSE 'New'
+                  END ) order_status,
+                SO.STATUS,
+                --SO.CREATED
+                 to_char(SO.CREATED at time zone 'Asia/Calcutta', 'DD-Mon-YYYY HH:MI PM') as CREATED,
+                 order_value,
+                DELIVERY_DATE,
+                (
+                  CASE
+                    WHEN EXPORT_FLAG IN ('Y', 'P')
+                    THEN 'Imported'
+                    ELSE 'New'
+                  END ) new_imported_flag ,  /* Thamaraiselvan Added on 18-Oct-18 */
+                   decode(SO.UPDATED_IN_TALLY,'Y','Yes','N','No') UPDATED_IN_TALLY,
+                   SO.TALLY_REFERENCE_NUMBER
+                from XXEBA_SALES_ORDER SO,
+                	EBA_SALES_DEALS SD,
+                	EBA_SALES_CUSTOMERS SC,
+                	EBA_SALES_SALESREPS SR,
+                	EBA_SALES_CUSTOMER_LOCATIONS CL,
+                	EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                    (select
+                    ORDER_ID,
+                    sum(order_value) order_value,
+                    min(DELIVERY_DATE) DELIVERY_DATE  from
+                    (
+                    select
+                    ORDER_ID,
+                    QUANTITY,
+                    PRODUCT_PRICE,
+                    (QUANTITY * PRODUCT_PRICE)order_value,
+                    DELIVERY_DATE
+                    from
+                    XXEBA_ORDER_PRODUCTS
+                    )
+                    group by ORDER_ID)value
+                    
+                where SO.DEAL_ID = SD.ID  
+                 -- and SO.CUSTOMER_ID = SC.ID(+)
+                     and SO.CUSTOMER_ID = SC.ID
+                 -- and SO.SALES_REP = SR.ID(+)
+                  and SO.SALES_REP = SR.ID
+                  and SO.DELIVERY_LOCATION = CL.ID(+)
+                  and SO.BILLING_LOCATION = CL2.ID (+)
+                  and SO.ORDER_ID = value.ORDER_ID(+)
+                  AND (upper(SC.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Sales Co-Ordinator'))
+                    and SO.STATUS IN ('N')
+                order by  SO.ORDER_ID
+                  
+                
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @nbsp
+            slot: tabs
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                i-h480
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        messages {
+            whenNoDataFound: <p style="text-align:center;">No Data Found.</p>
+        }
+
+        column BILLING (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column BILLING_LOCATION (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Billing Location
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 22
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column CUSTOMER_NAME (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DEAL_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 10
+            }
+        )
+
+        column DEAL_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column DELIVERY (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 19
+            }
+        )
+
+        column DELIVERY_DATE (
+            reportColumnQueryId: 24
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 24
+            }
+        )
+
+        column DELIVERY_LOCATION (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column NEW_IMPORTED_FLAG (
+            reportColumnQueryId: 25
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 25
+            }
+        )
+
+        column NEXT_ORDER_DATE (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 21
+            }
+        )
+
+        column ORDER_DATE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Order Date
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            columnFormatting {
+                htmlExpression: <span style="white-space:nowrap;">#ORDER_DATE#</span>
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ORDER_FREQUENCY (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 20
+            }
+        )
+
+        column ORDER_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 9
+            }
+        )
+
+        column ORDER_NUMBER (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Order Number
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 103
+                    items: {
+                        P103_ORDER_ID: #ORDER_ID#
+                        P103_DEAL_ID: #DEAL_ID#
+                        P103_SOURCE_PAGE: 102
+                        P103_ORDER_STATUS: #ORDER_STATUS#
+                        P103_EXPORTED_FLAG: #NEW_IMPORTED_FLAG#
+                        P103_REPEAT_ORDER_FLAG: N
+                    }
+                    action: resetPagination
+                }
+                linkText: #ORDER_NUMBER#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ORDER_STATUS (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 22
+            }
+        )
+
+        column ORDER_VALUE (
+            reportColumnQueryId: 23
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 23
+            }
+        )
+
+        column PO_DATE (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 16
+            }
+        )
+
+        column PO_NUMBER (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column REFERENCE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+        column REP_NAME (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column SALES_REP (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Sales Rep
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 21
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 8
+            }
+        )
+
+        column TALLY_REFERENCE_NUMBER (
+            reportColumnQueryId: 27
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 27
+            }
+        )
+
+        column TERRITORY_ID (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+        column UPDATED_IN_TALLY (
+            reportColumnQueryId: 26
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 26
+            }
+        )
+
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @nbsp-2
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

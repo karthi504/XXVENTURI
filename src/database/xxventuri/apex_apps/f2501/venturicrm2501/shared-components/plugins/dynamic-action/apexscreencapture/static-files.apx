@@ -1,0 +1,60 @@
+file apexscreencapture.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file apexscreencapture.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file canvg-all.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file canvg-all.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file es6-promise.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file es6-promise.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file html2canvas.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file html2canvas.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file jquery.dom-outline-1.0.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file jquery.dom-outline-1.0.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file jspdf.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file jspdf.min.js (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+

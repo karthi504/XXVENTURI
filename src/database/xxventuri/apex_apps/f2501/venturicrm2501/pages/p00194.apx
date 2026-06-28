@@ -1,0 +1,544 @@
+page 194 (
+    name: Update Details
+    title: Update Complaint Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region update-complaint-details (
+        name: Update Complaint Details
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+            excludeTitleFromTranslation: true
+        }
+    )
+
+    pageItem P194_COMPLAINT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @update-complaint-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_CORRECTIVE_ACTION (
+        type: textField
+        label {
+            label: Corrective Action
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CORRECTIVE_ACTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_PREVENTIVE_ACTION (
+        type: textField
+        label {
+            label: Preventive Action
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PREVENTIVE_ACTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_RAISED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @update-complaint-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RAISED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_RESOLVED_BY (
+        type: plugin/select2
+        label {
+            label: Resolved By
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS
+                where  (upper(ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                order by 1
+                ```
+        }
+        layout {
+            sequence: 80
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            customAttributes: style="width:70%;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RESOLVED_BY
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &USER_ID.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_RESOLVED_DATE (
+        type: datePickerJquery
+        label {
+            label: Resolved On
+            alignment: left
+        }
+        settings {
+            minDate: &P194_RAISED_DATE.
+            maxDate: +0d
+        }
+        layout {
+            sequence: 70
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RESOLVED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_RESOLVED_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 70
+            height: 5
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RESOLVED_REMARKS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_ROOT_CAUSE (
+        type: textField
+        label {
+            label: Root Cause
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ROOT_CAUSE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P194_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:New;N,In Progress;I,Completed;C
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @update-complaint-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: style="width:25%;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @update-complaint-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @update-complaint-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to delete?', 'DELETE');
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button update (
+        buttonName: UPDATE
+        label: Update
+        layout {
+            sequence: 30
+            region: @update-complaint-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-dialog (
+        name: Close dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-hide (
+        name: Show/Hide
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P194_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: P194_STATUS
+            value: C
+        }
+
+        action native-hide (
+            action: hide
+            settings {
+                hidePageItemsOnSameLine: true
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P194_RESOLVED_DATE
+                    P194_RESOLVED_BY
+                ]
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            settings {
+                showAllOnSameLine: true
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P194_RESOLVED_DATE
+                    P194_RESOLVED_BY
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process automatic-row-fetch (
+        name: Automatic Row Fetch
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_CUSTOMER_COMPLAINTS_T
+            pkColumn: COMPLAINT_ID
+            pkItem: P194_COMPLAINT_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 299294284569587258
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 295871691257998586
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: UPDATE,DELETE
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  IF :P194_COMPLAINT_ID IS NOT NULL THEN
+                    UPDATE xxeba_customer_complaints_t
+                    SET status         = 'X'
+                    WHERE complaint_id = :P194_COMPLAINT_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 204972862154759046
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process update-process (
+        name: Update Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  IF :P194_COMPLAINT_ID IS NOT NULL THEN
+                    UPDATE xxeba_customer_complaints_t
+                    SET root_cause      = :P194_ROOT_CAUSE,
+                      corrective_action = :P194_CORRECTIVE_ACTION,
+                      preventive_action = :P194_PREVENTIVE_ACTION,
+                      resolved_remarks  = :P194_RESOLVED_REMARKS,
+                      resolved_by       = :P194_RESOLVED_BY,
+                      resolved_date     = :P194_RESOLVED_DATE,
+                      status            = :P194_STATUS
+                    WHERE complaint_id  = :P194_COMPLAINT_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 295871864437998588
+        }
+        serverSideCondition {
+            whenButtonPressed: @update
+        }
+    )
+
+)
+

@@ -1,0 +1,281 @@
+page 521 (
+    name: Choose Lead Source
+    title: Choose Lead Source
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region choose-lead-source (
+        name: Choose Lead Source
+        type: list
+        source {
+            list: @mass-emails
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region choose-lead-source-2 (
+        name: Choose Lead Source
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @choose-lead-source
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region lead-contacts (
+        name: Lead Contacts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    contact_name,
+                    lead_email_01
+                FROM
+                    eba_sales_leads
+                WHERE
+                    account_id IS NULL
+                    and lead_source_id = :P521_LEAD_SOURCE
+                    and contact_name is not null 
+                    and lead_email_01  is not null;
+                ```
+            pageItemsToSubmit: P521_LEAD_SOURCE
+        }
+        layout {
+            sequence: 20
+            parentRegion: @choose-lead-source
+            slot: wizardSubRegions
+            column: 3
+            columnSpan: 8
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent2
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column CONTACT_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Contact Name
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column LEAD_EMAIL_01 (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Email Address
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+    )
+
+    pageItem P521_LEAD_SOURCE (
+        type: shuttle
+        label {
+            label: Lead Source
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT lead_source d, id r FROM eba_sales_lead_sources
+                union
+                select 'All' d, 0 r FROM eba_sales_lead_sources ORDER BY 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @choose-lead-source-2
+            slot: regionBody
+            alignment: left
+            column: 3
+            columnSpan: 7
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 10
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @choose-lead-source
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 519
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @choose-lead-source
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @choose-lead-source
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh-lead-contacts (
+        name: Refresh Lead Contacts
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P521_LEAD_SOURCE
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @lead-contacts
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    branch (
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 520
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 522
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

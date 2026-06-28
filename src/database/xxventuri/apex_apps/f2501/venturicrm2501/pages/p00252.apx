@@ -1,0 +1,591 @@
+page 252 (
+    name: Attendance Details
+    title: Attendance Details
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region attendance-details (
+        name: Attendance Details
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ATT_ID,
+                       EMPLOYEE_ID,
+                       initcap(EMPLOYEE_NAME) as EMPLOYEE_NAME ,
+                       ATTEND_DATE,
+                       ATTEND_INTIME,
+                       ATTEND_IN_LAT,
+                       ATTEND_IN_LONG,
+                       ATTEND_OUT_TIME,
+                       ATTEND_OUT_LAT,
+                       ATTEND_OUT_LONG,
+                       CLIENT_IP_ADDRESS,
+                       DEVICE_ID,
+                       SOURCE_APP,
+                       CREATED_BY,
+                       CREATED_DATE,
+                       UPDATED_BY,
+                       UPDATED_DATE,
+                       ATTEND_IN_LOCATION as in_location,
+                       ATTEND_OUT_LOCATION as out_location,
+                       replace(XXEBS_SALES_SECURITY_PKG.get_location_details(ATT_ID,'IN'),',,'  , ',') as start_location,
+                       replace(XXEBS_SALES_SECURITY_PKG.get_location_details(ATT_ID,'OUT'),',,' , ',')  as end_location
+                    from XXEBA_SALES_ATTENDANCE_T 
+                    where initcap(EMPLOYEE_NAME) <>'Admin'
+                  ORDER BY ATTEND_DATE DESC
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        comments {
+            comments:
+                ```
+                select ATT_ID,
+                       EMPLOYEE_ID,
+                       initcap(EMPLOYEE_NAME) as EMPLOYEE_NAME ,
+                       ATTEND_DATE,
+                       ATTEND_INTIME,
+                       ATTEND_IN_LAT,
+                       ATTEND_IN_LONG,
+                       ATTEND_OUT_TIME,
+                       ATTEND_OUT_LAT,
+                       ATTEND_OUT_LONG,
+                       CLIENT_IP_ADDRESS,
+                       DEVICE_ID,
+                       SOURCE_APP,
+                       CREATED_BY,
+                       CREATED_DATE,
+                       UPDATED_BY,
+                       UPDATED_DATE,
+                       --to_char(ATTEND_INTIME, 'HH:MI PM') || replace(regexp_replace(GET_GEO_LOCATION(ATTEND_IN_LAT,ATTEND_IN_LONG),'[0123456789.]',''),'IN',',')  as in_time_location,
+                       --to_char(ATTEND_OUT_TIME, 'HH:MI PM')|| replace(regexp_replace(GET_GEO_LOCATION(ATTEND_OUT_LAT,ATTEND_OUT_LONG),'[0123456789.]',''),'IN',',') as out_time_location
+                     /*case when ATTEND_IN_LAT is not null and ATTEND_IN_LONG is not null then
+                   replace(replace(replace(regexp_replace(XXEBS_SALES_SECURITY_PKG.GET_GEO_LOCATION(ATTEND_IN_LAT,ATTEND_IN_LONG),'[0123456789.]',''),'IN',','),'Tamil Nadu',''),',','')
+                     else null
+                     end as in_location,
+                     case when ATTEND_OUT_LAT is not null and ATTEND_OUT_LONG is not null then 
+                     replace(replace(replace(regexp_replace(XXEBS_SALES_SECURITY_PKG.GET_GEO_LOCATION(ATTEND_OUT_LAT,ATTEND_OUT_LONG),'[0123456789.]',''),'IN',',') ,'Tamil Nadu',''),',','')
+                     else null
+                     end as 
+                     out_location*/
+                    from XXEBA_SALES_ATTENDANCE_T where initcap(EMPLOYEE_NAME) <>'Admin'
+                  ORDER BY ATTEND_DATE DESC
+                ```
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 202015858353827046
+        }
+
+        column ATTEND_DATE (
+            type: plainText
+            heading {
+                heading: Attendance Date
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column ATTEND_INTIME (
+            type: plainText
+            heading {
+                heading: Start Time
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: " HH:MI PM"
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ATTEND_IN_LAT (
+            type: hidden
+            heading {
+                heading: Attend In Lat
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ATTEND_IN_LONG (
+            type: hidden
+            heading {
+                heading: Attend In Long
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ATTEND_OUT_LAT (
+            type: hidden
+            heading {
+                heading: Attend Out Lat
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ATTEND_OUT_LONG (
+            type: hidden
+            heading {
+                heading: Attend Out Long
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ATTEND_OUT_TIME (
+            type: plainText
+            heading {
+                heading: End Time
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: " HH:MI PM"
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column ATT_ID (
+            type: hidden
+            heading {
+                heading: Att Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CLIENT_IP_ADDRESS (
+            type: hidden
+            heading {
+                heading: Client Ip Address
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED_DATE (
+            type: hidden
+            heading {
+                heading: Created Date
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DEVICE_ID (
+            type: hidden
+            heading {
+                heading: Device Id
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column EMPLOYEE_ID (
+            type: hidden
+            heading {
+                heading: Employee Id
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column EMPLOYEE_NAME (
+            type: plainText
+            heading {
+                heading: Name
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                htmlDomId: IRCSS120
+                endUserAlias: C
+            }
+        )
+
+        column END_LOCATION (
+            type: plainText
+            heading {
+                heading: End Location
+            }
+            layout {
+                sequence: 57
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column IN_LOCATION (
+            type: plainText
+            heading {
+                heading: IN Location
+            }
+            layout {
+                sequence: 27
+            }
+            source {
+                dataType: STRING
+            }
+            columnFilter {
+                type: none
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column OUT_LOCATION (
+            type: plainText
+            heading {
+                heading: OUT Location
+            }
+            layout {
+                sequence: 37
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column SOURCE_APP (
+            type: hidden
+            heading {
+                heading: Source App
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column START_LOCATION (
+            type: plainText
+            heading {
+                heading: Start Location
+            }
+            layout {
+                sequence: 47
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED_DATE (
+            type: hidden
+            heading {
+                heading: Updated Date
+            }
+            layout {
+                sequence: 17
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Q
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2020231 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ATTEND_DATE (
+                sequence: 1
+            )
+
+            displayColumn ATTEND_INTIME (
+                sequence: 3
+            )
+
+            displayColumn ATTEND_OUT_TIME (
+                sequence: 4
+            )
+
+            displayColumn EMPLOYEE_NAME (
+                sequence: 2
+            )
+
+            displayColumn END_LOCATION (
+                sequence: 6
+            )
+
+            displayColumn START_LOCATION (
+                sequence: 5
+            )
+
+            sort (
+                column: ATTEND_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: EMPLOYEE_NAME
+                sort {
+                    sequence: 2
+                }
+            )
+
+            controlBreak (
+                column: ATTEND_DATE
+                layout {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region attendance-details-2 (
+        name: Attendance Details
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 20
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+)
+

@@ -1,0 +1,558 @@
+page 150 (
+    name: New Customers
+    title: New Customers
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region accounts (
+        name: Accounts
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region new-customers (
+        name: New Customers
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.id,
+                  c.row_key,
+                    case customer_is_key_account_yn
+                      when 'Y' then 'Yes'
+                      when 'N' then 'No'
+                    end key_account,
+                 -- c.customer_stock_symb,
+                --  c.customer_duns,
+                --  c.customer_sic,
+                  c.customer_web_site,
+                  --c.customer_facebook,
+                  c.customer_linkedin,
+                 -- c.customer_twitter,
+                  c.customer_description,c.Account_source ,c.GST_NO, 
+                  c.tags,
+                  c.created,
+                  lower(c.created_by) created_by,
+                  c.updated,
+                  lower(c.updated_by) updated_by,
+                  t.id territory_id,
+                  t.territory_name,
+                  case
+                    when c.default_rep_id is not null
+                    then (
+                      select rep_first_name || ' ' || rep_last_name
+                      from eba_sales_salesreps sr
+                      where sr.id = c.default_rep_id
+                    )
+                  end default_rep
+                from eba_sales_customers c, eba_sales_territories t
+                where  t.id = c.customer_territory_id and c.status='A'
+                and c.CREATED BETWEEN :P150_FROM_DATE AND :P150_TO_DATE 
+                ```
+            pageItemsToSubmit: [
+                P150_FROM_DATE
+                P150_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 20
+            parentRegion: @accounts
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 253328675177977112
+        }
+
+        column ACCOUNT_SOURCE (
+            type: plainText
+            heading {
+                heading: Source
+            }
+            layout {
+                sequence: 127
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Added On
+                alignment: center
+            }
+            layout {
+                sequence: 27
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Added By
+            }
+            layout {
+                sequence: 37
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column CUSTOMER_DESCRIPTION (
+            type: hidden
+            heading {
+                heading: Customer description
+            }
+            layout {
+                sequence: 117
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_LINKEDIN (
+            type: hidden
+            heading {
+                heading: Customer linkedin
+            }
+            layout {
+                sequence: 107
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_WEB_SITE (
+            type: hidden
+            heading {
+                heading: Customer web site
+            }
+            layout {
+                sequence: 97
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DEFAULT_REP (
+            type: hidden
+            heading {
+                heading: Default rep
+            }
+            layout {
+                sequence: 177
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AG
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column GST_NO (
+            type: hidden
+            heading {
+                heading: Gst no
+            }
+            layout {
+                sequence: 137
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Account Name
+            }
+            lov {
+                lov: @accounts
+            }
+            layout {
+                sequence: 67
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column KEY_ACCOUNT (
+            type: plainText
+            heading {
+                heading: Key account
+            }
+            layout {
+                sequence: 87
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column ROW_KEY (
+            type: hidden
+            heading {
+                heading: Row key
+            }
+            layout {
+                sequence: 77
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TAGS (
+            type: hidden
+            heading {
+                heading: Tags
+            }
+            layout {
+                sequence: 147
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TERRITORY_ID (
+            type: hidden
+            heading {
+                heading: Territory id
+            }
+            layout {
+                sequence: 157
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AE
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory Name
+            }
+            layout {
+                sequence: 167
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column UPDATED (
+            type: hidden
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 47
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: J
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 57
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1267153 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACCOUNT_SOURCE (
+                sequence: 4
+            )
+
+            displayColumn CREATED (
+                sequence: 5
+            )
+
+            displayColumn CREATED_BY (
+                sequence: 6
+            )
+
+            displayColumn ID (
+                sequence: 1
+            )
+
+            displayColumn KEY_ACCOUNT (
+                sequence: 3
+            )
+
+            displayColumn TERRITORY_NAME (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    pageItem P150_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From Date
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @new-customers
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P150_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: "To "
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new-customers
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: Go
+        label: Go
+        layout {
+            sequence: 30
+            region: @new-customers
+            slot: regionBody
+            startNewRow: false
+            column: 7
+            columnSpan: 1
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="margin-top: 4px; "
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @new-customers
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

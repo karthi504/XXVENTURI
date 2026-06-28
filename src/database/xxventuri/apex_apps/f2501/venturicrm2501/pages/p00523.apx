@@ -1,0 +1,1078 @@
+page 523 (
+    name: Review
+    title: Review
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            .delete-accrow{
+                color:red;
+            }
+            
+            .delete-leadrow{
+                color:red;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region accounts-contacts (
+        name: Accounts Contacts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    seq_id as sno,
+                    c001 as customer_id,
+                    c002 as contact_name,
+                    c003 as contact_email,
+                    c004 as customer_name,
+                    c005 as industry_name,
+                    ' ' as  delete_acc
+                FROM
+                  apex_collections
+                WHERE collection_name = 'P523_ACCOUNT_COLLECTION'  
+                order by seq_id, c005, c004
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @review-accounts-and-contacts
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--accent1
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column CONTACT_EMAIL (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Contact Email
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CONTACT_NAME (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Contact Name
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column CUSTOMER_NAME (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Account
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DELETE_ACC (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(null);
+                }
+                linkText: <span class="t-Icon fa fa-trash delete-accrow" aria-hidden="true"></span>
+                linkAttributes: data-id=#SNO#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column INDUSTRY_NAME (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Industry
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SNO (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: SNo.
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region lead-contacts (
+        name: Lead Contacts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    seq_id as sno,
+                    c001 as lead,
+                    c002 as email,
+                    c003 as contact_name,
+                    c004 as lead_source,
+                    ' ' as  delete_acc
+                FROM
+                  apex_collections
+                WHERE collection_name = 'P523_LEADS_COLLECTION'
+                order by seq_id, c003
+                ```
+        }
+        layout {
+            sequence: 50
+            parentRegion: @review-accounts-and-contacts
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--accent4
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column CONTACT_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column DELETE_ACC (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(null);
+                }
+                linkText: <span class="t-Icon fa fa-trash delete-leadrow" aria-hidden="true"></span>
+                linkAttributes: data-id=#SNO#
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column EMAIL (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LEAD (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Lead Name
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LEAD_SOURCE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Type
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SNO (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: SNo.
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region review-accounts-and-contacts (
+        name: Review Accounts and Contacts
+        type: list
+        source {
+            list: @mass-emails
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region selection-summary (
+        name: Selection Summary
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    nvl(acc.accounts,0)   AS accounts_total,
+                    nvl(lcc.leads,0)      AS leads_total,
+                    (acc.accounts + lcc.leads) total_contacts
+                FROM 
+                (
+                    SELECT
+                        COUNT(*) AS accounts
+                    FROM
+                        apex_collections
+                    WHERE
+                        collection_name = 'P523_ACCOUNT_COLLECTION'
+                ) acc, 
+                (
+                    SELECT
+                        COUNT(*) AS leads
+                    FROM
+                        apex_collections
+                    WHERE
+                        collection_name = 'P523_LEADS_COLLECTION'
+                ) lcc 
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @review-accounts-and-contacts
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--accent5
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @badge-list
+            templateOptions: [
+                #DEFAULT#
+                t-BadgeList--large
+                t-BadgeList--cols t-BadgeList--3cols
+                t-BadgeList--circular
+            ]
+            showNullValuesAs: -
+        }
+
+        column ACCOUNTS_TOTAL (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Accounts
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+        column LEADS_TOTAL (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Leads
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column TOTAL_CONTACTS (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Total Contacts
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+    region subject (
+        name: Subject
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select :p520_subject as subject from dual
+            pageItemsToSubmit: P523_SELECT_TEMPLATE
+        }
+        layout {
+            sequence: 20
+            parentRegion: @review-accounts-and-contacts
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--accent4
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        heading {
+            type: none
+        }
+
+        column SUBJECT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Subject
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+    )
+
+    region subject-p520-subject (
+        name: Subject: &P520_SUBJECT.
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select replace(:p520_mail_body_content, '#Name#',:P523_MAIL_CONTENT_NAME) as mail_body_content from dual
+            pageItemsToSubmit: P523_SELECT_TEMPLATE
+        }
+        layout {
+            sequence: 30
+            parentRegion: @review-accounts-and-contacts
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                is-expanded
+                t-Region--accent2
+                t-Region--scrollBody
+            ]
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        heading {
+            type: none
+        }
+
+        column MAIL_BODY_CONTENT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Mail Body Content
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+    )
+
+    pageItem P523_ACCOUNT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @accounts-contacts
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P523_LEAD_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @lead-contacts
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P523_MAIL_CONTENT_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @subject-p520-subject
+            slot: regionBody
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                
+                 v_name varchar2(4000);
+                BEGIN
+                      BEGIN
+                        SELECT
+                            c002 into v_name
+                        FROM
+                          apex_collections
+                        WHERE collection_name = 'P523_ACCOUNT_COLLECTION'  
+                        and seq_id = 1;
+                      EXCEPTION WHEN NO_DATA_FOUND THEN
+                         BEGIN   
+                            SELECT
+                                c001 into v_name
+                            FROM
+                              apex_collections
+                            WHERE collection_name = 'P523_LEADS_COLLECTION'
+                            and seq_id = 1;
+                         EXCEPTION WHEN NO_DATA_FOUND THEN
+                            v_name := '#Name#';
+                         END;
+                      END;
+                
+                return v_name;
+                
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @review-accounts-and-contacts
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 519
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @review-accounts-and-contacts
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button submit (
+        buttonName: SUBMIT
+        label: Submit
+        layout {
+            sequence: 40
+            region: @review-accounts-and-contacts
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm ('Press OK to send mail?','SUBMIT');
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-account-id (
+        name: Set Account ID
+        execution {
+            sequence: 20
+            eventScope: dynamic
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: .delete-accrow
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_collection.delete_member('P523_ACCOUNT_COLLECTION', :P523_ACCOUNT_ID);
+                itemsToSubmit: P523_ACCOUNT_ID
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @accounts-contacts
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @selection-summary
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: jsExpression
+                jsExpression: $(this.triggeringElement).parent().data('id')
+            }
+            affectedElements {
+                selectionType: items
+                items: P523_ACCOUNT_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-lead-id (
+        name: Set Lead ID
+        execution {
+            sequence: 10
+            eventScope: dynamic
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: .delete-leadrow
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_collection.delete_member('P523_LEADS_COLLECTION', :P523_LEAD_ID);
+                itemsToSubmit: P523_LEAD_ID
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @lead-contacts
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @selection-summary
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: jsExpression
+                jsExpression: $(this.triggeringElement).parent().data('id')
+            }
+            affectedElements {
+                selectionType: items
+                items: P523_LEAD_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    process generate-accounts-collection (
+        name: Generate Accounts Collection
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                	CURSOR Cled is
+                	SELECT
+                		customer_id,
+                		contact_name,
+                		contact_email,
+                		cus.customer_name,
+                		industry_name
+                	FROM
+                		eba_sales_customer_contacts   con,
+                		eba_sales_customers           cus,
+                		eba_sales_industries          ind
+                	WHERE
+                		con.customer_id = cus.id
+                		AND cus.industry_id = ind.id
+                		AND contact_name IS NOT NULL
+                		AND contact_email IS NOT NULL
+                		AND instr(':'||:P522_ACCOUNTS||':', ':'||customer_id||':') > 0;
+                		rled cled%rowtype;
+                BEGIN
+                
+                	apex_collection.create_or_truncate_collection(p_collection_name      => 'P523_ACCOUNT_COLLECTION');
+                										
+                	for rled in cled
+                	LOOP
+                		apex_collection.add_member (p_collection_name      => 'P523_ACCOUNT_COLLECTION',
+                									p_c001                 => rled.customer_id,
+                                                    p_c002                 => rled.contact_name,
+                									p_c003				   => rled.contact_email,
+                									p_c004				   => rled.customer_name,
+                									p_c005				   => rled.industry_name
+                                                   );
+                	END LOOP;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 158030785118622134
+        }
+    )
+
+    process generate-leads-collection (
+        name: Generate Leads Collection
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                	CURSOR Cled is
+                	SELECT
+                    lead_name_01,
+                    lead_email_01,
+                    contact_name,
+                    (
+                        SELECT
+                            lead_source
+                        FROM
+                            eba_sales_acc_sources
+                        WHERE
+                            id = lead_source_id
+                    ) lead_source
+                FROM
+                    eba_sales_leads
+                WHERE
+                    instr(':'
+                          || :p521_lead_source
+                          || ':', ':'
+                                  || lead_source_id
+                                  || ':') > 0
+                    AND account_id IS NULL
+                    AND account_name IS NOT NULL
+                    AND lead_email_01 IS NOT NULL
+                    AND contact_name IS NOT NULL
+                UNION
+                SELECT
+                    lead_name_01,
+                    lead_email_01,
+                    contact_name,
+                    (
+                        SELECT
+                            lead_source
+                        FROM
+                            eba_sales_acc_sources
+                        WHERE
+                            id = lead_source_id
+                    ) lead_source
+                FROM
+                    eba_sales_leads
+                WHERE
+                    instr(':'
+                          || replace(:p521_lead_source, ':', ' ')
+                          || ':', ':'
+                                  || 0
+                                  || ':') = 1
+                    AND account_id IS NULL
+                    AND account_name IS NOT NULL
+                    AND lead_email_01 IS NOT NULL
+                    AND contact_name IS NOT NULL;
+                		rled cled%rowtype;
+                BEGIN
+                
+                	apex_collection.create_or_truncate_collection(p_collection_name      => 'P523_LEADS_COLLECTION');
+                										
+                	for rled in cled
+                	LOOP
+                		apex_collection.add_member (p_collection_name      => 'P523_LEADS_COLLECTION',
+                									p_c001                 => rled.lead_name_01,
+                                                    p_c002                 => rled.lead_email_01,
+                									p_c003				   => rled.contact_name,
+                									p_c004				   => rled.lead_source                                  
+                                                   );
+                	END LOOP;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 160067364856015497
+        }
+    )
+
+    process send-mass-email-process (
+        name: Send Mass Email Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    CURSOR ccol IS
+                    SELECT
+                        c002   AS contact_name,
+                        c003   AS contact_email
+                    FROM
+                        apex_collections
+                    WHERE
+                        collection_name = 'P523_ACCOUNT_COLLECTION'
+                    UNION
+                    SELECT
+                        c003   AS contact_name,
+                        c002   AS contact_email
+                    FROM
+                        apex_collections
+                    WHERE
+                        collection_name = 'P523_LEADS_COLLECTION';
+                
+                    rcol          ccol%rowtype;
+                    v_body_html   CLOB;
+                    v_body        CLOB;
+                    v_mass_email_id NUMBER;
+                BEGIN
+                    v_body := 'To view the content of this message, please use an HTML enabled mail client.' || utl_tcp.crlf;
+                    
+                    IF :p520_mail_body_content IS NOT NULL AND :p520_subject IS NOT NULL THEN
+                    
+                         INSERT INTO xxeba_mass_emails_t (
+                                    template_id,
+                                    mail_content
+                                ) VALUES (
+                                    :p520_select_template,
+                                    :p520_mail_body_content
+                                ) RETURNING mass_email_id INTO v_mass_email_id;
+                                
+                        FOR rcol IN ccol LOOP
+                            v_body_html := replace(:p520_mail_body_content, '#Name#', rcol.contact_name);
+                            
+                            BEGIN               
+                                INSERT INTO xxeba_mass_email_details_t (
+                                    mass_email_id,
+                                    mail_to,
+                                    mail_cc,
+                                    subject,
+                                    contact_name                    
+                                ) VALUES (
+                                    v_mass_email_id,
+                                    rcol.contact_email,
+                                    NULL,
+                                    :p520_subject,
+                                    rcol.contact_name                    
+                                );
+                
+                            END;
+                
+                            apex_mail.send(
+                                           p_to         => rcol.contact_email, 
+                                           p_from       => 'CRM Desk "@" Venturi Tools <crm_desk@4iapps.com>', 
+                                           p_subj       => :p520_subject, 
+                                           p_body       => v_body, 
+                                           p_body_html  => v_body_html
+                                           );
+                                     apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);                             
+                        END LOOP;
+                    END IF;
+                    apex_collection.truncate_collection('P523_LEADS_COLLECTION');
+                    apex_collection.truncate_collection('P523_ACCOUNT_COLLECTION');
+                EXCEPTION WHEN OTHERS THEN
+                raise_application_error(-20001, SQLERRM);
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Mail Sent Successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 160069058433015514
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 522
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        name: Go To Page 519
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 100
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @submit
+        }
+    )
+
+)
+

@@ -1,0 +1,325 @@
+page 201 (
+    name: Accounts
+    alias: ACCOUNTS
+    title: Accounts
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 350
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region account (
+        name: Account
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                    customer_name  AS Account
+                   -- TO_CHAR(CREATED, 'Mon-YY') AS month_wise,
+                    --TO_CHAR(CREATED, 'MM-YY') AS month_id
+                FROM 
+                    eba_sales_customers
+                WHERE 
+                    --CREATED >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -5) 
+                     STATUS = 'A'
+                   AND  TO_CHAR(CREATED, 'Mon-YY') = :P201_MONTH_WISE_1 -- Filter by the selected month
+                    AND (
+                        (DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID)
+                         AND NOT EXISTS (
+                            SELECT 'Y'
+                            FROM EBA_SALES_SALESREPS SR,
+                                 EBA_SALES_SALESREP_ROLES R
+                            WHERE SR.REP_ROLE = R.ID
+                              AND UPPER(R.ROLE_NAME) IN ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                              AND UPPER(SR.USER_NAME) = :APP_USER
+                        ))
+                        OR (
+                            ((DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID)
+                              OR UPPER(:P100_MONTHWISE_ACCOUNTS) IS NULL)
+                             AND CREATED_BY IN (
+                                SELECT UPPER(USER_NAME)
+                                FROM EBA_SALES_SALESREPS R
+                                START WITH R.ID = :USER_ID
+                                CONNECT BY PRIOR R.ID = R.REP_MANAGER_ID
+                            ))
+                            AND EXISTS (
+                                SELECT 'Y'
+                                FROM EBA_SALES_SALESREPS SR,
+                                     EBA_SALES_SALESREP_ROLES R
+                                WHERE SR.REP_ROLE = R.ID
+                                  AND UPPER(R.ROLE_NAME) = 'TEAM LEADER - SALES'
+                                  AND UPPER(SR.USER_NAME) = UPPER(:APP_USER)
+                            )
+                        )
+                        OR (
+                            (DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID)
+                             OR :P100_MONTHWISE_ACCOUNTS IS NULL)
+                            AND EXISTS (
+                                SELECT 'Y'
+                                FROM EBA_SALES_SALESREPS SR,
+                                     EBA_SALES_SALESREP_ROLES R
+                                WHERE SR.REP_ROLE = R.ID
+                                  AND UPPER(R.ROLE_NAME) = 'ADMINISTRATOR'
+                                  AND UPPER(SR.USER_NAME) = :APP_USER
+                            )
+                        )
+                    )
+                ORDER BY 
+                    customer_name;
+                
+                ```
+            pageItemsToSubmit: P201_MONTH_WISE_1
+        }
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        comments {
+            comments:
+                ```
+                -- select * from eba_sales_customers
+                -- where to_char(CREATED, 'MM-YY')=:P201_MONTH_WISE
+                ```
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column ACCOUNT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Account
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region accounts (
+        name: Accounts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                  CUSTOMER_NAME,
+                  TO_CHAR(CREATED, 'Mon-YY') AS month_wise,
+                  TO_CHAR(CREATED, 'MM-YY') AS month_id
+                FROM eba_sales_customers
+                WHERE CREATED >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -5) 
+                  AND STATUS = 'A'
+                  AND (
+                    (
+                      DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID)
+                      AND NOT EXISTS (
+                        SELECT 1
+                        FROM EBA_SALES_SALESREPS SR
+                        JOIN EBA_SALES_SALESREP_ROLES R ON SR.REP_ROLE = R.ID
+                        WHERE UPPER(R.ROLE_NAME) IN ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                          AND UPPER(SR.USER_NAME) = :APP_USER
+                      )
+                    )
+                    OR (
+                      (
+                        DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID) 
+                        OR UPPER(:P100_MONTHWISE_ACCOUNTS) IS NULL
+                      )
+                      AND CREATED_BY IN (
+                        SELECT UPPER(USER_NAME)
+                        FROM EBA_SALES_SALESREPS R
+                        START WITH R.ID = :USER_ID
+                        CONNECT BY PRIOR R.ID = R.REP_MANAGER_ID
+                      )
+                      AND EXISTS (
+                        SELECT 1
+                        FROM EBA_SALES_SALESREPS SR
+                        JOIN EBA_SALES_SALESREP_ROLES R ON SR.REP_ROLE = R.ID
+                        WHERE UPPER(R.ROLE_NAME) = 'TEAM LEADER - SALES'
+                          AND UPPER(SR.USER_NAME) = UPPER(:APP_USER)
+                      )
+                    )
+                    OR (
+                      DEFAULT_REP_ID = NVL(UPPER(:P100_MONTHWISE_ACCOUNTS), :USER_ID)
+                      OR :P100_MONTHWISE_ACCOUNTS IS NULL
+                      AND EXISTS (
+                        SELECT 1
+                        FROM EBA_SALES_SALESREPS SR
+                        JOIN EBA_SALES_SALESREP_ROLES R ON SR.REP_ROLE = R.ID
+                        WHERE UPPER(R.ROLE_NAME) = 'ADMINISTRATOR'
+                          AND UPPER(SR.USER_NAME) = :APP_USER
+                      )
+                    )
+                  )
+                ORDER BY TO_DATE(month_id, 'MM-YY') ASC;
+                
+                
+                
+                
+                ```
+            pageItemsToSubmit: [
+                P100_ACC
+                P201_MONTH_WISE
+            ]
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        comments {
+            comments:
+                ```
+                -- select * from eba_sales_customers
+                -- where to_char(CREATED, 'MM-YY')=:P201_MONTH_WISE
+                ```
+        }
+        reportLayout {
+            numberOfRows: 50
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--staticRowColors
+                t-Report--rowHighlight
+                t-Report--inline
+                t-Report--hideNoPagination
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+
+        column CUSTOMER_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Account Name
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MONTH_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Month Id
+            }
+            layout {
+                sequence: 24
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column MONTH_WISE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Month Wise
+            }
+            layout {
+                sequence: 14
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    pageItem P201_MONTH_WISE (
+        type: textField
+        label {
+            label: Month Wise
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @accounts
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P201_MONTH_WISE_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @account
+            slot: regionBody
+        }
+    )
+
+)
+

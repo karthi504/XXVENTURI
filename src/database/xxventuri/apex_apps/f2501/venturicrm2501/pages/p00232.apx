@@ -1,0 +1,587 @@
+page 232 (
+    name: Upload Document
+    title: Upload Document
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-kit-files (
+        name: Form on XXEBA_SALES_KIT_FILES
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P232_FILE_CHARSET (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_CHARSET
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 600
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_COMMENTS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_IMAGES (
+        type: fileUpload
+        label {
+            label: Upload
+            alignment: left
+        }
+        display {
+            displayAs: nativeFileBrowse
+        }
+        storage {
+            mimeTypeColumn: FILE_MIMETYPE
+            filenameColumn: FILE_NAME
+            charSetColumn: FILE_CHARSET
+            bobLastUpdatedColumn: FILE_LAST_UPDATE
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_IMAGES
+            used: always
+        }
+    )
+
+    pageItem P232_FILE_LAST_UPDATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_LAST_UPDATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_MIMETYPE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_MIMETYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_TITLE (
+        type: textField
+        label {
+            label: Document Name
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 400
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_TITLE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_FILE_TYPE_ID (
+        type: selectList
+        label {
+            label: Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                LIST_VALUE AS D, LIST_ID as r 
+                from XXEBA_LIST_VALUES
+                where  LIST_CODE='SALES_KIT_TYPE' and LIST_ID <> 132
+                order by LIST_ID;
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select Type -
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_TYPE_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_KIT_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: KIT_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_REP_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P232_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-sales-kit-files
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P232_KIT_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P232_KIT_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: belowBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+                t-Button--simple
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P232_KIT_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P232_KIT_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation file-validations (
+        name: File Validations
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P232_FILE_IMAGES is null then
+                        return 'Please upload the document.';
+                    end if;
+                    return null;
+                end;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 27054167779145595
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE XXEBA_SALES_KIT_FILES SET STATUS='N' WHERE KIT_ID=:P232_KIT_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 48549644246837868
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process delete-process-2 (
+        name: "Delete Process "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE XXEBA_SALES_KIT_FILES SET STATUS='N' WHERE KIT_ID=:P232_KIT_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+            point: newSession
+        }
+        advanced {
+            executionMappingIdentifier: 48549591582837867
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-kit (
+        name: Fetch Row from XXEBA_SALES_KIT
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_KIT_FILES
+            pkColumn: KIT_ID
+            pkItem: P232_KIT_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 27052928473145593
+        }
+    )
+
+    process process-row-of-xxeba-sales-kit-files (
+        name: Process Row of XXEBA_SALES_KIT_FILES
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_KIT_FILES
+            pkColumn: KIT_ID
+            pkItem: P232_KIT_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 27053383827145594
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 27053743225145595
+        }
+    )
+
+)
+

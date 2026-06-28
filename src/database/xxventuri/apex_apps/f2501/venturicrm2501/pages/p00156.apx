@@ -1,0 +1,377 @@
+page 156 (
+    name: Cities
+    title: Cities
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region city-details (
+        name: "City Details "
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P156_CITY_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @city-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CITY_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P156_CITY_NAME (
+        type: textField
+        label {
+            label: Name of the City
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @city-details
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 40
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CITY_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P156_COUNTRY_ID (
+        type: selectList
+        label {
+            label: Country
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select COUNTRY_NAME As d, ID As r from EBA_SALES_COUNTRIES
+        }
+        layout {
+            sequence: 40
+            region: @city-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 7
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COUNTRY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P156_STATE_ID (
+        type: selectList
+        label {
+            label: State
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select STATE As d,ID As r from EBA_SALES_STATES
+            displayExtraValues: false
+            nullDisplayValue: "- Select - "
+        }
+        layout {
+            sequence: 30
+            region: @city-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 7
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATE_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @city-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @city-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P156_CITY_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @city-details
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @city-details
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P156_CITY_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation duplicate-check (
+        name: duplicate_check
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                  lv_count number;
+                begin
+                
+                 if :P156_CITY_ID is null then 
+                     select count(*) into lv_count from XXEBA_SALES_CITIES_T where upper(CITY_NAME) = upper(:P156_CITY_NAME)
+                            and STATE_ID = :P156_STATE_ID;
+                 else
+                      select count(*) into lv_count from XXEBA_SALES_CITIES_T where upper(CITY_NAME) = upper(:P156_CITY_NAME)
+                            and STATE_ID = :P156_STATE_ID and CITY_ID != :P156_CITY_ID;
+                 end if; 
+                
+                  if lv_count > 0 then
+                        return 'Sorry! City Name already exists under this State.';
+                  end if;
+                       
+                end;
+                ```
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 30226600358314534
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-cities-t (
+        name: Fetch Row from XXEBA_SALES_CITIES_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_CITIES_T
+            pkColumn: CITY_ID
+            pkItem: P156_CITY_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 69180166357778746
+        }
+    )
+
+    process process-row-of-xxeba-sales-cities-t (
+        name: Process Row of XXEBA_SALES_CITIES_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_CITIES_T
+            pkColumn: CITY_ID
+            pkItem: P156_CITY_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 69180660818778746
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 69181026506778747
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

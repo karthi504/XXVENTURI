@@ -1,0 +1,740 @@
+page 151 (
+    name: Change Password
+    title: Change Password
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region change-password (
+        name: Change Password
+        type: staticContent
+        layout {
+            sequence: 1210
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P151_CHANGE (
+        type: radioGroup
+        label {
+            label: Change Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Password,PIN
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: static
+            staticValue: Password
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_CONFIRM_MPIN (
+        type: password
+        label {
+            label: Confirm PIN
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_CONFIRM_PASSWORD (
+        type: password
+        label {
+            label: Confirm Password
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_CURRENT_MPIN (
+        type: password
+        label {
+            label: Current PIN
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_CURRENT_PASSWORD (
+        type: password
+        label {
+            label: Current Password
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_NEW_MPIN (
+        type: password
+        label {
+            label: New PIN
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P151_NEW_PASSWORD (
+        type: password
+        label {
+            label: New Password
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @change-password
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @change-password
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button change-pin (
+        buttonName: CHANGE_PIN
+        label: Change PIN
+        layout {
+            sequence: 30
+            region: @change-password
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Change Password
+        layout {
+            sequence: 20
+            region: @change-password
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-pin (
+        name: Show/Hide PIN
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: items
+            items: P151_CHANGE
+        }
+        clientSideCondition {
+            type: item=value
+            item: P151_CHANGE
+            value: PIN
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P151_CURRENT_PASSWORD
+                    P151_NEW_PASSWORD
+                    P151_CONFIRM_PASSWORD
+                ]
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P151_CURRENT_MPIN
+                    P151_NEW_MPIN
+                    P151_CONFIRM_MPIN
+                ]
+            }
+            execution {
+                sequence: 30
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-hide-3 (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-hide-4 (
+            action: hide
+            affectedElements {
+                selectionType: button
+                button: @change-pin
+            }
+            execution {
+                sequence: 40
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P151_CURRENT_MPIN
+                    P151_NEW_MPIN
+                    P151_CONFIRM_MPIN
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P151_CURRENT_PASSWORD
+                    P151_NEW_PASSWORD
+                    P151_CONFIRM_PASSWORD
+                ]
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show-3 (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @change-pin
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show-4 (
+            action: show
+            affectedElements {
+                selectionType: button
+                button: @save
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    validation password-validation (
+        name: password_validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                    digitarray varchar2(50);
+                    punctarray varchar2(50);
+                    chararray varchar2(100);
+                    regular_expr varchar2(50);
+                    password    varchar2(50);
+                BEGIN
+                    password := :P151_NEW_PASSWORD;
+                    digitarray:= '[0123456789]';
+                    chararray:= '[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]';
+                  --  punctarray:='[!"#$%&()``*+,-/:;<=>?_@]';
+                 --   regular_expr:= '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]';
+                
+                    if length(password)<6   THEN
+                        return 'Password should contain atleast 6 characters';
+                    
+                   /* elsif regexp_instr(password,regular_expr) < 1   THEN
+                    raise_application_error(-20006, 'Password must contain at least one upper case letter.'); 
+                    elsif regexp_instr(password,punctarray) < 1   THEN
+                    raise_application_error(-20006, 'Password should contain at least one punctuation');
+                    */
+                    
+                    elsif regexp_instr(password,chararray) < 1   THEN
+                        return 'Password should contain atleast one Alphabet.';
+                        
+                    elsif regexp_instr(password,digitarray) < 1   THEN
+                       return 'Password should contain atleast one Number';
+                    
+                  --  else
+                    --DBMS_OUTPUT.PUT_LINE('Password Success');
+                    end if;
+                    
+                END;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+            associatedItem: @P151_NEW_PASSWORD
+        }
+    )
+
+    validation password-validations (
+        name: Password Validations
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P151_CURRENT_PASSWORD is null  then
+                        return 'Please fill out the Current Password';
+                    end if;
+                if :P151_NEW_PASSWORD is null  then
+                        return 'Please fill out the New Password';
+                    end if;
+                
+                if  :P151_CONFIRM_PASSWORD  is null  then
+                        return 'Please fill out the Confirm Password ';
+                    end if;
+                
+                end;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    validation pin-validation (
+        name: PIN_validation
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  
+                    pin   varchar2(50);
+                BEGIN
+                    pin := :P151_NEW_MPIN;
+                  
+                    if length(pin) > 4   THEN
+                        return 'PIN should contain  4 digit only.';
+                     end if;
+                      if length(pin) < 4   THEN
+                        return 'PIN should contain  atleast 4 digit.';
+                     end if;
+                    
+                END;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+            associatedItem: @P151_NEW_PASSWORD
+        }
+        serverSideCondition {
+            whenButtonPressed: @change-pin
+        }
+    )
+
+    validation pin-validations (
+        name: PIN Validations
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P151_CURRENT_MPIN is null  then
+                        return 'Please fill out the Current PIN';
+                    end if;
+                if :P151_NEW_MPIN is null  then
+                        return 'Please fill out the New PIN';
+                    end if;
+                
+                if  :P151_CONFIRM_MPIN  is null  then
+                        return 'Please fill out the Confirm PIN ';
+                    end if;
+                
+                end;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @change-pin
+        }
+    )
+
+    process check-and-change-password (
+        name: check_and_change_password
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  lv_current_password VARCHAR2(100);
+                  lv_new_password     VARCHAR2(100);
+                  lv_confirm_password VARCHAR2(100);
+                BEGIN
+                  IF :P151_CURRENT_PASSWORD = :P151_NEW_PASSWORD THEN
+                    raise_application_error(-20100,'Current Password cannot be set as New Password');
+                  END IF;
+                  IF :P151_NEW_PASSWORD <> :P151_CONFIRM_PASSWORD THEN
+                    raise_application_error(-20100,'New Password and Confirm Password does not match');
+                  END IF;
+                  --select PASSWORD into lv_current_password from EBA_SALES_SALESREPS where upper(USER_NAME) = upper(:APP_USER);
+                  SELECT PASSWORD
+                  INTO lv_current_password
+                  FROM EBA_SALES_SALESREPS
+                  WHERE ID = :USER_ID;
+                  IF XXEBS_SALES_SECURITY_PKG.get_password_hash_value(:P151_CURRENT_PASSWORD) <> lv_current_password THEN
+                    raise_application_error(-20100,'Current Password is incorrect');
+                  ELSE
+                    ---      update EBA_SALES_SALESREPS set password = :P151_NEW_PASSWORD where EMPLOYEE_CODE = :APP_USER;
+                    UPDATE EBA_SALES_SALESREPS
+                    SET PASSWORD = XXEBS_SALES_SECURITY_PKG.get_password_hash_value(:P151_NEW_PASSWORD)
+                    WHERE ID     = :USER_ID;
+                    -- update EBA_SALES_SALESREPS set PASSWORD = XXEBS_SALES_SECURITY_PKG.get_password_hash_value(:P151_NEW_PASSWORD)
+                    -- where upper(USER_NAME) = upper(:APP_USER);
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        error {
+            errorMessage: Password changed successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 90060235856958107
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process check-and-change-pin (
+        name: check_and_change_PIN
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  lv_current_pin  VARCHAR2(100);
+                BEGIN
+                  IF :P151_CURRENT_MPIN = :P151_NEW_MPIN THEN
+                    raise_application_error(-20100,'Current PIN cannot be set as New PIN.');
+                  END IF;
+                  IF :P151_NEW_MPIN <> :P151_CONFIRM_MPIN THEN
+                    raise_application_error(-20100,'New PIN and Confirm PIN does not match.');
+                  END IF;
+                  SELECT MPIN
+                  INTO lv_current_pin
+                  FROM EBA_SALES_SALESREPS
+                  WHERE ID = :USER_ID;
+                  IF :P151_CURRENT_MPIN <> lv_current_pin THEN
+                    raise_application_error(-20100,'Current PIN is incorrect.');
+                  ELSE
+                    UPDATE EBA_SALES_SALESREPS
+                    SET MPIN = :P151_NEW_MPIN
+                    WHERE ID     = :USER_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        error {
+            errorMessage: PIN changed successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 319375778827401151
+        }
+        serverSideCondition {
+            whenButtonPressed: @change-pin
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 319377020005401163
+        }
+        serverSideCondition {
+            whenButtonPressed: @change-pin
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 90060328249958108
+        }
+    )
+
+    branch (
+        name: Logout
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 101
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+)
+

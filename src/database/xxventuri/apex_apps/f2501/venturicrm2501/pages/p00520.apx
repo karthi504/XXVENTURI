@@ -1,0 +1,449 @@
+page 520 (
+    name: Choose Template
+    title: Choose Template
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region choose-template (
+        name: Choose Template
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region choose-template-2 (
+        name: Choose Template
+        type: list
+        source {
+            list: @mass-emails
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region choose-template-3 (
+        name: Choose Template
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @choose-template-2
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region mail-body-content (
+        name: Mail Body Content
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select MAIL_CONTENT from xxeba_email_templates_t xxeba_email_templates_t where template_id = :P520_SELECT_TEMPLATE
+            pageItemsToSubmit: P520_SELECT_TEMPLATE
+        }
+        layout {
+            sequence: 30
+            parentRegion: @choose-template-2
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--textContent
+                t-Region--scrollBody
+                margin-top-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <b>Mail Body Content :-</b>
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        heading {
+            type: none
+        }
+
+        column MAIL_CONTENT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Mail Content
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+    )
+
+    region subject (
+        name: Subject
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery: select SUBJECT from xxeba_email_templates_t xxeba_email_templates_t where template_id = :P520_SELECT_TEMPLATE
+            pageItemsToSubmit: P520_SELECT_TEMPLATE
+        }
+        layout {
+            sequence: 20
+            parentRegion: @choose-template-2
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--textContent
+                t-Region--scrollBody
+                margin-bottom-none
+            ]
+        }
+        headerAndFooter {
+            headerText: <b>Subject :-</b>
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        heading {
+            type: none
+        }
+
+        column SUBJECT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Subject
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+    )
+
+    pageItem P520_MAIL_BODY_CONTENT (
+        type: richTextEditor
+        label {
+            label: Message
+            alignment: left
+        }
+        settings {
+            format: html
+            toolbar: full
+            toolbarStyle: multiline
+            minHeight: 180
+            allowCustomHtml: true
+        }
+        layout {
+            sequence: 30
+            region: @choose-template-3
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P520_SELECT_TEMPLATE (
+        type: selectList
+        label {
+            label: Template
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    template_name   d,
+                    template_id     r
+                FROM
+                    xxeba_email_templates_t
+                WHERE
+                    status = 'Y'
+                ORDER BY
+                    1
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select Email Template -
+        }
+        layout {
+            sequence: 10
+            region: @choose-template-3
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P520_SUBJECT (
+        type: textField
+        label {
+            label: Subject
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @choose-template-3
+            slot: regionBody
+            alignment: left
+            columnSpan: 11
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @choose-template-2
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 519
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @choose-template-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh-subject-and-mail-body-content (
+        name: Refresh Subject and Mail Body Content
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P520_SELECT_TEMPLATE
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @subject
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @mail-body-content
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-mail-body-content (
+        name: Set Mail Body Content
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P520_SELECT_TEMPLATE
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        CURSOR ctemp IS
+                        SELECT
+                            subject,
+                            mail_content
+                        FROM
+                            xxeba_email_templates_t xxeba_email_templates_t
+                        WHERE
+                            template_id = :p520_select_template;
+                    
+                        rtemp ctemp%rowtype;
+                    BEGIN
+                        OPEN ctemp;
+                        FETCH ctemp INTO rtemp;
+                        CLOSE ctemp;
+                        
+                        :P520_SUBJECT           := rtemp.subject;
+                        :P520_MAIL_BODY_CONTENT := rtemp.mail_content;
+                    END;
+                    ```
+                itemsToSubmit: P520_SELECT_TEMPLATE
+                itemsToReturn: [
+                    P520_SUBJECT
+                    P520_MAIL_BODY_CONTENT
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    branch (
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 521
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

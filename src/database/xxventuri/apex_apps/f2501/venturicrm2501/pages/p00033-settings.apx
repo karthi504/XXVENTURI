@@ -1,0 +1,680 @@
+page 33 (
+    name: Administration
+    alias: SETTINGS
+    title: Administration
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            .acl-Info {
+              display: block;
+              overflow: hidden;
+            }
+            .acl-Info-statusBox,
+            .acl-Info-usersBox {
+              display: block;
+              float: left;
+              width: 50%;
+            }
+            .acl-Info-statusBox {
+              text-align: center;
+            }
+            .acl-Info-heading {
+              display: block;
+              font-size: 16px;
+              margin: 16px 16px 8px 16px;
+              font-weight: bold;
+              color: #404040;
+            }
+            .acl-Info-heading span {
+              color: #707070;
+              font-weight: normal;
+            }
+            .acl-Info-status {
+              display: block;
+              width: 50%;
+              margin: 0 auto 8px auto;
+              padding: 12px 0;
+              border: 1px solid #D0D0D0;
+              border-radius: 2px;
+              font-size: 20px;
+              line-height: 20px;
+              color: #404040;
+              font-weight: bold;
+              background-color: #F0F0F0;
+            }
+            .authScheme .acl-Info-status {
+              font-size: 16px;
+              width: 70%
+            }
+            .acl-Info-status.is-enabled {
+              background-color: #40C230;
+              border-color: #37A62A;
+              color: #FFF;
+              text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+            }
+            .acl-Info-status.is-disabled {
+              background-color: #DE3038;
+              border-color: #A0242A;
+              color: #FFF;
+              text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+            }
+            .acl-Info-changeStatusLink {
+              display: inline-block;
+              padding: 8px 0;
+              color: #404040;
+              text-decoration: none;
+              font-size: 11px;
+              background-color: #F0F0F0;
+              border: 1px solid #D0D0D0;
+              margin: 0 16px 16px 16px;
+              border-radius: 2px;
+              width: 50%;
+            }
+            .acl-Info-changeStatusLink:hover {
+              background-color: #fff;
+              border-color: #C0C0C0;
+              box-shadow: 0 1px 1px rgba(0,0,0,.15);
+            }
+            .acl-Info-changeStatusLink:active {
+              background-color: #E0E0E0;
+              border-color: #C0C0C0;
+              box-shadow: 0 1px 1px rgba(0,0,0,.25) inset;
+            }
+            .acl-Info-users {
+              margin: 0;
+              list-style: none;
+              padding: 0;
+              margin: 0;
+              border-left: 1px solid #F0F0F0;
+            }
+            .acl-Info-user {
+              border-top: 1px solid #F0F0F0;
+            }
+            .acl-Info-userLink {
+              text-decoration: none;
+              display: block;
+              padding: 8px;
+            }
+            .acl-Info-userLink:hover {
+              background-color: #689AD8;
+            }
+            .acl-Info-user:first-child {
+              border-top: none;
+            }
+            .acl-Info-userType,
+            .acl-Info-userCount {
+              display: block;
+              font-size: 14px;
+            }
+            .acl-Info-userType {
+              font-weight: bold;
+              float: left;
+              margin-right: 8px;
+              line-height: 32px;
+            }
+            .acl-Info-userLink:hover .acl-Info-userType {
+              color: #FFF;
+            }
+            .acl-Info-userCount {
+              display: block;
+              overflow: hidden;
+              text-align: right;
+            }
+            .acl-Info-userCount span {
+              display: inline-block;
+              padding: 8px;
+              background-color: #F8F8F8;
+              color: #404040;
+              line-height: 16px;
+              min-width: 36px;
+              text-decoration: none;
+              text-align: right;
+              border-radius: 2px;
+            }
+            .acl-Info-desc {
+                padding: 16px;
+                border-top: 1px solid #E0E0E0;
+                border-bottom: 1px solid #E0E0E0;
+                background: #F8F8F8;
+                font-size: 14px;
+                clear: both;
+            }
+            .acl-Info-desc>p:last-child {
+              margin-bottom: 0;
+            }
+            
+            
+            
+            .t-Footer{
+            	display:none;
+            
+            
+            }
+            
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText:
+            ```html
+            <p>This page allows users with application administrator privileges to perform the following actions:
+                <ul>
+                    <li>Enable or disable access control</li>
+                    <li>Add, edit, and/or remove users</li>
+                    <li>Change the application's username format (email address or non-email address)</li>
+                    <li>Monitor application errors</li>
+                    <li>Manage the application's appearance</li>
+                    <li>Add, edit, and/or remove application notifications</li>
+                    <li>Rename the application</li>
+                    <li>Manage all other application settings and preferences</li>
+                </ul>
+            </p>
+            ```
+    }
+
+    region access-control (
+        name: Access Control
+        type: staticContent
+        layout {
+            sequence: 60
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    region access-control-2 (
+        name: Access Control
+        type: list
+        source {
+            list: @access-control
+        }
+        layout {
+            sequence: 45
+            parentRegion: @access-control
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region acl-status (
+        name: ACL Status
+        type: plugin/aclStatus
+        source {
+            sqlQuery:
+                ```sql
+                select 
+                  sum(case when access_level_id = 1 then 1 else 0 end) reader_count,
+                  sum(case when access_level_id = 2 then 1 else 0 end) contributor_count,
+                  sum(case when access_level_id = 3 then 1 else 0 end) admin_count,
+                  sum(case when access_level_id = 0 then 1 else 0 end) pending_count
+                from eba_sales_users
+                ```
+        }
+        layout {
+            sequence: 35
+            parentRegion: @access-control
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        settings {
+            configurationPage: 113
+            aclPage: 115
+            administratorCountColumn: ADMIN_COUNT
+            contributorCountColumn: CONTRIBUTOR_COUNT
+            readerCountColumn: READER_COUNT
+            scopePreferenceValue: eba_sales_fw.get_preference_value('ACCESS_CONTROL_SCOPE')
+            aclEnabledPreference: eba_sales_fw.get_preference_value('ACCESS_CONTROL_ENABLED')
+        }
+    )
+
+    region activity-reports (
+        name: Activity Reports
+        type: list
+        source {
+            list: @activity-reports-admin
+        }
+        layout {
+            sequence: 90
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region additional-administration-tasks (
+        name: Additional Administration Tasks
+        type: list
+        source {
+            list: @additional-administration-options
+        }
+        layout {
+            sequence: 30
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region administration (
+        name: Administration
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 90
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region application-authentication-and-authorization (
+        name: Application Authentication and Authorization
+        type: plugin/authorizationAdministration
+        layout {
+            sequence: 70
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+        settings {
+            pageReportPage: 44
+        }
+    )
+
+    region code-tables (
+        name: Code Tables
+        type: list
+        source {
+            list: @manage-code-tables-xx
+        }
+        layout {
+            sequence: 80
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region confirm-enabling-access-control (
+        name: Confirm Enabling Access Control
+        type: staticContent
+        source {
+            htmlCode: <p>Enabling Access Control allows access to the application and its features to be controlled by an Access Control List (ACL).  Until access control is enabled all authenticated users are administrators.</p>
+        }
+        layout {
+            sequence: 10
+            slot: dialogsDrawersAndPopups
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-autoheight
+                js-dialog-size600x400
+            ]
+        }
+        advanced {
+            htmlDomId: confirmEnableACL
+        }
+    )
+
+    region details (
+        name: Details
+        type: list
+        source {
+            list: @masters
+        }
+        layout {
+            sequence: 10
+            parentRegion: @masters
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--hiddenOverflow
+            ]
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region details-2 (
+        name: Details
+        type: list
+        source {
+            list: @location-masters
+        }
+        layout {
+            sequence: 20
+            parentRegion: @masters
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--hiddenOverflow
+            ]
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region masters (
+        name: Masters
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region primary-administration-tasks (
+        name: Primary Administration Tasks
+        type: list
+        source {
+            list: @primary-administration-options
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--hiddenOverflow
+            ]
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    region upload-data (
+        name: Upload Data
+        type: list
+        source {
+            list: @upload-data
+        }
+        layout {
+            sequence: 40
+            slot: body
+            startNewRow: false
+            newColumn: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        componentAppearance {
+            listTemplate: @media-list
+            templateOptions: [
+                #DEFAULT#
+                u-colors
+            ]
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @confirm-enabling-access-control
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:closeModal();
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button enable-access-control (
+        buttonName: ENABLE_ACCESS_CONTROL
+        label: Enable Access Control
+        layout {
+            sequence: 10
+            region: @confirm-enabling-access-control
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    process enable-access-control (
+        name: ENABLE_ACCESS_CONTROL
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                -- Set AC flag
+                eba_sales_acl_api.set_preference_value('ACCESS_CONTROL_ENABLED','Y');
+                -- Seed user table with current user as an administrator or set the current user as administrator
+                declare
+                   l_user_exists boolean := false;
+                   l_access_level_id number := null;
+                begin
+                   for c1 in (select access_level_id
+                              from eba_sales_users
+                              where username = :APP_USER)
+                   loop
+                     l_user_exists := true;
+                     l_access_level_id := c1.access_level_id;
+                   end loop;
+                
+                   if not l_user_exists then
+                       insert into eba_sales_users(username, access_level_id) values (:APP_USER, 3);   
+                   else
+                       if nvl(l_access_level_id,0) != 3 then
+                          update eba_sales_users
+                          set access_level_id = 3
+                          where username = :APP_USER;
+                       end if;
+                   end if;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: "Access Control enabled and the current user '&APP_USER.' has been set to be an Administrator. "
+        }
+        error {
+            errorMessage: Error
+        }
+        advanced {
+            executionMappingIdentifier: 3237887284703096692
+        }
+        serverSideCondition {
+            type: request=Value
+            value: ENABLE_ACCESS_CONTROL
+        }
+    )
+
+)
+

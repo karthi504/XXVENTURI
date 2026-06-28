@@ -1,0 +1,1335 @@
+page 223 (
+    name: Component Details
+    title: Component Details
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode != 46)) {
+                    return false;
+                }
+                return true;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region component-details (
+        name: Component Details
+        type: list
+        source {
+            list: @wizard-progress-list
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region component-details-2 (
+        name: Component Details
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @component-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region dimensions-in-mm (
+        name: Dimensions in MM
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @component-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    region footer (
+        name: Footer
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @component-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            customAttributes: style="background: #fafafa;"
+        }
+    )
+
+    region machine-details (
+        name: Machine Details
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @component-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--slimPadding
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    pageItem P223_CHUCK_DIAMETER (
+        type: numberField
+        label {
+            label: Chuck Diameter
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 190
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_CHUCK_DIAMETER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMPONENT_NAME (
+        type: textField
+        label {
+            label: Component Name
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 500
+        }
+        source {
+            type: item
+            item: P223_COMPONENT_NAME
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMP_DIAMETER (
+        type: numberField
+        label {
+            label: Diameter
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 110
+            region: @dimensions-in-mm
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_COMP_DIAMETER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMP_LENGTH (
+        type: numberField
+        label {
+            label: Length
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 120
+            region: @dimensions-in-mm
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_COMP_LENGTH
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMP_SHAPE (
+        type: selectList
+        label {
+            label: Shape
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_SHAPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 150
+            region: @dimensions-in-mm
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P223_COMP_SHAPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMP_THICKNESS (
+        type: numberField
+        label {
+            label: Thickness
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 140
+            region: @dimensions-in-mm
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_COMP_THICKNESS
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_COMP_WIDTH (
+        type: numberField
+        label {
+            label: Width
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 130
+            region: @dimensions-in-mm
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_COMP_WIDTH
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_CUTTING_TYPE (
+        type: selectList
+        label {
+            label: Cutting Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'CUTTING_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+            nullDisplayValue: -Select-
+        }
+        layout {
+            sequence: 270
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_HARDNESS (
+        type: textField
+        label {
+            label: Hardness
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 90
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 20
+        }
+        source {
+            type: item
+            item: P223_HARDNESS
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_HEAT_TREATMENT_TYPE (
+        type: selectList
+        label {
+            label: Heat Treatment Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_HEAT_TREATMENT_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 100
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P223_HEAT_TREATMENT_TYPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_INPUT_CONDITION (
+        type: selectList
+        label {
+            label: Input Condition
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 80
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P223_INPUT_CONDITION
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_MACHINE_BRAND (
+        type: textField
+        label {
+            label: Machine Brand
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_MACHINE_BRAND
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_MACHINE_TYPE (
+        type: textField
+        label {
+            label: Machine Type
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_MACHINE_TYPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_MATERIAL_TYPE (
+        type: textField
+        label {
+            label: Material Type
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_MATERIAL_TYPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_MAXIMUM_RPM (
+        type: numberField
+        label {
+            label: Maximum RPM
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 250
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_MAXIMUM_RPM
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_NO_OF_COMP_PROD_PER_HOUR (
+        type: numberField
+        label {
+            label: No. of Components Produced / Hour
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 120
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_NO_OF_COMP_PROD_PER_HOUR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_NO_OF_SHIFT_PER_DAY (
+        type: numberField
+        label {
+            label: No. of Shift / Day
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 130
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_NO_OF_SHIFT_PER_DAY
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_NO_OF_TOOL_LOCATION (
+        type: numberField
+        label {
+            label: No. of Tool Location
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 240
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_NO_OF_TOOL_LOCATION
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_NO_OF_WORKING_DAYS_PER_WE (
+        type: numberField
+        label {
+            label: No. of Working  Days / Week
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 140
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_NO_OF_WORKING_DAYS_PER_WE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_ORIG_EQUIP_MANUFACTURER (
+        type: textField
+        label {
+            label: Original Equipment Manufacturer
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_ORIG_EQUIP_MANUFACTURER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_PART_NUMBER (
+        type: textField
+        label {
+            label: Part Number
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_PART_NUMBER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_PROCESS_TYPE (
+        type: selectList
+        label {
+            label: Process Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 70
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P223_PROCESS_TYPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_SPINDLE_TAPER (
+        type: textField
+        label {
+            label: Spindle Taper
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 200
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: item
+            item: P223_SPINDLE_TAPER
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_SPINDLE_TOOL_WEIGHT_LIMIT (
+        type: numberField
+        label {
+            label: Spindle Tool Weight Limit
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 260
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_SPINDLE_TOOL_WEIGHT_LIMIT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_SURFACE_CONDITION (
+        type: textField
+        label {
+            label: Surface Condition
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 110
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: item
+            item: P223_SURFACE_CONDITION
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_TABLE_SIZE (
+        type: numberField
+        label {
+            label: Table Size
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 230
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumber(event)"
+        }
+        source {
+            type: item
+            item: P223_TABLE_SIZE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_THROUGH_COOLANT (
+        type: switch
+        label {
+            label: Through Coolant
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: item
+            item: P223_THROUGH_COOLANT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_TRIAL_OPERATION_NAME (
+        type: plugin/select2
+        label {
+            label: Operation Name
+            alignment: left
+        }
+        settings {
+            width: 100%
+            lazyLoading: attributeValue
+            lazyAppendRowCount: 10
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_OPERATION_NAME' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+            nullDisplayValue: -Select-
+        }
+        layout {
+            sequence: 280
+            region: @component-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_TYPE_OF_COOLANT (
+        type: textField
+        label {
+            label: Type of Coolant
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: item
+            item: P223_TYPE_OF_COOLANT
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P223_WORKHOLDING_TYPE (
+        type: selectList
+        label {
+            label: Workholding Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LIST_VALUE d, LIST_ID R from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_WORKHOLDING_TYPE' order by DISPLAY_SEQUENCE
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 180
+            region: @machine-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: item
+            item: P223_WORKHOLDING_TYPE
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @component-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to Cancel?', 'CANCEL');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel-2 (
+        buttonName: CANCEL_1
+        label: Cancel
+        layout {
+            sequence: 40
+            region: @footer
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to Cancel?', 'CANCEL_1');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT_1
+        label: Next
+        layout {
+            sequence: 10
+            region: @footer
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next-2 (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 50
+            region: @component-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS_1
+        label: Previous
+        layout {
+            sequence: 30
+            region: @footer
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous-2 (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 30
+            region: @component-details
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    branch (
+        name: Go To Page 224 When Existing or New Development
+        execution {
+            sequence: 30
+        }
+        behavior {
+            target: {
+                page: 224
+                clearCache: 224
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :REQUEST in ('NEXT','NEXT_1') and :P222_NEW_EXIST_DEV = 'N'
+        }
+    )
+
+    branch (
+        name: Go To 217
+        execution {
+            sequence: 50
+        }
+        behavior {
+            target: {
+                page: 217
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CANCEL,CANCEL_1
+        }
+    )
+
+    branch (
+        name: Go To Page 222
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 222
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: PREVIOUS,PREVIOUS_1
+        }
+    )
+
+    branch (
+        name: Go To Page 224
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 224
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :REQUEST in ('NEXT','NEXT_1') and :P222_NEW_EXIST_DEV = 'E'
+        }
+    )
+
+    branch (
+        name: Go To Page 224 When Competition  Replacement
+        execution {
+            sequence: 40
+        }
+        behavior {
+            target: {
+                page: 224
+                clearCache: 224
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :REQUEST in ('NEXT','NEXT_1') and :P222_NEW_EXIST_DEV = 'C'
+        }
+    )
+
+)
+

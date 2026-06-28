@@ -1,0 +1,1150 @@
+page 61 (
+    name: Product
+    title: Product
+    pageGroup: @products
+    appearance {
+        pageTemplate: @marquee
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+    help {
+        helpText: Manage an product's details, links, attachments, and/or comments. You can also validate the product.
+    }
+    config {
+        buildOption: @products
+    }
+
+    region brands (
+        name: "Brands "
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select "BRAND_ID", NULL EDIT,
+                "ENTITY_ID",
+                "ENTITY_TYPE",
+                "BRAND_NAME",
+                "BRAND_CODE",
+                "BRAND_PRICE",
+                "UNIT_OF_MEASURE",
+                "MINIMUM_ORDER_QTY",
+                "LEAD_TIME",
+                "BRAND_CURRENCY_TYPE",
+                dbms_lob.getlength("BRAND_ATTACHMENT") "BRAND_ATTACHMENT",
+                "BRAND_ATT_MIMETYPE",
+                "BRAND_ATT_FILENAME",
+                "BRAND_ATT_CHARSET",
+                "BRAND_ATT_LAST_UPDATE",
+                "CREATED_BY",
+                "CREATED",
+                "UPDATED_BY",
+                "UPDATED"
+                from "#OWNER#"."XXEBA_SALES_BRANDS" where  ENTITY_ID= :P61_ID
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column BRAND_ATTACHMENT (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: downloadBlob
+            heading {
+                heading: Brand Attachment
+                alignment: center
+            }
+            layout {
+                sequence: 12
+                columnAlignment: center
+            }
+            blobAttributes {
+                tableName: XXEBA_SALES_BRANDS
+                blobColumn: BRAND_ATTACHMENT
+                primaryKeyColumn1: BRAND_ID
+            }
+        )
+
+        column BRAND_ATT_CHARSET (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 15
+            }
+        )
+
+        column BRAND_ATT_FILENAME (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column BRAND_ATT_LAST_UPDATE (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 16
+            }
+        )
+
+        column BRAND_ATT_MIMETYPE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column BRAND_CODE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Brand Code
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column BRAND_CURRENCY_TYPE (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Currency
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column BRAND_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column BRAND_NAME (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Brand Name
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column BRAND_PRICE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Price
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: end
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 127
+                    items: {
+                        P127_BRAND_ID: #BRAND_ID#
+                    }
+                    clearCache: 127
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column ENTITY_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 3
+            }
+        )
+
+        column ENTITY_TYPE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 4
+            }
+        )
+
+        column LEAD_TIME (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Lead Time(In Days)
+                alignment: center
+            }
+            layout {
+                sequence: 11
+                columnAlignment: end
+            }
+        )
+
+        column MINIMUM_ORDER_QTY (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Minimum Order Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+        )
+
+        column UNIT_OF_MEASURE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Unit of Measure
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column UPDATED (
+            reportColumnQueryId: 20
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 20
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 19
+            }
+        )
+
+    )
+
+    region product (
+        name: Product
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select p.id,
+                  p.product_name,
+                  p.PRODUCT_COST||' '||CASE 
+                  WHEN p.PRODUCT_COST IS Not NULL  THEN p.PRODUCT_CURRENCY_TYPE 
+                  ELSE NULL  end as Product_cost,
+                  p.product_family_id,
+                  p.row_key, p.PRODUCT_PRICE ||' '||CASE 
+                  WHEN p.PRODUCT_PRICE  IS Not NULL  THEN p.CURRENCY_TYPE
+                  ELSE NULL  end as Product_price ,
+                  p.product_sku,p.CATALOGUE_NO,p.UNIT_OF_MEASURE,p.LEAD_TIME,p.MINIMUM_ORDER_QUANTITY,p.STOCK_ID,p.BRAND_ID,
+                  p.product_description,
+                  p.created,
+                  lower(p.created_by) created_by,
+                  p.updated,
+                  lower(p.updated_by) updated_by
+                from eba_sales_products p
+                where p.id = :P61_ID
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            template: @value-attribute-pairs-column
+            templateOptions: [
+                #DEFAULT#
+                t-AVPList--leftAligned
+            ]
+            showNullValuesAs: -
+        }
+
+        column BRAND_ID (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Brand Name
+                alignment: center
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: "select BRAND_NAME as d,BRAND_ID as r from XXEBA_SALES_PRODUCT_BRANDS order by 1 "
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column CATALOGUE_NO (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Ordering Code
+                alignment: center
+            }
+            layout {
+                sequence: 6
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 15
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column LEAD_TIME (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Lead Time (Days)
+                alignment: center
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column MINIMUM_ORDER_QUANTITY (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Minimum Order Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 13
+            }
+        )
+
+        column PRODUCT_COST (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Product Cost
+                alignment: center
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column PRODUCT_DESCRIPTION (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 10
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    select null
+                    from eba_sales_products p
+                    where p.id = :P61_ID
+                    and p.product_description is not null
+                    ```
+            }
+        )
+
+        column PRODUCT_FAMILY_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Group
+            }
+            lov {
+                type: sharedComponent
+                lov: @product-families
+            }
+            layout {
+                sequence: 4
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    select null
+                    from eba_sales_products p
+                    where p.id = :P61_ID
+                    and p.product_family_id is not null
+                    ```
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column PRODUCT_PRICE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Product Price
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column PRODUCT_SKU (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: HSN Code
+            }
+            layout {
+                sequence: 7
+            }
+            serverSideCondition {
+                type: rowsReturned
+                sqlQuery:
+                    ```sql
+                    select null
+                    from eba_sales_products p
+                    where p.id = :P61_ID
+                    and p.product_sku is not null
+                    ```
+            }
+        )
+
+        column ROW_KEY (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Key
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+        column STOCK_ID (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column UNIT_OF_MEASURE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Unit of Measure
+                alignment: center
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units
+                    
+                    ```
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column UPDATED (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 16
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #UPDATED# by #UPDATED_BY#
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+    )
+
+    region product-2 (
+        name: Product
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region product-actions (
+        name: Product Actions
+        type: list
+        source {
+            list: @actions-product
+        }
+        layout {
+            sequence: 10
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            listTemplate: @links-list
+            templateOptions: [
+                #DEFAULT#
+                t-LinksList--actions
+                t-LinksList--showTopIcons
+            ]
+        }
+    )
+
+    region rds (
+        name: RDS
+        type: regionDisplaySelector
+        layout {
+            sequence: 20
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: bySession
+        }
+    )
+
+    region summary (
+        name: Summary
+        type: plugin/badgeList
+        source {
+            sqlQuery:
+                ```sql
+                select d, 
+                  c
+                from (
+                  select 'Accounts' d, 
+                    count(*) c, 
+                    1 s
+                  from eba_sales_customers
+                  where id in (
+                    select customer_id
+                    from eba_sales_deals
+                    where id in (
+                      select deal_id
+                      from eba_sales_deal_products
+                      where product_id = :P61_ID
+                    )
+                  )
+                  union all
+                  select 'Opportunities' d, count(*) c, 2 s
+                  from eba_sales_deals
+                  where id in (
+                    select deal_id
+                    from eba_sales_deal_products
+                    where product_id = :P61_ID
+                  )
+                  union all
+                  select 'Open Opportunities' d, count(*) c, 3 s
+                  from eba_sales_deals
+                  where deal_probability != 0 and deal_probability != 100
+                    and id in (
+                      select deal_id
+                      from eba_sales_deal_products
+                      where product_id = :P61_ID
+                    )
+                )
+                order by s
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+            renderComponents: belowContent
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            topLabel: D
+            value: C
+            bottomLabel: D
+        }
+    )
+
+    region usage-metrics-90-days (
+        name: Usage Metrics - 90 days
+        type: plugin/badgeList
+        source {
+            sqlQuery:
+                ```sql
+                select count(*) c,
+                  'Views' l,
+                  1 disp
+                from eba_sales_clicks
+                where product_id = :P61_ID 
+                  and view_timestamp > sysdate - 90
+                union all
+                select count(distinct(app_username)) c,
+                    'Users' l,
+                    2 disp
+                from eba_sales_clicks
+                where product_id = :P61_ID 
+                    and view_timestamp > sysdate - 90
+                order by disp
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        config {
+            buildOption: @usage-metrics
+        }
+        settings {
+            badgeStyle: circular
+            value: C
+            bottomLabel: L
+            linkTarget: {
+                page: 138
+                items: {
+                    P138_ENTITY_TYPE: PRODUCT
+                    P138_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 138
+            }
+            layout: 2Columns
+        }
+    )
+
+    region validations (
+        name: Validations
+        type: plugin/contentValidator
+        source {
+            sqlQuery:
+                ```sql
+                select v.verified_by,
+                  v.created
+                from eba_sales_verifications v
+                where product_id = :P61_ID
+                order by v.created desc
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--stacked
+                t-Region--hiddenOverflow
+            ]
+            cssClasses: js-validateRegion
+        }
+        config {
+            buildOption: @validations
+        }
+        settings {
+            validationLink: {
+                page: 146
+                items: {
+                    P146_ENTITY_TYPE: PRODUCT
+                    P146_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 146
+            }
+            previousValidationsLink: {
+                page: 147
+                items: {
+                    P147_ENTITY_TYPE: PRODUCT
+                    P147_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 147
+                action: resetPagination
+            }
+        }
+    )
+
+    pageItem P61_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @product
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button add-brand (
+        buttonName: ADD_BRAND
+        label: Add brand
+        layout {
+            sequence: 10
+            region: @brands
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 127
+                items: {
+                    P127_ENTITY_ID: &P61_ID.
+                    P127_ENTITY_TYPE: PRODUCT
+                }
+                clearCache: 127
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button pop-link (
+        buttonName: POP_LINK
+        label: Add Link
+        layout {
+            sequence: 240
+            region: @/links
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: PRODUCT
+                    P114_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 114
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button popattachment (
+        buttonName: POPATTACHMENT
+        label: Add Attachment
+        layout {
+            sequence: 10
+            region: @/attachments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: PRODUCT
+                    P99_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 99
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button popcomment (
+        buttonName: POPCOMMENT
+        label: Add Comment
+        layout {
+            sequence: 260
+            region: @/comments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: PRODUCT
+                    P22_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 22
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    button view-attachments (
+        buttonName: VIEW_ATTACHMENTS
+        label: View Attachments
+        layout {
+            sequence: 20
+            region: @/attachments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 92
+                items: {
+                    P92_ENTITY_TYPE: PRODUCT
+                    P92_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 92
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-comments (
+        buttonName: VIEW_COMMENTS
+        label: View Comments
+        layout {
+            sequence: 270
+            region: @/comments
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 88
+                items: {
+                    P88_ENTITY_TYPE: PRODUCT
+                    P88_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 88
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-links (
+        buttonName: VIEW_LINKS
+        label: View Links
+        layout {
+            sequence: 250
+            region: @/links
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 89
+                items: {
+                    P89_ENTITY_TYPE: PRODUCT
+                    P89_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 89
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction link-details-dialog-closed (
+        name: Link Details dialog closed
+        execution {
+            sequence: 30
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 114
+        }
+    )
+
+    dynamicAction link-details-dialog-closed-2 (
+        name: Link Details dialog closed_1
+        execution {
+            sequence: 40
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 127
+        }
+    )
+
+    process init-page (
+        name: Init page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                insert into eba_sales_clicks (
+                  entity_type,
+                  product_id,
+                    app_username
+                ) values (
+                  'PRODUCT',
+                  :P61_ID,
+                    lower(:APP_USER)
+                );
+                
+                delete from eba_sales_clicks 
+                where view_timestamp < (sysdate - 90) 
+                  and product_id = :P61_ID;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 856341680428549262
+        }
+    )
+
+)
+

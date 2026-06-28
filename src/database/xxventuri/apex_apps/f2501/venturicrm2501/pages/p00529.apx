@@ -1,0 +1,349 @@
+page 529 (
+    name: HR Documents
+    title: HR Documents
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region hr-documents (
+        name: HR Documents
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region hr-documents-2 (
+        name: HR Documents
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                  KIT_ID,
+                  FILE_TITLE,
+                  FILE_TYPE_ID,
+                  dbms_lob.getlength(FILE_IMAGES) FILE_IMAGES,
+                  FILE_NAME,
+                  FILE_MIMETYPE,
+                  FILE_CHARSET,
+                  FILE_LAST_UPDATE,
+                  FILE_COMMENTS,
+                  initcap(CREATED_BY) as CREATED_BY,
+                  CREATED_DATE,
+                  STATUS,   
+                (SELECT LIST_VALUE  
+                  FROM XXEBA_LIST_VALUES
+                  WHERE LIST_CODE='SALES_KIT_TYPE' AND LIST_ID=FILE_TYPE_ID) as FILE_TYPE_NAME
+                FROM XXEBA_SALES_KIT_FILES
+                WHERE STATUS    ='Y'
+                and REP_ID = :USER_ID
+                ORDER BY CREATED_DATE DESC
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 686209741755254318
+        }
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+                alignment: center
+            }
+            layout {
+                sequence: 29
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 39
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column FILE_CHARSET (
+            type: plainText
+            heading {
+                heading: File Charset
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column FILE_COMMENTS (
+            type: plainText
+            heading {
+                heading: File Comments
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column FILE_IMAGES (
+            type: downloadBlob
+            heading {
+                heading: File Images
+                alignment: center
+            }
+            layout {
+                sequence: 19
+                columnAlignment: center
+            }
+            blobAttributes {
+                tableName: XXEBA_SALES_KIT_FILES
+                blobColumn: FILE_IMAGES
+                primaryKeyColumn1: KIT_ID
+                mimeTypeColumn: FILE_MIMETYPE
+                filenameColumn: FILE_NAME
+                lastUpdatedColumn: FILE_LAST_UPDATE
+                charSetColumn: FILE_CHARSET
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column FILE_LAST_UPDATE (
+            type: plainText
+            heading {
+                heading: File Last Update
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column FILE_MIMETYPE (
+            type: plainText
+            heading {
+                heading: File Mimetype
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column FILE_NAME (
+            type: plainText
+            heading {
+                heading: File Name
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column FILE_TITLE (
+            type: plainText
+            heading {
+                heading: File Title
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column FILE_TYPE_ID (
+            type: plainText
+            heading {
+                heading: File Type Id
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column FILE_TYPE_NAME (
+            type: plainText
+            heading {
+                heading: File Type Name
+                alignment: center
+            }
+            layout {
+                sequence: 59
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column KIT_ID (
+            type: plainText
+            heading {
+                heading: Kit Id
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 49
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 6862164 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn FILE_IMAGES (
+                sequence: 3
+            )
+
+            displayColumn FILE_NAME (
+                sequence: 1
+            )
+
+            displayColumn FILE_TYPE_NAME (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+)
+

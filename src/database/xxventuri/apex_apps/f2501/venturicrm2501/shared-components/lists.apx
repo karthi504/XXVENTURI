@@ -1,0 +1,4833 @@
+list access-control (
+    name: Access Control
+
+    entry access-control-list (
+        label: Access Control List
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 115
+            }
+        }
+        userDefinedAttributes {
+            1: Administrators can define the domain of users and assign each a role.
+            2: userIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry territory-access-control-list (
+        label: Territory Access Control List
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 104
+                clearCache: 104
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage application users by sales territory. Administrators can see all territories, contributors are limited to the assignments defined on these pages.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry username-format (
+        label: Username Format
+        icon {
+            imageIconCssClasses: fa-at
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 15
+                clearCache: 15
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Define the username format for new users in this application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+)
+
+list actions-account (
+    name: Actions - Account
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 136
+                items: {
+                    P136_CUSTOMER_ID: &P94_ID.
+                    P136_SOURCE_PAGE: 94
+                }
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: ACCOUNT
+                    P99_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 120
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: ACCOUNT
+                    P22_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-competition (
+        label: Add Competition
+        icon {
+            imageIconCssClasses: fa-user-plus
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 145
+                items: {
+                    P145_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 145
+            }
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry add-contact (
+        label: Add Contact
+        icon {
+            imageIconCssClasses: fa-phone
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 106
+                items: {
+                    P106_CUSTOMER_ID: &P94_ID.
+                    P106_SHOW_ACCOUNT: N
+                }
+                clearCache: 106
+            }
+        }
+        config {
+            buildOption: @contacts
+        }
+    )
+
+    entry add-links (
+        label: Add Links
+        icon {
+            imageIconCssClasses: fa-credit-card
+        }
+        layout {
+            sequence: 110
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: ACCOUNT
+                    P114_ENTITY_ID: &P94_ID.
+                }
+                clearCache: 114
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-location (
+        label: Add Location
+        icon {
+            imageIconCssClasses: fa-map-marker
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 32
+                items: {
+                    P32_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 32
+            }
+        }
+    )
+
+    entry add-products (
+        label: Add Products
+        icon {
+            imageIconCssClasses: fa-cog
+        }
+        layout {
+            sequence: 95
+        }
+        link {
+            target: {
+                page: 172
+                items: {
+                    P172_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 172
+            }
+        }
+    )
+
+    entry additional-details (
+        label: Additional Details
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 164
+                items: {
+                    P164_CUSTOMER_ID: &P94_ID.
+                    P164_FLAG: A
+                    P164_DETAILS_ID: &P94_CUSTOMER_DETAILS_ID.
+                }
+                clearCache: 164
+            }
+        }
+    )
+
+    entry bank-details (
+        label: Bank Details
+        icon {
+            imageIconCssClasses: fa-credit-card
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 168
+                items: {
+                    P168_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 168
+            }
+        }
+    )
+
+    entry competitor-products (
+        label: Competitor Products
+        icon {
+            imageIconCssClasses: fa-cogs
+        }
+        layout {
+            sequence: 96
+        }
+        link {
+            target: {
+                page: 235
+                items: {
+                    P235_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 235
+            }
+        }
+    )
+
+    entry machineries (
+        label: Machineries
+        icon {
+            imageIconCssClasses: fa-wrench
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 166
+                items: {
+                    P166_CUSTOMER_ID: &P94_ID.
+                    P166_ID: &P94_MACHINERY_ID.
+                }
+                clearCache: 166
+            }
+        }
+    )
+
+    entry recommendations (
+        label: Recommendations
+        icon {
+            imageIconCssClasses: fa-check-square-o
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 164
+                items: {
+                    P164_CUSTOMER_ID: &P94_ID.
+                    P164_FLAG: R
+                    P164_DETAILS_ID: &P94_CUSTOMER_DETAILS_ID.
+                }
+                clearCache: 164
+            }
+        }
+    )
+
+    entry verifications (
+        label: Verifications
+        icon {
+            imageIconCssClasses: fa-tasks
+        }
+        layout {
+            sequence: 130
+        }
+        link {
+            target: {
+                page: 229
+                items: {
+                    P229_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 229
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select 'Y' from EBA_SALES_CUSTOMERS where STATUS IN('N') and ID=:P94_ID 
+                
+                
+                ```
+        }
+        security {
+            authorizationScheme: @xxeba-sales-coordinator
+        }
+    )
+
+    entry verifications-2 (
+        label: Verifications
+        icon {
+            imageIconCssClasses: fa-tasks
+        }
+        layout {
+            sequence: 140
+        }
+        link {
+            target: {
+                page: 242
+                items: {
+                    P242_CUSTOMER_ID: &P94_ID.
+                }
+                clearCache: 242
+            }
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select 'Y' from EBA_SALES_CUSTOMERS where STATUS IN('R','U','Y') and ID=:P94_ID 
+                
+                
+                ```
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+)
+
+list actions-contact (
+    name: Actions - Contact
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: " fa-calendar  "
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 136
+                items: {
+                    P136_CUSTOMER_ID: &P24_CUSTOMER_ID.
+                    P136_CONTACT_ID: &P24_ID.
+                    P136_CONTACT_PERSON_ID: &P24_ID.
+                }
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: CONTACT
+                    P99_ENTITY_ID: &P24_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: CONTACT
+                    P22_ENTITY_ID: &P24_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-link (
+        label: Add Link
+        icon {
+            imageIconCssClasses: fa-link
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: CONTACT
+                    P114_ENTITY_ID: &P24_ID.
+                }
+                clearCache: 114
+            }
+        }
+    )
+
+)
+
+list actions-lead (
+    name: Actions - Lead
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: " fa-calendar  "
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 136
+                items: {
+                    P136_LEAD_ID: &P133_ID.
+                    P136_CUSTOMER_ID: &P133_ACCOUNT.
+                    P136_SOURCE_PAGE: 133
+                }
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: LEAD
+                    P99_ENTITY_ID: &P133_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: LEAD
+                    P22_ENTITY_ID: &P133_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-link (
+        label: Add Link
+        icon {
+            imageIconCssClasses: fa-link
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: LEAD
+                    P114_ENTITY_ID: &P133_ID.
+                }
+                clearCache: 114
+            }
+        }
+    )
+
+)
+
+list actions-opportunity (
+    name: Actions - Opportunity
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: "fa-calendar  "
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 136
+                items: {
+                    P136_OPPORTUNITY_ID: &P80_ID.
+                    P136_CUSTOMER_ID: &P80_ACCOUNT.
+                    P136_SOURCE_PAGE: 80
+                }
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: OPPORTUNITY
+                    P99_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: OPPORTUNITY
+                    P22_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-competition (
+        label: Add Competition
+        icon {
+            imageIconCssClasses: fa-user-plus
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 27
+                items: {
+                    P27_DEAL_ID: &P80_ID.
+                }
+                clearCache: 27
+            }
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry add-link (
+        label: Add Link
+        icon {
+            imageIconCssClasses: fa-link
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: OPPORTUNITY
+                    P114_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 114
+            }
+        }
+    )
+
+    entry add-product (
+        label: Add Product
+        icon {
+            imageIconCssClasses: fa-archive
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 108
+                items: {
+                    P108_DEAL_ID: &P80_ID.
+                }
+                clearCache: 108
+            }
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+    entry add-team-member (
+        label: Add Team Member
+        icon {
+            imageIconCssClasses: fa-user-plus
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 30
+                items: {
+                    P30_DEAL_ID: &P80_ID.
+                }
+                clearCache: 30
+            }
+        }
+    )
+
+)
+
+list actions-product (
+    name: Actions - Product
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: "fa-calendar  "
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 136
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: PRODUCT
+                    P99_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-brand (
+        label: Add Brand
+        icon {
+            imageIconCssClasses: fa-layers
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 127
+                items: {
+                    P127_ENTITY_TYPE: PRODUCT
+                    P127_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 127
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: PRODUCT
+                    P22_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-link (
+        label: Add Link
+        icon {
+            imageIconCssClasses: fa-link
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: PRODUCT
+                    P114_ENTITY_ID: &P61_ID.
+                }
+                clearCache: 114
+            }
+        }
+    )
+
+)
+
+list actions-territory (
+    name: Actions - Territory
+
+    entry add-appointment (
+        label: Add Appointment
+        icon {
+            imageIconCssClasses: "fa-calendar  "
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 136
+                clearCache: 136
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry add-attachment (
+        label: Add Attachment
+        icon {
+            imageIconCssClasses: fa-paperclip
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: TERRITORY
+                    P99_ENTITY_ID: &P93_ID.
+                }
+                clearCache: 99
+            }
+        }
+    )
+
+    entry add-comment (
+        label: Add Comment
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: TERRITORY
+                    P22_ENTITY_ID: &P93_ID.
+                }
+                clearCache: 22
+            }
+        }
+    )
+
+    entry add-country (
+        label: Add Country
+        icon {
+            imageIconCssClasses: fa-map-pin
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 124
+                items: {
+                    P124_TERRITORY_ID: &P93_ID.
+                }
+                clearCache: 124
+            }
+        }
+    )
+
+    entry add-link (
+        label: Add Link
+        icon {
+            imageIconCssClasses: fa-link
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: TERRITORY
+                    P114_ENTITY_ID: &P93_ID.
+                }
+                clearCache: 114
+            }
+        }
+    )
+
+    entry add-state (
+        label: Add State
+        icon {
+            imageIconCssClasses: fa-map-pin
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 126
+                items: {
+                    P126_TERRITORY_ID: &P93_ID.
+                }
+                clearCache: 126
+            }
+        }
+    )
+
+)
+
+list activity-reports (
+    name: Activity Reports
+
+    entry activity-calendar (
+        label: Activity Calendar
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 3
+        }
+        link {
+            target: {
+                page: 139
+            }
+        }
+        userDefinedAttributes {
+            1: Monthly calendar of application activity, reporting distinct users and total page views by day.
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry page-views (
+        label: Page Views
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 10
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 90
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report of page view details.
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry top-users (
+        label: Top Users
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 20
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 91
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Report of page views aggregated by user.
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+)
+
+list activity-reports-admin (
+    name: Activity Reports Admin
+
+    entry activity-calendar (
+        label: Activity Calendar
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 139
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Monthly calendar of application activity, reporting distinct users and total page views by day.
+            2: formIcon
+        }
+    )
+
+    entry page-views (
+        label: Page Views
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 90
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report of page view details.
+        }
+    )
+
+    entry top-users (
+        label: Top Users
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 91
+            }
+        }
+        userDefinedAttributes {
+            1: Report of page views aggregated by user.
+        }
+    )
+
+)
+
+list additional-administration-options (
+    name: Additional Administration Options
+
+    entry application-appearance (
+        label: Application Appearance
+        icon {
+            imageIconCssClasses: fa-desktop
+        }
+        layout {
+            sequence: 450
+        }
+        link {
+            target: {
+                page: 141
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Change user interface color scheme for all users.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry application-error-log (
+        label: Application Error Log
+        icon {
+            imageIconCssClasses: fa-file-o
+        }
+        layout {
+            sequence: 435
+        }
+        link {
+            target: {
+                page: 175
+            }
+        }
+        userDefinedAttributes {
+            1: Report of all internal errors encountered within the application.
+            2: reportIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry closed-opportunities (
+        label: Closed Opportunities
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 420
+        }
+        link {
+            target: {
+                page: 81
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunities that are won or lost (0 or 100% probability) cannot be edited. Set the status to something other then 0 or 100% to reenable edit capabilities.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry email-templates (
+        label: Email Templates
+        icon {
+            imageIconCssClasses: fa-envelope
+        }
+        layout {
+            sequence: 460
+        }
+        link {
+            target: {
+                page: 518
+                clearCache: 518
+            }
+        }
+        userDefinedAttributes {
+            1: Maintain email templates.
+        }
+    )
+
+    entry fiscal-quarters (
+        label: Fiscal Quarters
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 200
+        }
+        isCurrent {
+            type: pages
+            pages: 12
+        }
+        link {
+            target: {
+                page: 12
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the fiscal quarters used for reporting.  Companies have different quarter start and end dates, click here to manage those dates.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry mass-mails (
+        label: Mass Mails
+        icon {
+            imageIconCssClasses: fa-envelope-play
+        }
+        layout {
+            sequence: 470
+        }
+        link {
+            target: {
+                page: 520
+                clearCache: [
+                    520
+                    521
+                    522
+                    523
+                ]
+            }
+        }
+        userDefinedAttributes {
+            1: To send mass mails to contacts.
+        }
+    )
+
+    entry rename-application (
+        label: Rename Application
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 432
+        }
+        link {
+            target: {
+                page: 45
+            }
+        }
+        userDefinedAttributes {
+            1: Change the application name, displayed on the top left of each page, to one of your choosing.  By default, the application name is "&APP_NAME.".
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry sales-kit (
+        label: Sales Kit
+        icon {
+            imageIconCssClasses: fa fa-upload-alt fa
+        }
+        layout {
+            sequence: 480
+        }
+        link {
+            target: {
+                page: 231
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry sales-reps-target (
+        label: Sales Reps Target
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 250
+        }
+        isCurrent {
+            type: pages
+            pages: 12
+        }
+        link {
+            target: {
+                page: 174
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the sales reps target details.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry sample-data (
+        label: Sample Data
+        icon {
+            imageIconCssClasses: fa-database
+        }
+        layout {
+            sequence: 400
+        }
+        link {
+            target: {
+                page: 142
+            }
+        }
+        userDefinedAttributes {
+            1: Manage sample data for Accounts, &REP_TITLE.s, Products, Opportunities, Notes and Leads.  Options to remove, install, or re-install.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry svps (
+        label: SVPs
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 410
+        }
+        isCurrent {
+            type: pages
+            pages: 66
+        }
+        link {
+            target: {
+                page: 66
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunities can be tracked by Senior Vice President (SVP).  Use these pages to define the domain of SVP's for use within this application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+)
+
+list application-menu (
+    name: Application Menu
+
+    entry accounts-customers (
+        label: "Accounts [&CUSTOMERS.]"
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 30
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                2
+                94
+                98
+                105
+                107
+            ]
+        }
+        link {
+            target: {
+                page: 2
+            }
+        }
+    )
+
+    entry admin-reports (
+        label: Admin Reports
+        icon {
+            imageIconCssClasses: fa-table
+        }
+        layout {
+            sequence: 90
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                14
+                20
+                39
+                46
+                47
+                48
+                49
+                62
+                121
+                129
+                131
+                132
+            ]
+        }
+        link {
+            target: {
+                page: 39
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+    )
+
+    entry administration (
+        label: Administration
+        icon {
+            imageIconCssClasses: fa-gear
+        }
+        layout {
+            sequence: 180
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                10
+                13
+                12
+                18
+                17
+                26
+                25
+                33
+                11
+                44
+                43
+                37
+                38
+                8
+                9
+                6
+                7
+                5
+                33
+                54
+                53
+                56
+                55
+                57
+                60
+                59
+                65
+                64
+                67
+                66
+                70
+                69
+                51
+                77
+                78
+                81
+                96
+                83
+                104
+                109
+                110
+                112
+                111
+                116
+                113
+                115
+                119
+                82
+                210
+                211
+                212
+                213
+                43
+                128
+                44
+                109
+                104
+                110
+                175
+                175
+                15
+                153
+                154
+                45
+                141
+                142
+                28
+                35
+                40
+                35
+                36
+                139
+                90
+                91
+                75
+                84
+            ]
+        }
+        link {
+            target: {
+                page: 33
+                action: resetPagination
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry appointments-appointment (
+        label: "Appointments[&APPOINTMENT.]"
+        icon {
+            imageIconCssClasses: fa-calendar-o
+        }
+        layout {
+            sequence: 45
+            parentEntry: @accounts-customers
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                140
+                162
+                181
+            ]
+        }
+        link {
+            target: {
+                page: 181
+            }
+        }
+    )
+
+    entry approvals (
+        label: Approvals
+        icon {
+            imageIconCssClasses: fa-calendar-check-o
+        }
+        layout {
+            sequence: 86
+            parentEntry: @sales-kit
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    entry by-competitor (
+        label: By Competitor
+        layout {
+            sequence: 130
+            parentEntry: @opportunities-deals
+        }
+        link {
+            target: {
+                page: 134
+                action: resetPagination
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry by-product (
+        label: By Product
+        layout {
+            sequence: 140
+            parentEntry: @opportunities-deals
+        }
+        link {
+            target: {
+                page: 135
+                action: resetPagination
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+    entry by-rep-title (
+        label: By &REP_TITLE.
+        layout {
+            sequence: 120
+            parentEntry: @opportunities-deals
+        }
+        link {
+            target: {
+                page: 31
+                action: resetPagination
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry by-territory (
+        label: By Territory
+        layout {
+            sequence: 150
+            parentEntry: @opportunities-deals
+        }
+        link {
+            target: {
+                page: 42
+                action: resetPagination
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    entry complaints (
+        label: Complaints
+        icon {
+            imageIconCssClasses: fa-user-headset
+        }
+        layout {
+            sequence: 160
+        }
+        link {
+            target: {
+                page: 190
+                clearCache: 190
+            }
+        }
+    )
+
+    entry contacts-contacts (
+        label: "Contacts [&CONTACTS.]"
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 40
+            parentEntry: @accounts-customers
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                23
+                24
+            ]
+        }
+        link {
+            target: {
+                page: 23
+            }
+        }
+        config {
+            buildOption: @contacts
+        }
+    )
+
+    entry home (
+        label: Home
+        icon {
+            imageIconCssClasses: fa-home
+        }
+        layout {
+            sequence: 10
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                43
+                100
+                128
+                148
+                152
+            ]
+        }
+        link {
+            target: {
+                page: 100
+            }
+        }
+    )
+
+    entry hr-documents (
+        label: HR Documents
+        icon {
+            imageIconCssClasses: fa-file-text-o
+        }
+        layout {
+            sequence: 230
+            parentEntry: @sales-kit
+        }
+        isCurrent {
+            type: pages
+            pages: 529
+        }
+        link {
+            target: {
+                page: 529
+            }
+        }
+    )
+
+    entry leads-leads (
+        label: "Leads [&LEADS.]"
+        icon {
+            imageIconCssClasses: fa-crosshairs
+        }
+        layout {
+            sequence: 50
+            parentEntry: @accounts-customers
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                29
+                133
+                138
+                19
+            ]
+        }
+        link {
+            target: {
+                page: 19
+            }
+        }
+        config {
+            buildOption: @leads
+        }
+    )
+
+    entry leave-approvals (
+        label: Leave Approvals
+        layout {
+            sequence: 200
+            parentEntry: @approvals
+        }
+        link {
+            target: {
+                page: 258
+            }
+        }
+    )
+
+    entry leave-requests (
+        label: Leave Requests
+        layout {
+            sequence: 190
+            parentEntry: @requests
+        }
+        link {
+            target: {
+                page: 256
+            }
+        }
+    )
+
+    entry opportunities-deals (
+        label: "Opportunities [&DEALS.]"
+        icon {
+            imageIconCssClasses: fa-briefcase
+        }
+        layout {
+            sequence: 60
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                1
+                80
+                85
+                86
+                87
+                80
+            ]
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry outstanding-reports (
+        label: Outstanding Reports
+        icon {
+            imageIconCssClasses: fa-table
+        }
+        layout {
+            sequence: 92
+        }
+        link {
+            target: {
+                page: 265
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry permission-approvals (
+        label: Permission Approvals
+        layout {
+            sequence: 220
+            parentEntry: @approvals
+        }
+        link {
+            target: {
+                page: 261
+            }
+        }
+    )
+
+    entry permission-requests (
+        label: Permission Requests
+        layout {
+            sequence: 210
+            parentEntry: @requests
+        }
+        link {
+            target: {
+                page: 259
+            }
+        }
+    )
+
+    entry price-list (
+        label: Price List
+        icon {
+            imageIconCssClasses: fa-inr
+        }
+        layout {
+            sequence: 80
+        }
+        isCurrent {
+            type: pages
+            pages: 178
+        }
+        link {
+            target: {
+                page: 178
+            }
+        }
+    )
+
+    entry print-jasper-report (
+        label: Print Jasper Report
+        icon {
+            imageIconCssClasses: fa-file-o
+        }
+        layout {
+            sequence: 240
+        }
+        isCurrent {
+            type: pages
+            pages: 200
+        }
+        link {
+            target: {
+                page: 200
+            }
+        }
+    )
+
+    entry products-products (
+        label: "Products [&PRODUCTS.]"
+        icon {
+            imageIconCssClasses: fa-archive
+        }
+        layout {
+            sequence: 70
+            parentEntry: @price-list
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                68
+                61
+                4
+            ]
+        }
+        link {
+            target: {
+                page: 68
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+    entry repeat-orders (
+        label: Repeat Orders
+        icon {
+            imageIconCssClasses: fa-repeat
+        }
+        layout {
+            sequence: 67
+            parentEntry: @sales-orders
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                102
+                103
+                173
+            ]
+        }
+        link {
+            target: {
+                page: 230
+            }
+        }
+    )
+
+    entry reports (
+        label: Reports
+        icon {
+            imageIconCssClasses: fa-table
+        }
+        layout {
+            sequence: 91
+            parentEntry: @sales-kit
+        }
+        link {
+            target: {
+                page: 269
+            }
+        }
+    )
+
+    entry requests (
+        label: Requests
+        icon {
+            imageIconCssClasses: fa-file-text-o
+        }
+        layout {
+            sequence: 85
+        }
+        security {
+            authorizationScheme: !@xxeba-admin
+        }
+    )
+
+    entry rewards (
+        label: Rewards
+        icon {
+            imageIconCssClasses: fa-thumbs-up
+        }
+        layout {
+            sequence: 81
+            parentEntry: @sales-kit
+        }
+        link {
+            target: {
+                page: 262
+                clearCache: 262
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    entry sales-kit (
+        label: Sales Kit
+        icon {
+            imageIconCssClasses: fa-file-archive-o
+        }
+        layout {
+            sequence: 170
+        }
+        link {
+            target: {
+                page: 231
+            }
+        }
+    )
+
+    entry sales-orders (
+        label: Sales Orders
+        icon {
+            imageIconCssClasses: fa-shopping-cart
+        }
+        layout {
+            sequence: 65
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                102
+                103
+                173
+            ]
+        }
+        link {
+            target: {
+                page: 102
+            }
+        }
+    )
+
+    entry special-approvals (
+        label: Special Approvals
+        icon {
+            imageIconCssClasses: fa-cart-check
+        }
+        layout {
+            sequence: 66
+            parentEntry: @sales-orders
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                238
+                103
+            ]
+        }
+        link {
+            target: {
+                page: 238
+            }
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    entry territories-territories (
+        label: "Territories [&TERRITORIES.]"
+        icon {
+            imageIconCssClasses: fa-globe
+        }
+        layout {
+            sequence: 20
+            parentEntry: @accounts-customers
+        }
+        isCurrent {
+            type: pages
+            pages: [
+                50
+                93
+                123
+                125
+            ]
+        }
+        link {
+            target: {
+                page: 50
+            }
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    entry trial-details (
+        label: Trial Details
+        icon {
+            imageIconCssClasses: fa-cogs
+        }
+        layout {
+            sequence: 63
+        }
+        link {
+            target: {
+                page: 217
+            }
+        }
+    )
+
+)
+
+list create-opportunity-train (
+    name: create opportunity train
+
+    entry confirm (
+        label: Confirm
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 74
+            }
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry details (
+        label: Details
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 72
+            }
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry opportunity (
+        label: Opportunity
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 71
+            }
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+    entry products (
+        label: Products
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 73
+            }
+        }
+        security {
+            authorizationScheme: @contribution-rights
+        }
+    )
+
+)
+
+list data-load-process-train-load-opportunities (
+    name: Data Load Process Train - load opportunities
+
+    entry data-load-source (
+        label: Data Load Source
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 210
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry data-table-mapping (
+        label: Data / Table Mapping
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 211
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry data-validation (
+        label: Data Validation
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 212
+            }
+        }
+        security {
+            authorizationScheme: @administration-rights
+        }
+    )
+
+    entry finish (
+        label: Finish
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 213
+            }
+        }
+    )
+
+)
+
+list exception-reports (
+    name: Exception Reports
+
+    entry accounts-receivable (
+        label: Accounts Receivable
+        icon {
+            imageIconCssClasses: fa-money
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 187
+                clearCache: 187
+            }
+        }
+        userDefinedAttributes {
+            1: Customer-wise Pending Payments, data synchronized from Tally
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry accounts-with-no-territory (
+        label: Accounts with No Territory
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 132
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report of all accounts with no territory specified.
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    entry new-reports (
+        label: New Reports
+        icon {
+            imageIconCssClasses: fa-area-chart
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 237
+            }
+        }
+        userDefinedAttributes {
+            1: Graphical Reports on Sales Orders by Industry, Territory, Product Type and Product Class.
+        }
+    )
+
+    entry opportunities-past-due (
+        label: Opportunities Past Due
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 131
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report of all opportunities open but with a close date in the past.
+        }
+    )
+
+    entry opportunities-with-no-products (
+        label: Opportunities with No Products
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 10
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 129
+                clearCache: [
+                    129
+                    RIR
+                ]
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report identifying opportunities that do not specify any products.
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+    entry product-stock (
+        label: Product Stock
+        icon {
+            imageIconCssClasses: fa-tiles-8
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 188
+                clearCache: 188
+                printerFriendly: true
+            }
+        }
+        userDefinedAttributes {
+            1: Product-wise Stock, data synchronized from Tally
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry product-wise-sales-orders (
+        label: Product-wise Sales Orders
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 90
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 243
+                clearCache: [
+                    243
+                    RIR
+                ]
+            }
+        }
+        userDefinedAttributes {
+            1: Product-wise Orders booked for a given period
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+)
+
+list home-menu (
+    name: Home Menu
+
+    entry accounts (
+        label: Accounts
+        icon {
+            imageIconCssClasses: fa-users
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 2
+            }
+        }
+    )
+
+    entry appointments (
+        label: Appointments
+        icon {
+            imageIconCssClasses: fa-calendar-o
+        }
+        layout {
+            sequence: 55
+        }
+        link {
+            target: {
+                page: 130
+            }
+        }
+    )
+
+    entry contacts (
+        label: "Contacts "
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 23
+            }
+        }
+    )
+
+    entry leads (
+        label: "Leads "
+        icon {
+            imageIconCssClasses: fa-crosshairs
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 19
+            }
+        }
+    )
+
+    entry opportunities (
+        label: "Opportunities "
+        icon {
+            imageIconCssClasses: fa-briefcase
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+
+    entry price-list (
+        label: Price List
+        icon {
+            imageIconCssClasses: fa-inr
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 178
+            }
+        }
+    )
+
+    entry reports (
+        label: Reports
+        icon {
+            imageIconCssClasses: fa-table
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 39
+            }
+        }
+    )
+
+    entry sales-orders (
+        label: Sales Orders
+        icon {
+            imageIconCssClasses: fa-shopping-cart
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 102
+            }
+        }
+    )
+
+)
+
+list location-masters (
+    name: Location  Masters
+
+    entry cities (
+        label: Cities
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 155
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Cities  that will be available to end-users for selection in the application
+            2: formIcon
+        }
+    )
+
+    entry countries (
+        label: Countries
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 17
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Countries that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry currencies (
+        label: Currencies
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 111
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Currencies that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry engineer-efficiency (
+        label: Engineer Efficiency
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 239
+            }
+        }
+        userDefinedAttributes {
+            1: Manage list of an engineer efficiency master and details.
+            2: formIcon
+        }
+    )
+
+    entry states (
+        label: States
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 83
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of States that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry territories (
+        label: Territories
+        icon {
+            imageIconCssClasses: fa-globe
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 8
+            }
+        }
+        userDefinedAttributes {
+            1:
+                ```
+                Accounts are organized into territories.  Each account must be in one and only one territory.  
+                Territory's facilitate reporting and organization of opportunities.
+                ```
+            2: formIcon
+        }
+    )
+
+    entry visit-frequency (
+        label: Visit frequency
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 75
+                clearCache: 75
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of visit frequency that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+)
+
+list mail-chimp-wizard (
+    name: Mail Chimp Wizard
+
+    entry account (
+        label: Account
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 198
+            }
+        }
+    )
+
+    entry review (
+        label: Review
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 199
+            }
+        }
+    )
+
+)
+
+list manage-code-tables-xx (
+    name: Manage Code Tables XX
+
+    entry banks (
+        label: Banks
+        icon {
+            imageIconCssClasses: fa-btc
+        }
+        layout {
+            sequence: 170
+        }
+        link {
+            target: {
+                page: 169
+            }
+        }
+        userDefinedAttributes {
+            1: "Manage the List of Bank details "
+        }
+    )
+
+    entry brands (
+        label: Brands
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 130
+        }
+        link {
+            target: {
+                page: 118
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of brands that will be available to end-users for selection in the application.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry cities (
+        label: "Cities "
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 140
+        }
+        link {
+            target: {
+                page: 155
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Cities  that will be available to end-users for selection in the application
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry competitor-threats (
+        label: Competitor Threats
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 10
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 59
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Competitor Threats that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry countries (
+        label: Countries
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 20
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 17
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Countries that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry currencies (
+        label: Currencies
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 111
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Currencies that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry customer-classifications (
+        label: Customer Classifications
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 150
+        }
+        link {
+            target: {
+                page: 157
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Customer Classifications based on business
+        }
+    )
+
+    entry financial-assessments (
+        label: Financial Assessments
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 40
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 57
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Financial Assessments that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry industries (
+        label: Industries
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 50
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 64
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Industries that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry lead-sources (
+        label: Lead Sources
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 60
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 69
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Lead Sources that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry lead-status-codes (
+        label: Lead Status Codes
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 70
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 37
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Lead Status Codes that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunity-stages (
+        label: Opportunity Stages
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 80
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 10
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Opportunity Stages that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry product-groups (
+        label: Product Groups
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 120
+        }
+        link {
+            target: {
+                page: 103
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of product groups that will be available to end-users for selection in the application.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry risk-assessments (
+        label: Risk Assessments
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 90
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 53
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Risk Assessments that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry states (
+        label: States
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 83
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of States that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry status-assessments (
+        label: Status Assessments
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 110
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 55
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Status Assessments that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry stock-codes (
+        label: Stock Codes
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 180
+        }
+        link {
+            target: {
+                page: 97
+            }
+        }
+        userDefinedAttributes {
+            1: "Manage the Product stock details "
+        }
+    )
+
+    entry team-roles (
+        label: Team Roles
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 95
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 25
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Team Roles that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry unit-of-measures (
+        label: Unit of Measures
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 160
+        }
+        link {
+            target: {
+                page: 159
+            }
+        }
+        userDefinedAttributes {
+            1: "Manage the Unit of Measures to specify for each Product "
+        }
+    )
+
+)
+
+list mass-emails (
+    name: Mass Emails
+
+    entry accounts (
+        label: Accounts
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 522
+            }
+        }
+    )
+
+    entry choose-template (
+        label: Choose Template
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 520
+            }
+        }
+    )
+
+    entry leads (
+        label: Leads
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 521
+            }
+        }
+    )
+
+    entry review (
+        label: Review
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 523
+            }
+        }
+    )
+
+)
+
+list masters (
+    name: Masters
+
+    entry competitors (
+        label: Competitors
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 51
+            }
+        }
+        userDefinedAttributes {
+            1: Manage a list of competitors. Manage the domain of competitors available to be identified by opportunities.
+            2: formIcon
+        }
+    )
+
+    entry industries (
+        label: Industries
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 64
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Industries that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry organisation-chart (
+        label: Organisation Chart
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 152
+            }
+        }
+        userDefinedAttributes {
+            1: A graphic representation of the structure of an organization showing the relationships of the positions or jobs within it.
+        }
+    )
+
+    entry product-brands (
+        label: "Product Brands "
+        icon {
+            imageIconCssClasses: "fa-pencil "
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 118
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of brands that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry product-class (
+        label: Product Class
+        icon {
+            imageIconCssClasses: fa-archive
+        }
+        layout {
+            sequence: 35
+        }
+        link {
+            target: {
+                page: 220
+                clearCache: 220
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of product classification that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry product-groups (
+        label: "Product Groups "
+        icon {
+            imageIconCssClasses: "fa-object-group "
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 28
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the domain of product Groups available within this application. Opportunities can identify one or more products, each potentially belonging to a product group. This facilitates opportunity tracking by product and product group.
+        }
+    )
+
+    entry product-types (
+        label: Product Types
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 58
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the domain of product types available within this application.
+        }
+    )
+
+)
+
+list navigation-bar (
+    name: Navigation Bar
+
+    entry app-username (
+        label: &APP_USERNAME.
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                type: url
+                url: #
+            }
+        }
+    )
+
+    entry change-password (
+        label: Change Password
+        icon {
+            imageIconCssClasses: fa-lock
+        }
+        layout {
+            sequence: 65
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                page: 151
+            }
+        }
+    )
+
+    entry customize-appearance (
+        label: Customize Appearance
+        icon {
+            imageIconCssClasses: fa-wrench
+        }
+        layout {
+            sequence: 55
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                type: url
+                url: #CUSTOMIZE_URL#
+            }
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: '#CUSTOMIZE_URL#' is not null
+        }
+    )
+
+    entry help (
+        label: Help
+        icon {
+            imageIconCssClasses: fa-question-circle
+        }
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 1001
+                items: {
+                    P1001_PAGE_ID: &APP_PAGE_ID.
+                }
+                clearCache: 1001
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry install-app (
+        label: Install App
+        icon {
+            imageIconCssClasses: fa-cloud-download
+        }
+        layout {
+            sequence: 1
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                type: url
+                url: #action$a-pwa-install
+            }
+        }
+        userDefinedAttributes {
+            2: a-pwaInstall
+        }
+    )
+
+    entry list_item (
+        label: ---
+        layout {
+            sequence: 56
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                type: url
+                url: separator
+            }
+        }
+    )
+
+    entry logo (
+        label: logo
+        icon {
+            imageIconCssClasses: fa-client-log
+        }
+        layout {
+            sequence: 20
+        }
+        userDefinedAttributes {
+            1: <position: absolute; left: -121px; top: -6px; opacity: 0; ">
+            2: icon-only
+        }
+    )
+
+    entry nbsp (
+        label: &nbsp;
+        icon {
+            imageIconCssClasses: fa-bell
+        }
+        layout {
+            sequence: 22
+        }
+        link {
+            target: {
+                page: 1003
+            }
+        }
+        userDefinedAttributes {
+            1: &APP_NOTIFICATION.<span class="t-Button-badge"></span><span class="pulse_holder"></span>
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry organization-chart (
+        label: Organization Chart
+        icon {
+            imageIconCssClasses: fa-sitemap
+        }
+        layout {
+            sequence: 60
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                page: 152
+                clearCache: 152
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry preferences (
+        label: Preferences
+        icon {
+            imageIconCssClasses: fa-heart-o
+        }
+        layout {
+            sequence: 50
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                page: 148
+            }
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry search (
+        label: Search
+        icon {
+            imageIconCssClasses: fa-search
+        }
+        layout {
+            sequence: 25
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 149
+                clearCache: 149
+            }
+        }
+        userDefinedAttributes {
+            2: icon-only
+        }
+        serverSideCondition {
+            type: currentPageNotInList
+            pages: 1000
+        }
+    )
+
+    entry sign-out (
+        label: Sign Out
+        icon {
+            imageIconCssClasses: fa-sign-out
+        }
+        layout {
+            sequence: 70
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                type: url
+                url: &LOGOUT_URL.
+            }
+        }
+    )
+
+    entry update-theme (
+        label: Update Theme
+        icon {
+            imageIconCssClasses: fa-adjust
+        }
+        layout {
+            sequence: 64
+            parentEntry: @app-username
+        }
+        link {
+            target: {
+                page: 270
+            }
+        }
+    )
+
+)
+
+list payment-reports (
+    name: Payment Reports
+
+    entry attendance (
+        label: Attendance
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 130
+        }
+        link {
+            target: {
+                page: 252
+            }
+        }
+        userDefinedAttributes {
+            1: Daily Attendance Report to view the Clock-in and Clock-out timings with Geo-location.
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+    )
+
+    entry billing-report (
+        label: Billing Report
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 268
+            }
+        }
+        userDefinedAttributes {
+            1: "Report to show all sales order billing details. "
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry competitor-analysis (
+        label: Competitor Analysis
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 49
+            }
+        }
+        userDefinedAttributes {
+            1: View opportunity counts organized by Competitor, Quarter, and Status.
+        }
+        serverSideCondition {
+            type: never
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry complaints (
+        label: Complaints
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 16
+        }
+        link {
+            target: {
+                page: 264
+            }
+        }
+        userDefinedAttributes {
+            1: Report to show all customer complaints.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry mailchimp-campaigns (
+        label: Mailchimp Campaigns
+        icon {
+            imageIconCssClasses: fa-address-card
+        }
+        layout {
+            sequence: 140
+        }
+        link {
+            target: {
+                page: 189
+                clearCache: 189
+            }
+        }
+        userDefinedAttributes {
+            1: Outstanding Report
+        }
+    )
+
+    entry new-accounts (
+        label: "New Accounts "
+        icon {
+            imageIconCssClasses: fa-contacts
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 150
+            }
+        }
+        userDefinedAttributes {
+            1: "View the Account details "
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry new-appointments (
+        label: "New Appointments "
+        icon {
+            imageIconCssClasses: fa-apex
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 143
+            }
+        }
+        userDefinedAttributes {
+            1: View Appointments details and Status.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunities-about-to-close (
+        label: Opportunities About to Close
+        icon {
+            imageIconCssClasses: fa-dollar
+        }
+        layout {
+            sequence: 50
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 20
+            }
+        }
+        userDefinedAttributes {
+            1: Identifies opportunities that are past due, or about to become past due.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunities-won (
+        label: Opportunities Won
+        icon {
+            imageIconCssClasses: fa-scatter-chart
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 144
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunity Won report
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunity-pipeline (
+        label: Opportunity Pipeline
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 30
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 62
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunity analysis by sales stage.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry outstanding-report (
+        label: Outstanding Report
+        icon {
+            imageIconCssClasses: fa-list-alt
+        }
+        layout {
+            sequence: 120
+        }
+        link {
+            target: {
+                page: 265
+            }
+        }
+        userDefinedAttributes {
+            1: Outstanding Report
+        }
+        security {
+            authorizationScheme: @xxeba-admin-tl-co-ordinator
+        }
+    )
+
+    entry payment-receipts (
+        label: Payment Receipts
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 15
+        }
+        link {
+            target: {
+                page: 267
+            }
+        }
+        userDefinedAttributes {
+            1: Report to show all sales order payment details.
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry revenue-by-quarter (
+        label: Revenue by Quarter
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 60
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 14
+            }
+        }
+        userDefinedAttributes {
+            1: "Vertical bar chart showing sales forcast by quarter for a user definable reporting period.  "
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+)
+
+list preferences (
+    name: Preferences
+
+    entry time-zone (
+        label: Time Zone
+        icon {
+            imageIconCssClasses: fa-globe
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 43
+            }
+        }
+        userDefinedAttributes {
+            1: Set time zone for the current user.
+            2: switchIcon
+        }
+    )
+
+)
+
+list primary-administration-options (
+    name: Primary Administration Options
+
+    entry application-preferences (
+        label: Application Preferences
+        icon {
+            imageIconCssClasses: fa-heart-o
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 35
+                clearCache: 35
+            }
+        }
+        userDefinedAttributes {
+            1: Manage your application's preferences. Set the title text used to describe representatives in your line of business.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry build-options (
+        label: Build Options
+        icon {
+            imageIconCssClasses: fa-bell-o
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 110
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Enable and disable various features and functionality within the application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry competitors (
+        label: Competitors
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 50
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 51
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Manage a list of competitors.  Manage the domain of competitors available to be identified by opportunities.
+            2: formIcon
+            3: Manage
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry contract-terms (
+        label: Contract Terms
+        icon {
+            imageIconCssClasses: fa-clock-o
+        }
+        layout {
+            sequence: 51
+        }
+        link {
+            target: {
+                page: 36
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the various contract terms that are used throughout the application. This facilitates opportunity tracking by contract term.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry holidays-list (
+        label: Holidays List
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 254
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of holidays.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry list-of-values (
+        label: List of Values
+        icon {
+            imageIconCssClasses: fa-bars
+        }
+        layout {
+            sequence: 27
+        }
+        link {
+            target: {
+                page: 214
+                clearCache: 214
+            }
+        }
+        userDefinedAttributes {
+            1: "Manage the Products file "
+        }
+    )
+
+    entry notifications (
+        label: Notifications
+        icon {
+            imageIconCssClasses: fa-comment-o
+        }
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 77
+            }
+        }
+        userDefinedAttributes {
+            1: Manage notifications which are displayed on this applications home page.  Use notifications to communicate important information to users of this application.
+            2: formIcon
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry parameters (
+        label: Parameters
+        icon {
+            imageIconCssClasses: fa-align-justify
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 228
+                clearCache: 228
+            }
+        }
+        userDefinedAttributes {
+            1: Manage Global Parameters like URL and etc..
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry product-groups (
+        label: Product Groups
+        icon {
+            imageIconCssClasses: fa-object-group
+        }
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 28
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the domain of product Groups available within this application. Opportunities can identify one or more products, each potentially belonging to a product family. This facilitates opportunity tracking by product and product group.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry product-types (
+        label: Product Types
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 35
+        }
+        link {
+            target: {
+                page: 58
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the domain of product types available within this application.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    entry products (
+        label: Products
+        icon {
+            imageIconCssClasses: fa-archive
+        }
+        layout {
+            sequence: 30
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 4
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the domain of products available within this application.  Opportunities can identify one or more products.  This facilitates opportunity tracking by product.
+            2: formIcon
+            3: Manage
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @products
+        }
+    )
+
+    entry rep-title-s (
+        label: &REP_TITLE.s
+        icon {
+            imageIconCssClasses: fa-user
+        }
+        layout {
+            sequence: 10
+        }
+        isCurrent {
+            type: pages
+            pages: 7
+        }
+        link {
+            target: {
+                page: 6
+            }
+        }
+        userDefinedAttributes {
+            1: Manage all &REP_TITLE.s.  Identify name, email, and role.
+            2: formIcon
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry roles (
+        label: Roles
+        icon {
+            imageIconCssClasses: fa-pencil
+        }
+        layout {
+            sequence: 15
+        }
+        link {
+            target: {
+                page: 25
+            }
+        }
+        userDefinedAttributes {
+            1: Manage the list of Team Roles that will be available to end-users for selection in the application.
+            2: formIcon
+        }
+    )
+
+    entry territories (
+        label: Territories
+        icon {
+            imageIconCssClasses: fa-globe
+        }
+        layout {
+            sequence: 40
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 8
+            }
+        }
+        userDefinedAttributes {
+            1: Accounts are organized into territories.  Each account must be in one and only one territory.  Territory's facilitate reporting and organization of opportunities.
+            2: formIcon
+            3: Manage
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    entry update-pricelist (
+        label: Update Pricelist
+        icon {
+            imageIconCssClasses: fa-file-excel-o
+        }
+        layout {
+            sequence: 25
+        }
+        link {
+            target: {
+                page: 117
+            }
+        }
+        userDefinedAttributes {
+            1: To Update existing product unit price and currency.
+        }
+    )
+
+    entry upload-products (
+        label: Upload Products
+        icon {
+            imageIconCssClasses: fa-file-excel-o
+        }
+        layout {
+            sequence: 26
+        }
+        link {
+            target: {
+                page: 219
+                clearCache: 219
+            }
+        }
+        userDefinedAttributes {
+            1: Option to upload bulk products.
+        }
+    )
+
+)
+
+list primary-reports (
+    name: Primary Reports
+
+    entry attendance (
+        label: Attendance
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 15
+        }
+        link {
+            target: {
+                page: 252
+            }
+        }
+        userDefinedAttributes {
+            1: Daily Attendance Report to view the Clock-in and Clock-out timings with Geo-location.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry competitor-analysis (
+        label: Competitor Analysis
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 49
+            }
+        }
+        userDefinedAttributes {
+            1: View opportunity counts organized by Competitor, Quarter, and Status.
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry complaints (
+        label: Complaints
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 16
+        }
+        link {
+            target: {
+                page: 264
+            }
+        }
+        userDefinedAttributes {
+            1: Report to show all customer complaints.
+        }
+        security {
+            authorizationScheme: @xxeba-admin-coordinator
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry efficiency-report (
+        label: Efficiency Report
+        icon {
+            imageIconCssClasses: fa-bullseye
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 253
+            }
+        }
+        userDefinedAttributes {
+            1: "Efficiency report to show the effort put in to sell the products and to quantify its customer satisfaction. "
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+        config {
+            buildOption: @competitors
+        }
+    )
+
+    entry new-accounts (
+        label: "New Accounts "
+        icon {
+            imageIconCssClasses: fa-contacts
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 150
+            }
+        }
+        userDefinedAttributes {
+            1: "View the Account details "
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry new-appointments (
+        label: "New Appointments "
+        icon {
+            imageIconCssClasses: fa-apex
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 143
+            }
+        }
+        userDefinedAttributes {
+            1: View Appointments details and Status.
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunities-about-to-close (
+        label: Opportunities About to Close
+        icon {
+            imageIconCssClasses: fa-dollar
+        }
+        layout {
+            sequence: 50
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 20
+            }
+        }
+        userDefinedAttributes {
+            1: Identifies opportunities that are past due, or about to become past due.
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunities-won (
+        label: Opportunities Won
+        icon {
+            imageIconCssClasses: fa-scatter-chart
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 144
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunity Won report
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry opportunity-pipeline (
+        label: Opportunity Pipeline
+        icon {
+            imageIconCssClasses: fa-file-text
+        }
+        layout {
+            sequence: 30
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 62
+            }
+        }
+        userDefinedAttributes {
+            1: Opportunity analysis by sales stage.
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry revenue-by-quarter (
+        label: Revenue by Quarter
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 60
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 14
+            }
+        }
+        userDefinedAttributes {
+            1: "Vertical bar chart showing sales forcast by quarter for a user definable reporting period.  "
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+)
+
+list report-directory (
+    name: report directory
+
+    entry active-inactive-customers (
+        label: Active / Inactive Customers
+        icon {
+            imageIconCssClasses: fa-align-justify
+        }
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 531
+            }
+        }
+        userDefinedAttributes {
+            1: Sales engineers wise active and in active customers
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry category-wise-report (
+        label: Category-wise Report
+        icon {
+            imageIconCssClasses: fa-clone
+        }
+        layout {
+            sequence: 90
+        }
+        link {
+            target: {
+                page: 1004
+            }
+        }
+        userDefinedAttributes {
+            1: Interactive report for all product categories
+        }
+    )
+
+    entry customers-wise-sales-report (
+        label: Customers-wise Sales Report
+        icon {
+            imageIconCssClasses: fa-clipboard-edit
+        }
+        layout {
+            sequence: 100
+        }
+        link {
+            target: {
+                page: 1002
+            }
+        }
+        userDefinedAttributes {
+            1: Sales engineers wise report
+        }
+    )
+
+    entry no-of-trials-conducted (
+        label: No. of Trials conducted
+        icon {
+            imageIconCssClasses: fa-archive
+        }
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 530
+            }
+        }
+        userDefinedAttributes {
+            1: Sales engineers wise trial conducted
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    entry potential-revenue-by-rep-title (
+        label: Potential Revenue by &REP_TITLE.
+        icon {
+            imageIconCssClasses: fa-area-chart
+        }
+        layout {
+            sequence: 41
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 121
+            }
+        }
+        userDefinedAttributes {
+            1: Chart showing potential revenue by &REP_TITLE..
+        }
+    )
+
+    entry projected-close-dates (
+        label: Projected Close Dates
+        icon {
+            imageIconCssClasses: fa-calendar
+        }
+        layout {
+            sequence: 50
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 47
+            }
+        }
+        userDefinedAttributes {
+            1: Calendar of projected opportunity close dates.
+        }
+    )
+
+    entry revenue-by-rep-title (
+        label: Revenue by &REP_TITLE.
+        icon {
+            imageIconCssClasses: fa-area-chart
+        }
+        layout {
+            sequence: 40
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 46
+            }
+        }
+        userDefinedAttributes {
+            1: Chart showing revenue by &REP_TITLE..
+        }
+    )
+
+    entry tags (
+        label: Tags
+        icon {
+            imageIconCssClasses: fa-tag
+        }
+        layout {
+            sequence: 60
+        }
+        isCurrent {
+            type: never
+        }
+        link {
+            target: {
+                page: 48
+                action: resetPagination
+            }
+        }
+        userDefinedAttributes {
+            1: Tags with click through to tag references.
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+)
+
+list upload-data (
+    name: upload data
+
+    entry opportunity (
+        label: Opportunity
+        icon {
+            imageIconCssClasses: fa-database
+        }
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 210
+                clearCache: [
+                    210
+                    211
+                    212
+                    213
+                ]
+            }
+        }
+        userDefinedAttributes {
+            1: Upload opportunities from a spreadsheet
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+)
+
+list wizard-progress-list (
+    name: Wizard Progress List
+
+    entry component-details (
+        label: Component Details
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 223
+            }
+        }
+    )
+
+    entry existing-details (
+        label: Existing Details
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 224
+            }
+        }
+    )
+
+    entry recommendations (
+        label: Recommendations
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 225
+            }
+        }
+    )
+
+    entry trial-details (
+        label: Trial Details
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 222
+            }
+        }
+    )
+
+)
+

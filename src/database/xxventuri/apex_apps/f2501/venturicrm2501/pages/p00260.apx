@@ -1,0 +1,1144 @@
+page 260 (
+    name: Permission Request Details
+    title: Permission Request Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        height: 400
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-permissions-t (
+        name: Form on XXEBA_SALES_PERMISSIONS_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P260_APPROVED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_APPROVED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_APPROVER_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVER_COMMENTS
+            used: always
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P260_REQUEST_ID is not null and :P260_SOURCE_PAGE=261 and trim(:P260_PERMISSION_STATUS)='S'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_FROM_TIME (
+        type: selectList
+        label {
+            label: From Period
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues:
+                ```
+                STATIC2:
+                0:30;0:30,
+                1:00;1:00,
+                1:30;1:30,
+                2:00;2:00,
+                2:30;2:30,
+                3:00;3:00,
+                3:30;3:30,
+                4:00;4:00,
+                4:30;4:30,
+                5:00;5:00,
+                5:30;5:30,
+                6:00;6:00,
+                6:30;6:30,
+                7:00;7:00,
+                7:30;7:30,
+                8:00;8:00,
+                8:30;8:30,
+                9:00;9:00,
+                9:30;9:30,
+                10:00;10:00,
+                10:30;10:30,
+                11:00;11:00,
+                11:30;11:30,
+                12:00;12:00,
+                12:30;12:30,
+                13:00;13:00,
+                13:30;13:30,
+                14:00;14:00,
+                14:30;14:30,
+                15:00;15:00,
+                15:30;15:30,
+                16:00;16:00,
+                16:30;16:30,
+                17:00;17:00,
+                17:30;17:30,
+                18:00;18:00,
+                18:30;18:30,
+                19:00;19:00,
+                19:30;19:30,
+                20:00;20:00,
+                20:30;20:30,
+                21:00;21:00,
+                21:30;21:30,
+                22:00;22:00,
+                22:30;22:30,
+                23:00;23:00,
+                23:30;23:30,
+                24:00;24:00
+                ```
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FROM_TIME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_PERMISSION_DATE (
+        type: datePickerJquery
+        label {
+            label: Date
+            alignment: left
+        }
+        settings {
+            maxDate: +1d
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERMISSION_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: +0d
+        }
+    )
+
+    pageItem P260_PERMISSION_REASON (
+        type: textarea
+        label {
+            label: Reason
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            valueRequired: true
+            maxLength: 500
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERMISSION_REASON
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_PERMISSION_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERMISSION_STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_REQUEST_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REQUEST_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_SALES_REP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SALES_REP_ID
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &USER_ID.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_SOURCE_PAGE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 170
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_TOTAL_HOURS (
+        type: textField
+        label {
+            label: Total Hours
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: style="background: transparent;border: none;" readonly
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TOTAL_HOURS
+            used: always
+        }
+        default {
+            type: static
+            staticValue: 2:00
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P260_TO_TIME (
+        type: selectList
+        label {
+            label: To
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues:
+                ```
+                STATIC2:
+                0:30;0:30,
+                1:00;1:00,
+                1:30;1:30,
+                2:00;2:00,
+                2:30;2:30,
+                3:00;3:00,
+                3:30;3:30,
+                4:00;4:00,
+                4:30;4:30,
+                5:00;5:00,
+                5:30;5:30,
+                6:00;6:00,
+                6:30;6:30,
+                7:00;7:00,
+                7:30;7:30,
+                8:00;8:00,
+                8:30;8:30,
+                9:00;9:00,
+                9:30;9:30,
+                10:00;10:00,
+                10:30;10:30,
+                11:00;11:00,
+                11:30;11:30,
+                12:00;12:00,
+                12:30;12:30,
+                13:00;13:00,
+                13:30;13:30,
+                14:00;14:00,
+                14:30;14:30,
+                15:00;15:00,
+                15:30;15:30,
+                16:00;16:00,
+                16:30;16:30,
+                17:00;17:00,
+                17:30;17:30,
+                18:00;18:00,
+                18:30;18:30,
+                19:00;19:00,
+                19:30;19:30,
+                20:00;20:00,
+                20:30;20:30,
+                21:00;21:00,
+                21:30;21:30,
+                22:00;22:00,
+                22:30;22:30,
+                23:00;23:00,
+                23:30;23:30,
+                24:00;24:00
+                ```
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-sales-permissions-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TO_TIME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button approve (
+        buttonName: APPROVE
+        label: Approve
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--success
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P260_REQUEST_ID is not null and :P260_SOURCE_PAGE=261 and trim(:P260_PERMISSION_STATUS)='S'
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Submit
+        layout {
+            sequence: 60
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P260_REQUEST_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button reject (
+        buttonName: REJECT
+        label: Reject
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P260_REQUEST_ID is not null and :P260_SOURCE_PAGE=261 and trim(:P260_PERMISSION_STATUS)='S'
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P260_REQUEST_ID is not null and :P260_SOURCE_PAGE=259 and trim(:P260_PERMISSION_STATUS)='S'
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-total-hours (
+        name: Set Total Hours
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: [
+                P260_FROM_TIME
+                P260_TO_TIME
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT extract (hour FROM (to_timestamp(:P260_TO_TIME, 'HH24:MI')-to_timestamp(:P260_FROM_TIME, 'HH24:MI')))||':'||
+                                trim(to_char(extract (minute FROM (to_timestamp(:P260_TO_TIME, 'HH24:MI')-to_timestamp(:P260_FROM_TIME, 'HH24:MI'))),'00')) AS minutes
+                    FROM dual
+                    
+                    
+                    ```
+                itemsToSubmit: [
+                    P260_FROM_TIME
+                    P260_TO_TIME
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P260_TOTAL_HOURS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation check-hours (
+        name: Check Hours
+        execution {
+            sequence: 10
+        }
+        validation {
+            language: sql
+            sqlExpression: exists (select 1 from dual where to_number(REPLACE(:P260_TOTAL_HOURS,':','.')) <= 2)
+        }
+        error {
+            errorMessage: Permission has been allowed for a maximum of 2 Hours only.
+            associatedItem: @P260_TOTAL_HOURS
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P260_REQUEST_ID
+        }
+    )
+
+    validation check-hours-negative (
+        name: "Check Hours Negative "
+        execution {
+            sequence: 20
+        }
+        validation {
+            language: sql
+            sqlExpression: exists (select 1 from dual where to_number(REPLACE(:P260_TOTAL_HOURS,':','.')) > 0)
+        }
+        error {
+            errorMessage: Permission has been not allowed for negative Hours.
+            associatedItem: @P260_TOTAL_HOURS
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P260_REQUEST_ID
+        }
+    )
+
+    validation check-permission-count (
+        name: Check Permission Count
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                v_permission_count number;
+                
+                begin 
+                   
+                   select count(*) into v_permission_count 
+                     from XXEBA_SALES_PERMISSIONS_T 
+                   where SALES_REP_ID = :P260_SALES_REP_ID 
+                       and PERMISSION_DATE =  to_date(:P260_PERMISSION_DATE)
+                       and nvl(PERMISSION_STATUS,'S') not in ('R');
+                       
+                   if v_permission_count > 0 then
+                        return 'Permission has been already applied for the selected date.';
+                   else
+                       select count(*) into v_permission_count 
+                         from XXEBA_SALES_PERMISSIONS_T 
+                       where SALES_REP_ID = :P260_SALES_REP_ID 
+                           and to_char(PERMISSION_DATE, 'MMYY') =  to_char(to_date(:P260_PERMISSION_DATE), 'MMYY')
+                           and nvl(PERMISSION_STATUS,'S') not in ('R');
+                
+                        if v_permission_count >= 3 then
+                            return 'Sorry! only 3 permissions are allowed during a month.';
+                        else
+                            return null;
+                       end if;
+                   end if;
+                EXCEPTION when others then
+                  return SQLERRM;
+                end;
+                ```
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P260_REQUEST_ID
+        }
+    )
+
+    validation comments-validations (
+        name: Comments Validations
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P260_APPROVER_COMMENTS is null then
+                        return 'Comments must have a some values';
+                    end if;
+                    return null;
+                end;
+                ```
+        }
+        error {
+            associatedItem: @P260_APPROVER_COMMENTS
+        }
+        serverSideCondition {
+            whenButtonPressed: @reject
+        }
+    )
+
+    validation leave-exists-validation (
+        name: Leave Exists Validation
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                    lv_leave_count NUMBER;
+                BEGIN
+                    select count(*) into lv_leave_count from XXEBA_SALES_LEAVE_REQUESTS_T where SALES_REP_ID =:P260_SALES_REP_ID
+                    and LEAVE_STATUS in ('S','A') and :P260_PERMISSION_DATE between FROM_DATE and TO_DATE;
+                    if lv_leave_count > 0 then 
+                    return 'Sorry! Leave request has been already applied for the selected date.';
+                    end if ;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process approve-process (
+        name: Approve Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE xxeba_sales_permissions_t
+                  SET approved_by       = :USER_ID ,
+                    permission_status        ='A',
+                    approver_comments   =:P257_APPROVER_COMMENTS,
+                    approved_date       = sysdate
+                  WHERE request_id=:P260_REQUEST_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        successMessage {
+            successMessage: Action processed.
+        }
+        advanced {
+            executionMappingIdentifier: 300203202457808466
+        }
+        serverSideCondition {
+            whenButtonPressed: @approve
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 300540737566132407
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-permissions-t (
+        name: Fetch Row from XXEBA_SALES_PERMISSIONS_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_PERMISSIONS_T
+            pkColumn: REQUEST_ID
+            pkItem: P260_REQUEST_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 300539586836132406
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-permissions-t-2 (
+        name: Fetch Row from XXEBA_SALES_PERMISSIONS_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_PERMISSIONS_T
+            pkColumn: REQUEST_ID
+            pkItem: P260_REQUEST_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 300565436987136265
+        }
+    )
+
+    process process-row-of-xxeba-sales-permissions-t (
+        name: Process Row of XXEBA_SALES_PERMISSIONS_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_PERMISSIONS_T
+            pkColumn: REQUEST_ID
+            pkItem: P260_REQUEST_ID
+            returnKeyIntoItem: P260_REQUEST_ID
+            supportedOperations: [
+                insert
+                update
+            ]
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 300540009834132406
+        }
+    )
+
+    process reject-process (
+        name: Reject Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE xxeba_sales_permissions_t
+                  SET approved_by       = :USER_ID ,
+                    permission_status        ='R',
+                    approver_comments   =:P257_APPROVER_COMMENTS,
+                    approved_date       = sysdate
+                  WHERE request_id=:P260_REQUEST_ID;
+                END;
+                
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        successMessage {
+            successMessage: Action processed.
+        }
+        advanced {
+            executionMappingIdentifier: 300203311812808467
+        }
+        serverSideCondition {
+            whenButtonPressed: @reject
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 300540382678132406
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process send-mail (
+        name: "Send Mail "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  v_rep_name           VARCHAR2(500);
+                  v_rep_id             NUMBER;
+                  v_leave_type         VARCHAR2(500);
+                  v_permission_type_id NUMBER;
+                  v_permission_reason       VARCHAR2(100);
+                  v_from_period        VARCHAR2(100);
+                  v_to_period          VARCHAR2(100);
+                  v_contact_number     NUMBER;
+                  v_number_days        NUMBER;
+                  v_to_mails           VARCHAR2(1000);
+                  v_cc_mails           VARCHAR2(1000);
+                  v_subject            VARCHAR2(500);
+                  v_manager_mail_id    VARCHAR2(1000);
+                  v_manager_id         NUMBER;
+                  v_rep_mail_id        VARCHAR2(500);
+                  v_approver_name      VARCHAR2(500);
+                  v_manager_name       VARCHAR2(500);
+                  v_body               CLOB;
+                  v_body_html          CLOB;
+                  v_crlf               VARCHAR2(2) := chr(13)||chr(10);
+                  v_from_mail_alias    VARCHAR2(100);
+                
+                BEGIN
+                
+                BEGIN
+                SELECT   REQUEST_ID,
+                         SALES_REP_ID,
+                         PERMISSION_REASON
+                INTO     v_permission_type_id,
+                         v_rep_id,
+                         v_permission_reason
+                FROM XXEBA_SALES_PERMISSIONS_T  
+                WHERE PERMISSION_STATUS ='S'
+                AND REQUEST_ID =:P260_REQUEST_ID;
+                END;
+                BEGIN
+                    SELECT REP_FIRST_NAME
+                      ||' '
+                      ||REP_LAST_NAME,
+                      REP_MANAGER_ID,
+                      REP_EMAIL
+                    INTO v_rep_name,
+                      v_manager_id,
+                      v_rep_mail_id
+                    FROM EBA_SALES_SALESREPS
+                    WHERE ID = v_rep_id;
+                  END;
+                  BEGIN
+                    SELECT REP_FIRST_NAME
+                      ||' '
+                      ||REP_LAST_NAME,
+                      REP_EMAIL
+                    INTO v_manager_name,
+                      v_manager_mail_id
+                    FROM EBA_SALES_SALESREPS
+                    WHERE ID =v_manager_id;
+                  END;
+                
+                  BEGIN
+                    SELECT TRIM(CHAR_VALUE)
+                    INTO v_from_mail_alias
+                    FROM XXEBA_SALES_PARAMETERS_T
+                    WHERE CODE = 'FROM_MAIL_ALIAS'
+                    AND STATUS = 'Y';
+                  END;
+                  
+                  
+                  v_body      := 'To view the content of this message, please use an HTML enabled mail client.'|| v_crlf;
+                  v_body      := v_body||'Leave details';
+                  v_body_html := '<html><head>           
+                
+                <style type="text/css">                
+                body{font-family: Tahoma, Arial, Helvetica, sans-serif;                    
+                font-size:10pt;                    
+                color:#002060;                    
+                margin:30px;                    
+                background-color:#ffffff;}                
+                span.sig{font-style:italic;                    
+                font-weight:bold;                    
+                color:#811919;}             
+                </style>          
+                
+                </head><body>Dear '||NVL(v_manager_name,'Manager')||',';
+                  v_body_html := v_body_html || '<br/><br/>'||v_rep_name||'  has submitted the below permission request for your Approval.      
+                <br/><br/>';
+                  v_subject   := v_rep_name||'''s Permission Request has been sent for your Approval';
+                  
+                  v_body_html := v_body_html || '<table border="0">
+                  <tr height="20"><td>Rep Name</td><td width="15">:</td><td>'|| v_rep_name || '</td></tr>
+                  <tr height="20"><td>Permission Date</td><td width="15">:</td><td>' || :P260_PERMISSION_DATE||'</td></tr>
+                  <tr height="20"><td>From Time </td><td width="15">:</td><td>' ||:P260_FROM_TIME ||'</td></tr>
+                  <tr height="20"><td>To Time</td><td width="15">:</td><td>' || :P260_TO_TIME ||'</td></tr>
+                  <tr height="20"><td>Total Hours</td><td width="15">:</td><td>' || :P260_TOTAL_HOURS || '</td></tr>
+                  <tr height="20"><td>Reason</td><td width="15">:</td><td>' || v_permission_reason || '</td></tr></table>
+                  <br/>' || 'Regards,<br/>' ||v_rep_name|| v_crlf;
+                  
+                 IF v_manager_id != 137298143222070397625267765568033924482 then
+                 
+                  apex_mail.send (p_to =>v_manager_mail_id, 
+                                  p_cc => v_rep_mail_id||','||'rajan@venturitool.com',
+                                  p_bcc => NULL,
+                                  p_from =>v_from_mail_alias,
+                                  p_subj => v_subject,
+                                  p_body => v_body,
+                                  p_body_html => v_body_html 
+                  );
+                   apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);  
+                  else
+                  apex_mail.send (p_to =>v_manager_mail_id, 
+                                  p_cc => v_rep_mail_id,
+                                  p_bcc => NULL,
+                                  p_from =>v_from_mail_alias,
+                                  p_subj => v_subject,
+                                  p_body => v_body,
+                                  p_body_html => v_body_html 
+                  );
+                 apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);  
+                  END IF;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_leave_Email',NULL,5);
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 599765097745954345
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    branch (
+        name: Go to page 261
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 261
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: APPROVE,REJECT
+        }
+    )
+
+)
+

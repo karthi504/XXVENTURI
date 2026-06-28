@@ -1,0 +1,975 @@
+page 191 (
+    name: Complaint Details
+    title: Complaint Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <!DOCTYPE html>
+            <html>
+              
+                <body>
+                    <script>  function printReport(p_customer_complaint,p_datasource,p_url) 
+                     {
+                         var v_customer_complaint = document.getElementById(p_customer_complaint).value;
+                         var v_datasource = document.getElementById(p_datasource).value;
+                         var v_url = document.getElementById(p_url).value;
+                               window.open(""+v_url+"report?_repName=customer_complaint&_repFormat=pdf&_dataSource="+v_datasource+"&_outFilename=&_repLocale=en_US&_repEncoding=&p_complaint_id="+v_customer_complaint+""
+            );   
+                     }
+                  </script>
+                </body>
+            </html>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-customer-complaints-t (
+        name: Form on XXEBA_CUSTOMER_COMPLAINTS_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P191_ACCOUNT_ID (
+        type: plugin/select2
+        label {
+            label: Account
+            alignment: left
+        }
+        settings {
+            width: 90%
+            lazyLoading: attributeValue
+            lazyAppendRowCount: 10
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.customer_name display_value,c.id return_value  from eba_sales_customers c
+                where  c.status='A' 
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME in( 'Administrator','Sales Co-Ordinator')) ---- as per the venturi team confirmation, sales Co-Ordinator role  added by bharath raju on 25-Aug-2023
+                    )                 
+                order by 1 
+                ```
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+            columnSpan: 12
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: style="width:60%;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ACCOUNT_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                select c.customer_name display_value,c.id return_value  from eba_sales_customers c,eba_sales_verifications v
+                where c.id=v.CUST_ID and c.status='Y' 
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    )                 
+                order by 1 
+                ```
+        }
+    )
+
+    pageItem P191_ASSIGNED_TO (
+        type: plugin/select2
+        label {
+            label: Assigned To
+            alignment: left
+        }
+        settings {
+            width: 90%
+            lazyLoading: attributeValue
+            lazyAppendRowCount: 10
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS
+                where  (upper(ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME in('Administrator','Sales Co-Ordinator')))---- as per the venturi team confirmation, sales Co-Ordinator role  added by bharath raju on 25-Aug-2023
+                order by 1
+                ```
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ASSIGNED_TO
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &USER_ID.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_COMPLAINT_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_COMPLAINT_TYPE (
+        type: selectList
+        label {
+            label: Type
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @customer-complaint-type
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_CONTACT_NUMBER (
+        type: textField
+        label {
+            label: Phone / Email
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 83
+            valuePlaceholder: Phone Number / Email Address of the Person Complained
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_DATA_SOURCE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT TRIM(CHAR_VALUE) 
+                  FROM XXEBA_SALES_PARAMETERS_T
+                 WHERE UPPER(CODE) = UPPER('DATA_SOURCE_NAME')
+                   AND STATUS = 'Y';
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 71
+            height: 3
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_DESC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_ISSUE (
+        type: textField
+        label {
+            label: Nature of Complaint
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 83
+        }
+        validation {
+            valueRequired: true
+            maxLength: 1000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_SUBJECT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_PRODUCT_LIST (
+        type: plugin/select2
+        label {
+            label: Products list
+            alignment: left
+        }
+        settings {
+            width: 90%
+            lazyLoading: attributeValue
+            lazyAppendRowCount: 10
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select p.PRODUCT_NAME||' ['||p.CATALOGUE_NO||']' display_value, p.ID return_value 
+                from eba_sales_PRODUCTS p,eba_sales_verifications  v
+                where p.ID =v.PRODUCT_ID
+                and p.status='Y'
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMPLAINT_PRODUCTS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                select p.PRODUCT_NAME display_value, p.ID return_value 
+                from eba_sales_PRODUCTS p,eba_sales_verifications  v
+                where p.ID =v.PRODUCT_ID
+                and p.status='Y'
+                order by 1
+                ```
+        }
+    )
+
+    pageItem P191_RAISED_BY (
+        type: textField
+        label {
+            label: Raised By
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 83
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RAISED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_RAISED_DATE (
+        type: datePickerJquery
+        label {
+            label: Raised On
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 8
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RAISED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_RAISED_SOURCE (
+        type: selectList
+        label {
+            label: Source
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @complaint-source
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: style="width:80%;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RAISED_SOURCE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P191_URL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-customer-complaints-t
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT TRIM(CHAR_VALUE) 
+                  FROM XXEBA_SALES_PARAMETERS_T
+                 WHERE UPPER(CODE) = UPPER('JASPER_REPORTS_URL')
+                   AND STATUS = 'Y';
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Register
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P191_COMPLAINT_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P191_COMPLAINT_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button print (
+        buttonName: PRINT
+        label: Print
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P191_COMPLAINT_ID is not null and :P191_STATUS='N'
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction customer-complaint-report (
+        name: Customer_Complaint_Report
+        execution {
+            sequence: 40
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @print
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                        repName           VARCHAR2(100);
+                        parameters        VARCHAR2(200);
+                        l_url             VARCHAR2(2000);
+                        l_encoded_params  VARCHAR2(500);
+                    BEGIN
+                    
+                        -- IF :P216_REPORT_TYPE = 'TRIAL' THEN
+                        --     repName := 'trial_report';
+                        
+                        -- IF :P216_REPORT_TYPE = 'TRIAL' THEN
+                        --     repName := 'trial_report';
+                        -- ELSE repName := 'trial_report_test';
+                        -- END IF;
+                    
+                    
+                    -- IF :P216_PRODUCT_CLASS_ID =3 then
+                    
+                        repName := 'customer_complaint';
+                    
+                    -- ELSE    repName := 'trial_report_test';
+                    -- END IF;
+                    
+                    
+                    
+                        parameters := '&p_complaint_id=' || :P191_COMPLAINT_ID;
+                    
+                        l_encoded_params := apex_util.url_encode(parameters);
+                    
+                        l_url := 'https://products.4iapps.com/ords/r/venturitool/venturicrm2501/print-jasper-report?p200_parameters=' ||
+                                  l_encoded_params || 
+                                  '&p200_report_name=' || repName || 
+                                  '&session=' || :APP_SESSION;
+                    
+                        -- Set to output URL item (used in frontend)
+                        :P191_URL := l_url;
+                    
+                    EXCEPTION
+                        WHEN OTHERS THEN
+                            xxfs_pm_error_log_pkg.record_log(
+                                'ERROR', 
+                                'REPORT_PROCESS'||l_url||repName, 
+                                'Error generating report URL: ' || SQLERRM
+                            );
+                    END;
+                    ```
+                itemsToSubmit: P191_COMPLAINT_ID
+                itemsToReturn: P191_URL
+                suppressChangeEvent: true
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    window.open($v('P191_URL'),'_blank');
+                    
+                    //window.location.href = $v('P216_URL');
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode: printReport('P191_COMPLAINT_ID','P191_DATA_SOURCE','P191_URL');
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction product-list (
+        name: Product List
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P191_COMPLAINT_TYPE
+        }
+        clientSideCondition {
+            type: item=value
+            item: P191_COMPLAINT_TYPE
+            value: Products
+        }
+
+        action native-hide (
+            action: hide
+            settings {
+                hidePageItemsOnSameLine: true
+            }
+            affectedElements {
+                selectionType: items
+                items: P191_PRODUCT_LIST
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            settings {
+                showAllOnSameLine: true
+            }
+            affectedElements {
+                selectionType: items
+                items: P191_PRODUCT_LIST
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-product-class (
+        name: Set Product Class
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P191_PRODUCT_CLASS
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select product_class_name from xxeba_product_class where id = :P191_PRODUCT_CLASS;
+                    
+                    ```
+                itemsToSubmit: P191_PRODUCT_CLASS
+            }
+            affectedElements {
+                selectionType: items
+                items: P191_PRODUCT_CLASS
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation not-null-validations (
+        name: Not Null Validations
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P191_COMPLAINT_TYPE = 'Products' then
+                      if :P191_PRODUCT_LIST is null then
+                        return 'Products list must have some value';
+                    end if;
+                   end if;
+                end;
+                ```
+        }
+        error {
+            associatedItem: @P191_PRODUCT_LIST
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 295850866707987534
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-xxeba-customer-complaints-t (
+        name: Fetch Row from XXEBA_CUSTOMER_COMPLAINTS_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_CUSTOMER_COMPLAINTS_T
+            pkColumn: COMPLAINT_ID
+            pkItem: P191_COMPLAINT_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 295849665700987533
+        }
+    )
+
+    process process-row-of-xxeba-customer-complaints-t (
+        name: Process Row of XXEBA_CUSTOMER_COMPLAINTS_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_CUSTOMER_COMPLAINTS_T
+            pkColumn: COMPLAINT_ID
+            pkItem: P191_COMPLAINT_ID
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 295850114729987534
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 295850447773987534
+        }
+    )
+
+)
+

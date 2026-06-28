@@ -1,0 +1,293 @@
+page 140 (
+    name: "Appointment Schedule Timing "
+    title: Appointments
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        executeWhenPageLoads:
+            ```javascript-browser
+            $('button.fc-month-button').text('Month'); 
+            
+            $('button.fc-list-button').text('List'); 
+            
+            $('button.fc-today-button').text('Today');
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .fc-content{
+                font-size: 11px;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region appointments (
+        name: Appointments
+        type: calendar
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                Select APPOINTMENT_ID,APPOINTMENT_TYPE, APPOINTMENT_DATE,
+                --to_date(to_char(APPOINTMENT_DATE,'DD-Mon-YYYY HH:MI AM'), 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE,
+                TO_CHAR (APPOINTMENT_DATE, 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE_PASS,
+                        --   (case when CREATED_BY != :APP_USER then CREATED_BY||' - '||APPOINTMENT_PURPOSE else APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE, -- if same user login show only purpos else show with name
+                             (case when SALESREPS_ID != :USER_ID then SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME||' - '||APPOINTMENT_PURPOSE else APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE, -- if same user login show only purpos else show with name
+                
+                          APPOINTMENT_STATUS,
+                           'D' TYPE,
+                 Case APPOINTMENT_STATUS 
+                      --     when 'Prepone'    then 'apex-cal-bluesky'
+                     --      when 'Postpone' then 'apex-cal-bluesky'
+                    --       When 'scheduled' then 'apex-cal-bluesky'
+                           when 'Visited'  then 'apex-cal-green'
+                           when 'Cancel' then 'apex-cal-red'
+                           else 'apex-cal-bluesky'
+                       end as css_class
+                from XXEBA_SALES_APPOINTMENT,
+                EBA_SALES_SALESREPS SR
+                where SR.ID = SALESREPS_ID
+                and (upper(SALESREPS_ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                    
+                union
+                
+                select A.APPOINTMENT_ID, A.APPOINTMENT_TYPE, all_days APPOINTMENT_DATE,
+                --to_date(to_char(all_days,'DD-Mon-YYYY HH:MI AM'), 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE, 
+                to_char(all_days)||' '||to_char(A.APPOINTMENT_DATE,'HH12:MI AM') APPOINTMENT_DATE_PASS,
+                --(case when A.CREATED_BY != :APP_USER then A.CREATED_BY||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                   (case when A.SALESREPS_ID != :USER_ID then SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                APPOINTMENT_STATUS,  'S' TYPE, 'apex-cal-bluesky' css_class
+                from XXEBA_SALES_MEETING_SCHEDULE MS, XXEBA_SALES_APPOINTMENT A , EBA_SALES_SALESREPS SR, 
+                (WITH calendar
+                		 AS (SELECT TO_DATE ('01-11-2017', 'dd-mm-yyyy') + ROWNUM - 1 AS day FROM DUAL
+                	--		 CONNECT BY ROWNUM < TO_DATE ('31-12-2018', 'dd-mm-yyyy')- TO_DATE ('01-11-2017', 'dd-mm-yyyy'))
+                              CONNECT BY ROWNUM < TO_DATE ('31-12-2018', 'dd-mm-yyyy')- TO_DATE ('01-11-2017', 'dd-mm-yyyy'))
+                		 SELECT day all_days
+                		   FROM calendar) CA
+                where A.APPOINTMENT_ID = MS.APPOINTMENT_ID
+                and SR.ID = A.SALESREPS_ID
+                and ','||MS.SCHEDULE_SEQUENCE  like '%,'||to_number(to_char(CA.all_days,'dd'))||',%'
+                and all_days  >= trunc(MS.CREATED)
+                and all_days <= nvl(A.SCHEDULE_UPTO,TO_DATE ('31-12-2018', 'dd-mm-yyyy'))
+                and MS.SCHEDULE_TYPE = 'M'
+                and (upper(SALESREPS_ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                 and to_char(all_days,'DDMMYY') not in (select to_char(A1.APPOINTMENT_DATE,'DDMMYY') from XXEBA_SALES_APPOINTMENT A1 where A1.SCHEDULE_REFERENCE = to_char(A.APPOINTMENT_ID))
+                 and to_char(all_days,'DDMMYY') not in (select nvl(to_char(A2.SCHEDULE_CHANGE_DATE,'DDMMYY'),'000000') from XXEBA_SALES_APPOINTMENT A2 where A2.SCHEDULE_REFERENCE = to_char(A.APPOINTMENT_ID))
+                
+                union
+                
+                select A.APPOINTMENT_ID, A.APPOINTMENT_TYPE,  all_days APPOINTMENT_DATE, 
+                --to_date(to_char(all_days,'DD-Mon-YYYY HH:MI AM'), 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE, 
+                to_char(all_days)||' '||to_char(A.APPOINTMENT_DATE,'HH12:MI AM') APPOINTMENT_DATE_PASS,
+                --(case when A.CREATED_BY != :APP_USER then A.CREATED_BY||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                   (case when A.SALESREPS_ID != :USER_ID then SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                APPOINTMENT_STATUS,  'S' TYPE, 'apex-cal-bluesky' css_class
+                from XXEBA_SALES_MEETING_SCHEDULE MS, XXEBA_SALES_APPOINTMENT A, EBA_SALES_SALESREPS SR, 
+                (WITH calendar
+                		 AS (SELECT TO_DATE ('01-11-2017', 'dd-mm-yyyy') + ROWNUM - 1 AS day FROM DUAL
+                			 CONNECT BY ROWNUM < TO_DATE ('31-12-2018', 'dd-mm-yyyy')- TO_DATE ('01-11-2017', 'dd-mm-yyyy'))
+                		 SELECT day all_days
+                		   FROM calendar) CA
+                where A.APPOINTMENT_ID = MS.APPOINTMENT_ID
+                and SR.ID = A.SALESREPS_ID
+                and ','||MS.SCHEDULE_SEQUENCE  like '%,'||to_char(CA.all_days,'DY')||',%'
+                and all_days  >= trunc(MS.CREATED)
+                and all_days <= nvl(A.SCHEDULE_UPTO,TO_DATE ('31-12-2018', 'dd-mm-yyyy'))
+                and MS.SCHEDULE_TYPE = 'W'
+                and (upper(SALESREPS_ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                 and to_char(all_days,'DDMMYY') not in (select to_char(A1.APPOINTMENT_DATE,'DDMMYY') from XXEBA_SALES_APPOINTMENT A1 where A1.SCHEDULE_REFERENCE = to_char(A.APPOINTMENT_ID))
+                                                       
+                union
+                
+                select A.APPOINTMENT_ID, A.APPOINTMENT_TYPE, all_days APPOINTMENT_DATE, 
+                --to_date(to_char(all_days,'DD-Mon-YYYY HH:MI AM'), 'DD-Mon-YYYY HH:MI AM') APPOINTMENT_DATE, 
+                to_char(all_days)||' '||to_char(A.APPOINTMENT_DATE,'HH12:MI AM') APPOINTMENT_DATE_PASS,
+                --(case when A.CREATED_BY != :APP_USER then A.CREATED_BY||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                   (case when A.SALESREPS_ID != :USER_ID then SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME||' - '||A.APPOINTMENT_PURPOSE else A.APPOINTMENT_PURPOSE end) APPOINTMENT_PURPOSE,
+                APPOINTMENT_STATUS,  'S' TYPE, 'apex-cal-bluesky' css_class
+                from XXEBA_SALES_MEETING_SCHEDULE MS, XXEBA_SALES_APPOINTMENT A, EBA_SALES_SALESREPS SR, 
+                (WITH calendar
+                		 AS (SELECT TO_DATE ('01-11-2017', 'dd-mm-yyyy') + ROWNUM - 1 AS day FROM DUAL
+                			 CONNECT BY ROWNUM < TO_DATE ('31-12-2018', 'dd-mm-yyyy')- TO_DATE ('01-11-2017', 'dd-mm-yyyy'))
+                		 SELECT day all_days
+                		   FROM calendar) CA
+                where A.APPOINTMENT_ID = MS.APPOINTMENT_ID
+                and SR.ID = A.SALESREPS_ID
+                --and ','||MS.SCHEDULE_SEQUENCE  like '%,'||to_char(CA.all_days,'DY')||',%'
+                and all_days  >= trunc(MS.CREATED)
+                and all_days <= nvl(A.SCHEDULE_UPTO,TO_DATE ('31-12-2018', 'dd-mm-yyyy'))
+                and MS.SCHEDULE_TYPE = 'D'
+                and (upper(SALESREPS_ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                 --and to_char(A.APPOINTMENT_DATE,'DDMMYY') != to_char(all_days,'DDMMYY')
+                and to_char(all_days,'DDMMYY') not in (select to_char(A1.APPOINTMENT_DATE,'DDMMYY') from XXEBA_SALES_APPOINTMENT A1 where A1.SCHEDULE_REFERENCE = to_char(A.APPOINTMENT_ID))
+                ```
+        }
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            displayColumn: APPOINTMENT_PURPOSE
+            startDateColumn: APPOINTMENT_DATE
+            supplementalInfo: &APPOINTMENT_STATUS.
+            additionalCalendarViews: [
+                list
+                navigation
+            ]
+            createLink: {
+                page: 136
+                items: {
+                    P136_SOURCE_PAGE: 140
+                }
+                clearCache: 136
+                action: resetPagination
+            }
+            viewEditLink: {
+                page: 136
+                items: {
+                    P136_APPOINTMENT_ID: &APPOINTMENT_ID.
+                    P136_SOURCE_PAGE: 140
+                    P136_APPOINTMENT_DATE_VAL: &APPOINTMENT_DATE_PASS.
+                    P136_MEETING_TYPE: &TYPE.
+                    P136_PASS_DATE: &APPOINTMENT_DATE_PASS.
+                }
+                clearCache: 136
+                action: resetPagination
+            }
+            cssClass: CSS_CLASS
+        }
+        performance {
+            lazyLoading: true
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @appointments
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: " style=\"background-color:#d91e18; margin: 10px 5px;\""
+        }
+    )
+
+    button customer-visit (
+        buttonName: CUSTOMER_VISIT
+        label: Customer Visits
+        layout {
+            sequence: 40
+            region: @appointments
+            slot: aboveBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 162
+                clearCache: 162
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button data-change (
+        buttonName: Data_Change
+        label: Scheduled
+        layout {
+            sequence: 10
+            region: @appointments
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="background-color:#6bb9f0; margin: 10px 5px;"
+        }
+    )
+
+    button visited (
+        buttonName: Visited
+        label: Visited
+        layout {
+            sequence: 20
+            region: @appointments
+            slot: aboveBox
+            horizontalAlignment: left
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="background-color:#2ecc71; margin: 10px 5px;"
+        }
+    )
+
+)
+

@@ -1,0 +1,4776 @@
+page 217 (
+    name: Trial Report
+    title: Trial Report
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region closed (
+        name: Closed
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                TRIAL_ID,
+                DEAL_ID,
+                to_char(sysdate, 'YY')||'/'||trial_no as trial_no,
+                COMPONENT_NAME,
+                PART_NUMBER,
+                MATERIAL_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' and LIST_ID = trial.PROCESS_TYPE)PROCESS_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' and LIST_ID = trial.INPUT_CONDITION)INPUT_CONDITION,
+                HARDNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_HEAT_TREATMENT_TYPE' and LIST_ID = trial.HEAT_TREATMENT_TYPE)HEAT_TREATMENT_TYPE,
+                SURFACE_CONDITION,
+                COMP_DIAMETER,
+                COMP_LENGTH,
+                COMP_WIDTH,
+                COMP_THICKNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_SHAPE' and LIST_ID = trial.COMP_SHAPE)COMP_SHAPE,
+                MACHINE_TYPE,
+                MACHINE_BRAND,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_WORKHOLDING_TYPE' and LIST_ID = trial.WORKHOLDING_TYPE)WORKHOLDING_TYPE,
+                CHUCK_DIAMETER,
+                SPINDLE_TAPER,
+                decode(THROUGH_COOLANT,'Y', 'Yes', 'No')THROUGH_COOLANT,
+                TABLE_SIZE,
+                NO_OF_TOOL_LOCATION,
+                MAXIMUM_RPM,
+                SPINDLE_TOOL_WEIGHT_LIMIT,
+                EXIST_TOOL_SPEC,
+                EXIST_TOOL_HOLDING_SPEC,
+                EXIST_NO_OF_CUTTING_EDGES,
+                EXIST_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.EXIST_TOOL_CHANGING_CRITERIA)EXIST_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.EXIST_TYPE_OF_COATING)EXIST_TYPE_OF_COATING,
+                EXIST_NO_OF_REGRINDING_DONE,
+                EXIST_AVERAGE_LIFE_PER_EDGE,
+                EXIST_UNIT_PRICE,
+                RECOM_TOOL_SPEC,
+                RECOM_TOOL_HOLDING_SPEC,
+                RECOM_NO_OF_CUTTING_EDGES,
+                RECOM_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.RECOM_TOOL_CHANGING_CRITERIA)RECOM_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.RECOM_TYPE_OF_COATING)RECOM_TYPE_OF_COATING,
+                RECOM_NO_OF_REGRINDING_DONE,
+                RECOM_AVERAGE_LIFE_PER_EDGE,
+                RECOM_UNIT_PRICE,
+                EXIST_TOTAL_MATERIAL_REMOVAL,
+                EXIST_NO_OF_PASSES,
+                EXIST_DEPTH_OF_CUT,
+                EXIST_WIDTH_OF_CUT,
+                EXIST_SPINDLE_SPEED,
+                EXIST_CUTTING_SPEED,
+                EXIST_FEED_PER_TOOTH,
+                EXIST_TABLE_FEED,
+                EXIST_CYCLE_TIME,
+                RECOM_TOTAL_MATERIAL_REMOVAL,
+                RECOM_NO_OF_PASSES,
+                RECOM_DEPTH_OF_CUT,
+                RECOM_WIDTH_OF_CUT,
+                RECOM_SPINDLE_SPEED,
+                RECOM_CUTTING_SPEED,
+                RECOM_FEED_PER_TOOTH,
+                RECOM_TABLE_FEED,
+                RECOM_CYCLE_TIME,
+                RESULT_AVG_LIFE_EDGE,
+                RESULT_AVG_CONTACT_TIME,
+                RESULT_CYLE_TIME_DIFFERENCE,
+                RESULT_PRODUCTIVITY_IMPROVED,
+                decode(TRIAL_RESULT, 'F', 'Fail', 'P', 'Pass')TRIAL_RESULT,
+                decode(STATUS, 'N', 'New', 'I', 'In Progress', 'C', 'Closed')STATUS,
+                deal.deal_name,
+                deal.customer_name,
+                created_date,
+                created_by,
+                (case when STATUS = 'C' then null else
+                --'<i class="fa fa-check-circle"></i>' 
+                 '<img src="#APP_IMAGES#result_icon.png" alt="result">'
+                 end) as result,
+                 (select REP_FIRST_NAME  from eba_sales_salesreps where ID=deal.salesrep_id_01 ) as Sales_Rep,
+                  (NVL(RECOM_UNIT_PRICE,0) * NVL(RECOM_NO_OF_FLUTES,0)) AS val
+                from XXEBA_TRIAL_DETAILS trial, 
+                (SELECT d.id,
+                  d.deal_name,
+                  d.salesrep_id_01,
+                  c.customer_name
+                FROM eba_sales_deals d,
+                  eba_sales_customers c
+                WHERE c.id = d.customer_id 
+                )deal
+                where DEAL_ID = deal.id and trial.status = 'C'
+                -- AND trial.status != 'X'
+                -- and status = 'Y'
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @trial-report
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 317393458050847821
+        }
+
+        column CHUCK_DIAMETER (
+            type: plainText
+            heading {
+                heading: Chuck Diameter
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column COMPONENT_NAME (
+            type: plainText
+            heading {
+                heading: Component Name
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column COMP_DIAMETER (
+            type: plainText
+            heading {
+                heading: Comp Diameter
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column COMP_LENGTH (
+            type: plainText
+            heading {
+                heading: Comp Length
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column COMP_SHAPE (
+            type: plainText
+            heading {
+                heading: Comp Shape
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column COMP_THICKNESS (
+            type: plainText
+            heading {
+                heading: Comp Thickness
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column COMP_WIDTH (
+            type: plainText
+            heading {
+                heading: Comp Width
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 730
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BU
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 720
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: BT
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Account Name
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DEAL_ID (
+            type: plainText
+            heading {
+                heading: Deal Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DEAL_NAME (
+            type: link
+            heading {
+                heading: Opportunity Name
+            }
+            layout {
+                sequence: 30
+            }
+            link {
+                target: {
+                    page: 216
+                    items: {
+                        P216_TRIAL_ID: #TRIAL_ID#
+                    }
+                    clearCache: 216
+                    action: resetPagination
+                }
+                linkText: #DEAL_NAME#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EXIST_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Exist Average Life Per Edge
+                alignment: end
+            }
+            layout {
+                sequence: 370
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AK
+            }
+        )
+
+        column EXIST_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Cutting Speed
+                alignment: end
+            }
+            layout {
+                sequence: 530
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BA
+            }
+        )
+
+        column EXIST_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Exist Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 560
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BD
+            }
+        )
+
+        column EXIST_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 500
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column EXIST_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Exist Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 540
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BB
+            }
+        )
+
+        column EXIST_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Exist No Of Cutting Edges
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column EXIST_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Exist No Of Flutes
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AG
+            }
+        )
+
+        column EXIST_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Exist No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 490
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AW
+            }
+        )
+
+        column EXIST_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Exist No Of Regrinding Done
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column EXIST_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 520
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AZ
+            }
+        )
+
+        column EXIST_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Exist Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 550
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BC
+            }
+        )
+
+        column EXIST_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Exist Tool Changing Criteria
+            }
+            layout {
+                sequence: 340
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column EXIST_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Holding Spec
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column EXIST_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Spec
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column EXIST_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Exist Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 480
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AV
+            }
+        )
+
+        column EXIST_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Exist Type Of Coating
+            }
+            layout {
+                sequence: 350
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AI
+            }
+        )
+
+        column EXIST_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Exist Unit Price
+                alignment: end
+            }
+            layout {
+                sequence: 380
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AL
+            }
+        )
+
+        column EXIST_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 510
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AY
+            }
+        )
+
+        column HARDNESS (
+            type: plainText
+            heading {
+                heading: Hardness
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column HEAT_TREATMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Heat Treatment Type
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column INPUT_CONDITION (
+            type: plainText
+            heading {
+                heading: Input Condition
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column MACHINE_BRAND (
+            type: plainText
+            heading {
+                heading: Machine Brand
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column MACHINE_TYPE (
+            type: plainText
+            heading {
+                heading: Machine Type
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column MATERIAL_TYPE (
+            type: plainText
+            heading {
+                heading: Material Type
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MAXIMUM_RPM (
+            type: plainText
+            heading {
+                heading: Maximum Rpm
+            }
+            layout {
+                sequence: 280
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column NO_OF_TOOL_LOCATION (
+            type: plainText
+            heading {
+                heading: No Of Tool Location
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column PART_NUMBER (
+            type: plainText
+            heading {
+                heading: Part Number
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PROCESS_TYPE (
+            type: plainText
+            heading {
+                heading: Process Type
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column RECOM_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Recom Average Life Per Edge
+                alignment: end
+            }
+            layout {
+                sequence: 460
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AT
+            }
+        )
+
+        column RECOM_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Cutting Speed
+                alignment: end
+            }
+            layout {
+                sequence: 620
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BJ
+            }
+        )
+
+        column RECOM_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Recom Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 650
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BM
+            }
+        )
+
+        column RECOM_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 590
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BG
+            }
+        )
+
+        column RECOM_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Recom Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 630
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BK
+            }
+        )
+
+        column RECOM_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Recom No Of Cutting Edges
+                alignment: end
+            }
+            layout {
+                sequence: 410
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AO
+            }
+        )
+
+        column RECOM_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Recom No Of Flutes
+                alignment: end
+            }
+            layout {
+                sequence: 420
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column RECOM_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Recom No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 580
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BF
+            }
+        )
+
+        column RECOM_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Recom No Of Regrinding Done
+                alignment: end
+            }
+            layout {
+                sequence: 450
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AS
+            }
+        )
+
+        column RECOM_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 610
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BI
+            }
+        )
+
+        column RECOM_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Recom Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 640
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BL
+            }
+        )
+
+        column RECOM_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Recom Tool Changing Criteria
+            }
+            layout {
+                sequence: 430
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column RECOM_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Holding Spec
+            }
+            layout {
+                sequence: 400
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AN
+            }
+        )
+
+        column RECOM_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Spec
+            }
+            layout {
+                sequence: 390
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column RECOM_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Recom Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 570
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BE
+            }
+        )
+
+        column RECOM_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Recom Type Of Coating
+            }
+            layout {
+                sequence: 440
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column RECOM_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Recom Unit Price
+                alignment: end
+            }
+            layout {
+                sequence: 470
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column RECOM_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 600
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BH
+            }
+        )
+
+        column RESULT (
+            type: link
+            heading {
+                heading: Update Result
+            }
+            layout {
+                sequence: 50
+            }
+            link {
+                target: {
+                    page: 218
+                    items: {
+                        P218_TRIAL_ID: #TRIAL_ID#
+                    }
+                    clearCache: 218
+                    action: resetPagination
+                }
+                linkText: #RESULT#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_AVG_CONTACT_TIME (
+            type: plainText
+            heading {
+                heading: Result Avg Contact Time
+                alignment: end
+            }
+            layout {
+                sequence: 670
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BO
+            }
+        )
+
+        column RESULT_AVG_LIFE_EDGE (
+            type: plainText
+            heading {
+                heading: Result Avg Life Edge
+                alignment: end
+            }
+            layout {
+                sequence: 660
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BN
+            }
+        )
+
+        column RESULT_CYLE_TIME_DIFFERENCE (
+            type: plainText
+            heading {
+                heading: Result Cyle Time Difference
+                alignment: end
+            }
+            layout {
+                sequence: 680
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BP
+            }
+        )
+
+        column RESULT_PRODUCTIVITY_IMPROVED (
+            type: plainText
+            heading {
+                heading: Result Productivity Improved
+            }
+            layout {
+                sequence: 690
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BQ
+            }
+        )
+
+        column SALES_REP (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 740
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BV
+            }
+        )
+
+        column SPINDLE_TAPER (
+            type: plainText
+            heading {
+                heading: Spindle Taper
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column SPINDLE_TOOL_WEIGHT_LIMIT (
+            type: plainText
+            heading {
+                heading: Spindle Tool Weight Limit
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 710
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BS
+            }
+        )
+
+        column SURFACE_CONDITION (
+            type: plainText
+            heading {
+                heading: Surface Condition
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column TABLE_SIZE (
+            type: plainText
+            heading {
+                heading: Table Size
+                alignment: end
+            }
+            layout {
+                sequence: 260
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column THROUGH_COOLANT (
+            type: plainText
+            heading {
+                heading: Through Coolant
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column TRIAL_ID (
+            type: plainText
+            heading {
+                heading: Trial Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TRIAL_NO (
+            type: plainText
+            heading {
+                heading: Trial No
+                alignment: center
+            }
+            layout {
+                sequence: 240
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column TRIAL_RESULT (
+            type: plainText
+            heading {
+                heading: Trial Result
+            }
+            layout {
+                sequence: 700
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BR
+            }
+        )
+
+        column VAL (
+            type: plainText
+            heading {
+                heading: Val
+                alignment: end
+            }
+            layout {
+                sequence: 750
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BW
+            }
+        )
+
+        column WORKHOLDING_TYPE (
+            type: plainText
+            heading {
+                heading: Workholding Type
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Closed
+        }
+
+        savedReport 3174485 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPONENT_NAME (
+                sequence: 5
+            )
+
+            displayColumn CREATED_DATE (
+                sequence: 3
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 4
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 2
+            )
+
+            displayColumn HARDNESS (
+                sequence: 10
+            )
+
+            displayColumn INPUT_CONDITION (
+                sequence: 9
+            )
+
+            displayColumn MATERIAL_TYPE (
+                sequence: 7
+            )
+
+            displayColumn PART_NUMBER (
+                sequence: 6
+            )
+
+            displayColumn PROCESS_TYPE (
+                sequence: 8
+            )
+
+            displayColumn RECOM_CUTTING_SPEED (
+                sequence: 11
+            )
+
+            displayColumn SALES_REP (
+                sequence: 13
+            )
+
+            displayColumn TRIAL_NO (
+                sequence: 1
+            )
+
+            displayColumn TRIAL_RESULT (
+                sequence: 12
+            )
+
+            sort (
+                column: CREATED_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region in-progress (
+        name: In Progress
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                TRIAL_ID,
+                DEAL_ID,
+                to_char(sysdate, 'YY')||'/'||trial_no as trial_no,
+                COMPONENT_NAME,
+                PART_NUMBER,
+                MATERIAL_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' and LIST_ID = trial.PROCESS_TYPE)PROCESS_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' and LIST_ID = trial.INPUT_CONDITION)INPUT_CONDITION,
+                HARDNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_HEAT_TREATMENT_TYPE' and LIST_ID = trial.HEAT_TREATMENT_TYPE)HEAT_TREATMENT_TYPE,
+                SURFACE_CONDITION,
+                COMP_DIAMETER,
+                COMP_LENGTH,
+                COMP_WIDTH,
+                COMP_THICKNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_SHAPE' and LIST_ID = trial.COMP_SHAPE)COMP_SHAPE,
+                MACHINE_TYPE,
+                MACHINE_BRAND,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_WORKHOLDING_TYPE' and LIST_ID = trial.WORKHOLDING_TYPE)WORKHOLDING_TYPE,
+                CHUCK_DIAMETER,
+                SPINDLE_TAPER,
+                decode(THROUGH_COOLANT,'Y', 'Yes', 'No')THROUGH_COOLANT,
+                TABLE_SIZE,
+                NO_OF_TOOL_LOCATION,
+                MAXIMUM_RPM,
+                SPINDLE_TOOL_WEIGHT_LIMIT,
+                EXIST_TOOL_SPEC,
+                EXIST_TOOL_HOLDING_SPEC,
+                EXIST_NO_OF_CUTTING_EDGES,
+                EXIST_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.EXIST_TOOL_CHANGING_CRITERIA)EXIST_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.EXIST_TYPE_OF_COATING)EXIST_TYPE_OF_COATING,
+                EXIST_NO_OF_REGRINDING_DONE,
+                EXIST_AVERAGE_LIFE_PER_EDGE,
+                EXIST_UNIT_PRICE,
+                RECOM_TOOL_SPEC,
+                RECOM_TOOL_HOLDING_SPEC,
+                RECOM_NO_OF_CUTTING_EDGES,
+                RECOM_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.RECOM_TOOL_CHANGING_CRITERIA)RECOM_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.RECOM_TYPE_OF_COATING)RECOM_TYPE_OF_COATING,
+                RECOM_NO_OF_REGRINDING_DONE,
+                RECOM_AVERAGE_LIFE_PER_EDGE,
+                RECOM_UNIT_PRICE,
+                EXIST_TOTAL_MATERIAL_REMOVAL,
+                EXIST_NO_OF_PASSES,
+                EXIST_DEPTH_OF_CUT,
+                EXIST_WIDTH_OF_CUT,
+                EXIST_SPINDLE_SPEED,
+                EXIST_CUTTING_SPEED,
+                EXIST_FEED_PER_TOOTH,
+                EXIST_TABLE_FEED,
+                EXIST_CYCLE_TIME,
+                RECOM_TOTAL_MATERIAL_REMOVAL,
+                RECOM_NO_OF_PASSES,
+                RECOM_DEPTH_OF_CUT,
+                RECOM_WIDTH_OF_CUT,
+                RECOM_SPINDLE_SPEED,
+                RECOM_CUTTING_SPEED,
+                RECOM_FEED_PER_TOOTH,
+                RECOM_TABLE_FEED,
+                RECOM_CYCLE_TIME,
+                RESULT_AVG_LIFE_EDGE,
+                RESULT_AVG_CONTACT_TIME,
+                RESULT_CYLE_TIME_DIFFERENCE,
+                RESULT_PRODUCTIVITY_IMPROVED,
+                decode(TRIAL_RESULT, 'F', 'Fail', 'P', 'Pass')TRIAL_RESULT,
+                decode(STATUS, 'N', 'New', 'I', 'In Progress', 'C', 'Closed')STATUS,
+                deal.deal_name,
+                deal.customer_name,
+                created_date,
+                created_by,
+                (case when STATUS = 'C' then null else
+                --'<i class="fa fa-check-circle"></i>' 
+                 '<img src="#APP_IMAGES#result_icon.png" alt="result">'
+                 end) as result,
+                 (select REP_FIRST_NAME  from eba_sales_salesreps where ID=deal.salesrep_id_01 ) as Sales_Rep,
+                  (NVL(RECOM_UNIT_PRICE,0) * NVL(RECOM_NO_OF_FLUTES,0)) AS val
+                from XXEBA_TRIAL_DETAILS trial, 
+                (SELECT d.id,
+                  d.deal_name,
+                  d.salesrep_id_01,
+                  c.customer_name
+                FROM eba_sales_deals d,
+                  eba_sales_customers c
+                WHERE c.id = d.customer_id 
+                )deal
+                where DEAL_ID = deal.id and trial.status = 'I'
+                AND created_date > '01-Sep-2025' 
+                -- AND trial.status != 'X'
+                -- and status = 'Y'
+                ```
+        }
+        layout {
+            sequence: 20
+            parentRegion: @trial-report
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 317311963614741543
+        }
+
+        column CHUCK_DIAMETER (
+            type: plainText
+            heading {
+                heading: Chuck Diameter
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column COMPONENT_NAME (
+            type: plainText
+            heading {
+                heading: Component Name
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column COMP_DIAMETER (
+            type: plainText
+            heading {
+                heading: Comp Diameter
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column COMP_LENGTH (
+            type: plainText
+            heading {
+                heading: Comp Length
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column COMP_SHAPE (
+            type: plainText
+            heading {
+                heading: Comp Shape
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column COMP_THICKNESS (
+            type: plainText
+            heading {
+                heading: Comp Thickness
+            }
+            layout {
+                sequence: 170
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column COMP_WIDTH (
+            type: plainText
+            heading {
+                heading: Comp Width
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 730
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BU
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 720
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: BT
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Account Name
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DEAL_ID (
+            type: plainText
+            heading {
+                heading: Deal Id
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DEAL_NAME (
+            type: link
+            heading {
+                heading: Opportunity Name
+            }
+            layout {
+                sequence: 30
+            }
+            link {
+                target: {
+                    page: 216
+                    items: {
+                        P216_TRIAL_ID: #TRIAL_ID#
+                    }
+                    clearCache: 216
+                    action: resetPagination
+                }
+                linkText: #DEAL_NAME#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column EXIST_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Exist Average Life Per Edge
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AK
+            }
+        )
+
+        column EXIST_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Cutting Speed
+                alignment: end
+            }
+            layout {
+                sequence: 530
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BA
+            }
+        )
+
+        column EXIST_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Exist Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 560
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BD
+            }
+        )
+
+        column EXIST_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 500
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column EXIST_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Exist Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 540
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BB
+            }
+        )
+
+        column EXIST_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Exist No Of Cutting Edges
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column EXIST_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Exist No Of Flutes
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AG
+            }
+        )
+
+        column EXIST_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Exist No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 490
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AW
+            }
+        )
+
+        column EXIST_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Exist No Of Regrinding Done
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column EXIST_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 520
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AZ
+            }
+        )
+
+        column EXIST_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Exist Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 550
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BC
+            }
+        )
+
+        column EXIST_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Exist Tool Changing Criteria
+            }
+            layout {
+                sequence: 340
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column EXIST_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Holding Spec
+            }
+            layout {
+                sequence: 310
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column EXIST_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Spec
+            }
+            layout {
+                sequence: 300
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column EXIST_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Exist Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 480
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AV
+            }
+        )
+
+        column EXIST_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Exist Type Of Coating
+            }
+            layout {
+                sequence: 350
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AI
+            }
+        )
+
+        column EXIST_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Exist Unit Price
+                alignment: center
+            }
+            layout {
+                sequence: 380
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AL
+            }
+        )
+
+        column EXIST_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 510
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AY
+            }
+        )
+
+        column HARDNESS (
+            type: plainText
+            heading {
+                heading: Hardness
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column HEAT_TREATMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Heat Treatment Type
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column INPUT_CONDITION (
+            type: plainText
+            heading {
+                heading: Input Condition
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column MACHINE_BRAND (
+            type: plainText
+            heading {
+                heading: Machine Brand
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column MACHINE_TYPE (
+            type: plainText
+            heading {
+                heading: Machine Type
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column MATERIAL_TYPE (
+            type: plainText
+            heading {
+                heading: Material Type
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MAXIMUM_RPM (
+            type: plainText
+            heading {
+                heading: Maximum Rpm
+            }
+            layout {
+                sequence: 280
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column NO_OF_TOOL_LOCATION (
+            type: plainText
+            heading {
+                heading: No Of Tool Location
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column PART_NUMBER (
+            type: plainText
+            heading {
+                heading: Part Number
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column PROCESS_TYPE (
+            type: plainText
+            heading {
+                heading: Process Type
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column RECOM_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Recom Average Life Per Edge
+                alignment: end
+            }
+            layout {
+                sequence: 460
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AT
+            }
+        )
+
+        column RECOM_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Cutting Speed
+                alignment: center
+            }
+            layout {
+                sequence: 620
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BJ
+            }
+        )
+
+        column RECOM_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Recom Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 650
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BM
+            }
+        )
+
+        column RECOM_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 590
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BG
+            }
+        )
+
+        column RECOM_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Recom Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 630
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BK
+            }
+        )
+
+        column RECOM_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Recom No Of Cutting Edges
+                alignment: end
+            }
+            layout {
+                sequence: 410
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AO
+            }
+        )
+
+        column RECOM_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Recom No Of Flutes
+                alignment: end
+            }
+            layout {
+                sequence: 420
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column RECOM_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Recom No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 580
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BF
+            }
+        )
+
+        column RECOM_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Recom No Of Regrinding Done
+                alignment: end
+            }
+            layout {
+                sequence: 450
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AS
+            }
+        )
+
+        column RECOM_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 610
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BI
+            }
+        )
+
+        column RECOM_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Recom Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 640
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BL
+            }
+        )
+
+        column RECOM_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Recom Tool Changing Criteria
+            }
+            layout {
+                sequence: 430
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column RECOM_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Holding Spec
+            }
+            layout {
+                sequence: 400
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AN
+            }
+        )
+
+        column RECOM_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Spec
+            }
+            layout {
+                sequence: 390
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column RECOM_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Recom Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 570
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BE
+            }
+        )
+
+        column RECOM_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Recom Type Of Coating
+            }
+            layout {
+                sequence: 440
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column RECOM_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Recom Unit Price
+                alignment: end
+            }
+            layout {
+                sequence: 470
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column RECOM_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 600
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BH
+            }
+        )
+
+        column RESULT (
+            type: link
+            heading {
+                heading: Update Result
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 218
+                    items: {
+                        P218_TRIAL_ID: #TRIAL_ID#
+                        P218_TRIAL_RESULT: #TRIAL_RESULT#
+                    }
+                    clearCache: 218
+                    action: resetPagination
+                }
+                linkText: #RESULT#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_AVG_CONTACT_TIME (
+            type: plainText
+            heading {
+                heading: Result Avg Contact Time
+                alignment: end
+            }
+            layout {
+                sequence: 670
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BO
+            }
+        )
+
+        column RESULT_AVG_LIFE_EDGE (
+            type: plainText
+            heading {
+                heading: Result Avg Life Edge
+                alignment: end
+            }
+            layout {
+                sequence: 660
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BN
+            }
+        )
+
+        column RESULT_CYLE_TIME_DIFFERENCE (
+            type: plainText
+            heading {
+                heading: Result Cyle Time Difference
+                alignment: end
+            }
+            layout {
+                sequence: 680
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BP
+            }
+        )
+
+        column RESULT_PRODUCTIVITY_IMPROVED (
+            type: plainText
+            heading {
+                heading: Result Productivity Improved
+            }
+            layout {
+                sequence: 690
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BQ
+            }
+        )
+
+        column SALES_REP (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 740
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BV
+            }
+        )
+
+        column SPINDLE_TAPER (
+            type: plainText
+            heading {
+                heading: Spindle Taper
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column SPINDLE_TOOL_WEIGHT_LIMIT (
+            type: plainText
+            heading {
+                heading: Spindle Tool Weight Limit
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 710
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BS
+            }
+        )
+
+        column SURFACE_CONDITION (
+            type: plainText
+            heading {
+                heading: Surface Condition
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column TABLE_SIZE (
+            type: plainText
+            heading {
+                heading: Table Size
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column THROUGH_COOLANT (
+            type: plainText
+            heading {
+                heading: Through Coolant
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column TRIAL_ID (
+            type: plainText
+            heading {
+                heading: Trial Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TRIAL_NO (
+            type: plainText
+            heading {
+                heading: Trial No
+                alignment: center
+            }
+            layout {
+                sequence: 240
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column TRIAL_RESULT (
+            type: plainText
+            heading {
+                heading: Trial Result
+            }
+            layout {
+                sequence: 700
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BR
+            }
+        )
+
+        column VAL (
+            type: plainText
+            heading {
+                heading: Val
+                alignment: end
+            }
+            layout {
+                sequence: 750
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BW
+            }
+        )
+
+        column WORKHOLDING_TYPE (
+            type: plainText
+            heading {
+                heading: Workholding Type
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: In Progress
+        }
+
+        savedReport 3174479 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPONENT_NAME (
+                sequence: 5
+            )
+
+            displayColumn CREATED_DATE (
+                sequence: 2
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 4
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 3
+            )
+
+            displayColumn HARDNESS (
+                sequence: 10
+            )
+
+            displayColumn INPUT_CONDITION (
+                sequence: 9
+            )
+
+            displayColumn MATERIAL_TYPE (
+                sequence: 7
+            )
+
+            displayColumn PART_NUMBER (
+                sequence: 6
+            )
+
+            displayColumn PROCESS_TYPE (
+                sequence: 8
+            )
+
+            displayColumn RECOM_CUTTING_SPEED (
+                sequence: 11
+            )
+
+            displayColumn RESULT (
+                sequence: 12
+            )
+
+            displayColumn SALES_REP (
+                sequence: 14
+            )
+
+            displayColumn TRIAL_NO (
+                sequence: 1
+            )
+
+            displayColumn TRIAL_RESULT (
+                sequence: 13
+            )
+
+            sort (
+                column: CREATED_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region new (
+        name: New
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                TRIAL_ID,
+                DEAL_ID,
+                to_char(sysdate, 'YY')||'/'||trial_no as trial_no,
+                COMPONENT_NAME,
+                PART_NUMBER,
+                MATERIAL_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' and LIST_ID = trial.PROCESS_TYPE)PROCESS_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' and LIST_ID = trial.INPUT_CONDITION)INPUT_CONDITION,
+                HARDNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_HEAT_TREATMENT_TYPE' and LIST_ID = trial.HEAT_TREATMENT_TYPE)HEAT_TREATMENT_TYPE,
+                SURFACE_CONDITION,
+                COMP_DIAMETER,
+                COMP_LENGTH,
+                COMP_WIDTH,
+                COMP_THICKNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_SHAPE' and LIST_ID = trial.COMP_SHAPE)COMP_SHAPE,
+                MACHINE_TYPE,
+                MACHINE_BRAND,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_WORKHOLDING_TYPE' and LIST_ID = trial.WORKHOLDING_TYPE)WORKHOLDING_TYPE,
+                CHUCK_DIAMETER,
+                SPINDLE_TAPER,
+                decode(THROUGH_COOLANT,'Y', 'Yes', 'No')THROUGH_COOLANT,
+                TABLE_SIZE,
+                NO_OF_TOOL_LOCATION,
+                MAXIMUM_RPM,
+                SPINDLE_TOOL_WEIGHT_LIMIT,
+                EXIST_TOOL_SPEC,
+                EXIST_TOOL_HOLDING_SPEC,
+                EXIST_NO_OF_CUTTING_EDGES,
+                EXIST_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.EXIST_TOOL_CHANGING_CRITERIA)EXIST_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.EXIST_TYPE_OF_COATING)EXIST_TYPE_OF_COATING,
+                EXIST_NO_OF_REGRINDING_DONE,
+                EXIST_AVERAGE_LIFE_PER_EDGE,
+                EXIST_UNIT_PRICE,
+                RECOM_TOOL_SPEC,
+                RECOM_TOOL_HOLDING_SPEC,
+                RECOM_NO_OF_CUTTING_EDGES,
+                RECOM_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.RECOM_TOOL_CHANGING_CRITERIA)RECOM_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.RECOM_TYPE_OF_COATING)RECOM_TYPE_OF_COATING,
+                RECOM_NO_OF_REGRINDING_DONE,
+                RECOM_AVERAGE_LIFE_PER_EDGE,
+                RECOM_UNIT_PRICE,
+                EXIST_TOTAL_MATERIAL_REMOVAL,
+                EXIST_NO_OF_PASSES,
+                EXIST_DEPTH_OF_CUT,
+                EXIST_WIDTH_OF_CUT,
+                EXIST_SPINDLE_SPEED,
+                EXIST_CUTTING_SPEED,
+                EXIST_FEED_PER_TOOTH,
+                EXIST_TABLE_FEED,
+                EXIST_CYCLE_TIME,
+                RECOM_TOTAL_MATERIAL_REMOVAL,
+                RECOM_NO_OF_PASSES,
+                RECOM_DEPTH_OF_CUT,
+                RECOM_WIDTH_OF_CUT,
+                RECOM_SPINDLE_SPEED,
+                RECOM_CUTTING_SPEED,
+                RECOM_FEED_PER_TOOTH,
+                RECOM_TABLE_FEED,
+                RECOM_CYCLE_TIME,
+                RESULT_AVG_LIFE_EDGE,
+                RESULT_AVG_CONTACT_TIME,
+                RESULT_CYLE_TIME_DIFFERENCE,
+                RESULT_PRODUCTIVITY_IMPROVED,
+                decode(TRIAL_RESULT, 'F', 'Fail', 'P', 'Pass')TRIAL_RESULT,
+                decode(STATUS, 'N', 'New', 'I', 'In Progress', 'C', 'Closed')STATUS,
+                deal.deal_name,
+                deal.customer_name,
+                created_date,
+                created_by,
+                (case when STATUS = 'C' then null else
+                --'<i class="fa fa-check-circle"></i>' 
+                 '<img src="#APP_IMAGES#result_icon.png" alt="result">'
+                 end) as result,
+                 (select REP_FIRST_NAME  from eba_sales_salesreps where ID=deal.salesrep_id_01 ) as Sales_Rep,
+                  (NVL(RECOM_UNIT_PRICE,0) * NVL(RECOM_NO_OF_FLUTES,0)) AS val
+                from XXEBA_TRIAL_DETAILS trial, 
+                (SELECT d.id,
+                  d.deal_name,
+                  d.salesrep_id_01,
+                  c.customer_name
+                FROM eba_sales_deals d,
+                  eba_sales_customers c
+                WHERE c.id = d.customer_id 
+                )deal
+                where DEAL_ID = deal.id and trial.status = 'N'
+                AND created_date > '01-Sep-2025' 
+                -- AND trial.status != 'X'
+                -- and status = 'Y'
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @trial-report
+            slot: tabs
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 316861457550415316
+        }
+
+        column CHUCK_DIAMETER (
+            type: plainText
+            heading {
+                heading: Chuck Diameter
+                alignment: end
+            }
+            layout {
+                sequence: 240
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column COMPONENT_NAME (
+            type: plainText
+            heading {
+                heading: Component Name
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column COMP_DIAMETER (
+            type: plainText
+            heading {
+                heading: Comp Diameter
+                alignment: end
+            }
+            layout {
+                sequence: 160
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column COMP_LENGTH (
+            type: plainText
+            heading {
+                heading: Comp Length
+                alignment: end
+            }
+            layout {
+                sequence: 170
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column COMP_SHAPE (
+            type: plainText
+            heading {
+                heading: Comp Shape
+            }
+            layout {
+                sequence: 200
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column COMP_THICKNESS (
+            type: plainText
+            heading {
+                heading: Comp Thickness
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column COMP_WIDTH (
+            type: plainText
+            heading {
+                heading: Comp Width
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 750
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BT
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 740
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: BS
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Account Name
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BR
+            }
+        )
+
+        column DEAL_ID (
+            type: plainText
+            heading {
+                heading: Deal Id
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DEAL_NAME (
+            type: link
+            heading {
+                heading: Opportunity Name
+            }
+            layout {
+                sequence: 40
+            }
+            link {
+                target: {
+                    page: 216
+                    items: {
+                        P216_TRIAL_ID: #TRIAL_ID#
+                    }
+                    clearCache: 216
+                    action: resetPagination
+                }
+                linkText: #DEAL_NAME#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BQ
+            }
+        )
+
+        column EXIST_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Exist Average Life Per Edge
+                alignment: end
+            }
+            layout {
+                sequence: 390
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column EXIST_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Cutting Speed
+                alignment: end
+            }
+            layout {
+                sequence: 550
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column EXIST_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Exist Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 580
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BA
+            }
+        )
+
+        column EXIST_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 520
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column EXIST_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Exist Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 560
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AY
+            }
+        )
+
+        column EXIST_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Exist No Of Cutting Edges
+                alignment: end
+            }
+            layout {
+                sequence: 340
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column EXIST_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Exist No Of Flutes
+                alignment: end
+            }
+            layout {
+                sequence: 350
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column EXIST_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Exist No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 510
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AT
+            }
+        )
+
+        column EXIST_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Exist No Of Regrinding Done
+                alignment: end
+            }
+            layout {
+                sequence: 380
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AG
+            }
+        )
+
+        column EXIST_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Exist Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 540
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AW
+            }
+        )
+
+        column EXIST_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Exist Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 570
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AZ
+            }
+        )
+
+        column EXIST_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Exist Tool Changing Criteria
+            }
+            layout {
+                sequence: 360
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column EXIST_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Holding Spec
+            }
+            layout {
+                sequence: 330
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column EXIST_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Exist Tool Spec
+            }
+            layout {
+                sequence: 320
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column EXIST_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Exist Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 500
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AS
+            }
+        )
+
+        column EXIST_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Exist Type Of Coating
+            }
+            layout {
+                sequence: 370
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        column EXIST_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Exist Unit Price
+                alignment: end
+            }
+            layout {
+                sequence: 400
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AI
+            }
+        )
+
+        column EXIST_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Exist Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 530
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AV
+            }
+        )
+
+        column HARDNESS (
+            type: plainText
+            heading {
+                heading: Hardness
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column HEAT_TREATMENT_TYPE (
+            type: plainText
+            heading {
+                heading: Heat Treatment Type
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column INPUT_CONDITION (
+            type: plainText
+            heading {
+                heading: Input Condition
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MACHINE_BRAND (
+            type: plainText
+            heading {
+                heading: Machine Brand
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column MACHINE_TYPE (
+            type: plainText
+            heading {
+                heading: Machine Type
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column MATERIAL_TYPE (
+            type: plainText
+            heading {
+                heading: Material Type
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MAXIMUM_RPM (
+            type: plainText
+            heading {
+                heading: Maximum Rpm
+                alignment: end
+            }
+            layout {
+                sequence: 300
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column NO_OF_TOOL_LOCATION (
+            type: plainText
+            heading {
+                heading: No Of Tool Location
+                alignment: end
+            }
+            layout {
+                sequence: 290
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column PART_NUMBER (
+            type: plainText
+            heading {
+                heading: Part Number
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column PROCESS_TYPE (
+            type: plainText
+            heading {
+                heading: Process Type
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column RECOM_AVERAGE_LIFE_PER_EDGE (
+            type: plainText
+            heading {
+                heading: Recom Average Life Per Edge
+                alignment: end
+            }
+            layout {
+                sequence: 480
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column RECOM_CUTTING_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Cutting Speed
+                alignment: center
+            }
+            layout {
+                sequence: 640
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BG
+            }
+        )
+
+        column RECOM_CYCLE_TIME (
+            type: plainText
+            heading {
+                heading: Recom Cycle Time
+                alignment: end
+            }
+            layout {
+                sequence: 670
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BJ
+            }
+        )
+
+        column RECOM_DEPTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Depth Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 610
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BD
+            }
+        )
+
+        column RECOM_FEED_PER_TOOTH (
+            type: plainText
+            heading {
+                heading: Recom Feed Per Tooth
+                alignment: end
+            }
+            layout {
+                sequence: 650
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BH
+            }
+        )
+
+        column RECOM_NO_OF_CUTTING_EDGES (
+            type: plainText
+            heading {
+                heading: Recom No Of Cutting Edges
+                alignment: end
+            }
+            layout {
+                sequence: 430
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AL
+            }
+        )
+
+        column RECOM_NO_OF_FLUTES (
+            type: plainText
+            heading {
+                heading: Recom No Of Flutes
+                alignment: end
+            }
+            layout {
+                sequence: 440
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column RECOM_NO_OF_PASSES (
+            type: plainText
+            heading {
+                heading: Recom No Of Passes
+                alignment: end
+            }
+            layout {
+                sequence: 600
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BC
+            }
+        )
+
+        column RECOM_NO_OF_REGRINDING_DONE (
+            type: plainText
+            heading {
+                heading: Recom No Of Regrinding Done
+                alignment: end
+            }
+            layout {
+                sequence: 470
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AP
+            }
+        )
+
+        column RECOM_SPINDLE_SPEED (
+            type: plainText
+            heading {
+                heading: Recom Spindle Speed
+                alignment: end
+            }
+            layout {
+                sequence: 630
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BF
+            }
+        )
+
+        column RECOM_TABLE_FEED (
+            type: plainText
+            heading {
+                heading: Recom Table Feed
+                alignment: end
+            }
+            layout {
+                sequence: 660
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BI
+            }
+        )
+
+        column RECOM_TOOL_CHANGING_CRITERIA (
+            type: plainText
+            heading {
+                heading: Recom Tool Changing Criteria
+            }
+            layout {
+                sequence: 450
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AN
+            }
+        )
+
+        column RECOM_TOOL_HOLDING_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Holding Spec
+            }
+            layout {
+                sequence: 420
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AK
+            }
+        )
+
+        column RECOM_TOOL_SPEC (
+            type: plainText
+            heading {
+                heading: Recom Tool Spec
+            }
+            layout {
+                sequence: 410
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column RECOM_TOTAL_MATERIAL_REMOVAL (
+            type: plainText
+            heading {
+                heading: Recom Total Material Removal
+                alignment: end
+            }
+            layout {
+                sequence: 590
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BB
+            }
+        )
+
+        column RECOM_TYPE_OF_COATING (
+            type: plainText
+            heading {
+                heading: Recom Type Of Coating
+            }
+            layout {
+                sequence: 460
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AO
+            }
+        )
+
+        column RECOM_UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Recom Unit Price
+                alignment: end
+            }
+            layout {
+                sequence: 490
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column RECOM_WIDTH_OF_CUT (
+            type: plainText
+            heading {
+                heading: Recom Width Of Cut
+                alignment: end
+            }
+            layout {
+                sequence: 620
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BE
+            }
+        )
+
+        column RESULT (
+            type: link
+            heading {
+                heading: Update Result
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 218
+                    items: {
+                        P218_TRIAL_ID: #TRIAL_ID#
+                        P218_TRIAL_RESULT: #TRIAL_RESULT#
+                    }
+                    clearCache: 218
+                    action: resetPagination
+                }
+                linkText: #RESULT#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BU
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_AVG_CONTACT_TIME (
+            type: plainText
+            heading {
+                heading: Result Avg Contact Time
+                alignment: end
+            }
+            layout {
+                sequence: 690
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BL
+            }
+        )
+
+        column RESULT_AVG_LIFE_EDGE (
+            type: plainText
+            heading {
+                heading: Result Avg Life Edge
+                alignment: end
+            }
+            layout {
+                sequence: 680
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BK
+            }
+        )
+
+        column RESULT_CYLE_TIME_DIFFERENCE (
+            type: plainText
+            heading {
+                heading: Result Cyle Time Difference
+                alignment: end
+            }
+            layout {
+                sequence: 700
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BM
+            }
+        )
+
+        column RESULT_PRODUCTIVITY_IMPROVED (
+            type: plainText
+            heading {
+                heading: Result Productivity Improved
+            }
+            layout {
+                sequence: 710
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BN
+            }
+        )
+
+        column SALES_REP (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 760
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BV
+            }
+        )
+
+        column SPINDLE_TAPER (
+            type: plainText
+            heading {
+                heading: Spindle Taper
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column SPINDLE_TOOL_WEIGHT_LIMIT (
+            type: plainText
+            heading {
+                heading: Spindle Tool Weight Limit
+                alignment: end
+            }
+            layout {
+                sequence: 310
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 730
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BP
+            }
+        )
+
+        column SURFACE_CONDITION (
+            type: plainText
+            heading {
+                heading: Surface Condition
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column TABLE_SIZE (
+            type: plainText
+            heading {
+                heading: Table Size
+                alignment: end
+            }
+            layout {
+                sequence: 280
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column THROUGH_COOLANT (
+            type: plainText
+            heading {
+                heading: Through Coolant
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column TRIAL_ID (
+            type: plainText
+            heading {
+                heading: Trial Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TRIAL_NO (
+            type: plainText
+            heading {
+                heading: Trial No
+                alignment: center
+            }
+            layout {
+                sequence: 260
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column TRIAL_RESULT (
+            type: plainText
+            heading {
+                heading: Trial Result
+            }
+            layout {
+                sequence: 720
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: BO
+            }
+        )
+
+        column VAL (
+            type: plainText
+            heading {
+                heading: Val
+                alignment: end
+            }
+            layout {
+                sequence: 770
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: BW
+            }
+        )
+
+        column WORKHOLDING_TYPE (
+            type: plainText
+            heading {
+                heading: Workholding Type
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: New
+        }
+
+        savedReport 3173634 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPONENT_NAME (
+                sequence: 5
+            )
+
+            displayColumn CREATED_DATE (
+                sequence: 2
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 4
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 3
+            )
+
+            displayColumn HARDNESS (
+                sequence: 10
+            )
+
+            displayColumn INPUT_CONDITION (
+                sequence: 9
+            )
+
+            displayColumn MATERIAL_TYPE (
+                sequence: 7
+            )
+
+            displayColumn PART_NUMBER (
+                sequence: 6
+            )
+
+            displayColumn PROCESS_TYPE (
+                sequence: 8
+            )
+
+            displayColumn RECOM_CUTTING_SPEED (
+                sequence: 11
+            )
+
+            displayColumn RESULT (
+                sequence: 12
+            )
+
+            displayColumn SALES_REP (
+                sequence: 14
+            )
+
+            displayColumn TRIAL_NO (
+                sequence: 1
+            )
+
+            displayColumn TRIAL_RESULT (
+                sequence: 13
+            )
+
+            sort (
+                column: CREATED_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region trial-details (
+        name: Trial Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noUI
+                t-Region--scrollBody
+                margin-top-none
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region trial-details-2 (
+        name: Trial Details
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region trial-report (
+        name: Trial Report
+        type: regionDisplaySelector
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                js-useLocalStorage
+                t-TabsRegion-mod--simple
+                margin-top-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        comments {
+            comments:
+                ```
+                select 
+                TRIAL_ID,
+                DEAL_ID,
+                to_char(sysdate, 'YY')||'/'||trial_no as trial_no,
+                COMPONENT_NAME,
+                PART_NUMBER,
+                MATERIAL_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' and LIST_ID = trial.PROCESS_TYPE)PROCESS_TYPE,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' and LIST_ID = trial.INPUT_CONDITION)INPUT_CONDITION,
+                HARDNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_HEAT_TREATMENT_TYPE' and LIST_ID = trial.HEAT_TREATMENT_TYPE)HEAT_TREATMENT_TYPE,
+                SURFACE_CONDITION,
+                COMP_DIAMETER,
+                COMP_LENGTH,
+                COMP_WIDTH,
+                COMP_THICKNESS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_SHAPE' and LIST_ID = trial.COMP_SHAPE)COMP_SHAPE,
+                MACHINE_TYPE,
+                MACHINE_BRAND,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_WORKHOLDING_TYPE' and LIST_ID = trial.WORKHOLDING_TYPE)WORKHOLDING_TYPE,
+                CHUCK_DIAMETER,
+                SPINDLE_TAPER,
+                decode(THROUGH_COOLANT,'Y', 'Yes', 'No')THROUGH_COOLANT,
+                TABLE_SIZE,
+                NO_OF_TOOL_LOCATION,
+                MAXIMUM_RPM,
+                SPINDLE_TOOL_WEIGHT_LIMIT,
+                EXIST_TOOL_SPEC,
+                EXIST_TOOL_HOLDING_SPEC,
+                EXIST_NO_OF_CUTTING_EDGES,
+                EXIST_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.EXIST_TOOL_CHANGING_CRITERIA)EXIST_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.EXIST_TYPE_OF_COATING)EXIST_TYPE_OF_COATING,
+                EXIST_NO_OF_REGRINDING_DONE,
+                EXIST_AVERAGE_LIFE_PER_EDGE,
+                EXIST_UNIT_PRICE,
+                RECOM_TOOL_SPEC,
+                RECOM_TOOL_HOLDING_SPEC,
+                RECOM_NO_OF_CUTTING_EDGES,
+                RECOM_NO_OF_FLUTES,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_TOOL_CHANGING_CRITERIA' and LIST_ID = trial.RECOM_TOOL_CHANGING_CRITERIA)RECOM_TOOL_CHANGING_CRITERIA,
+                (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_COATING_TYPE' and LIST_ID = trial.RECOM_TYPE_OF_COATING)RECOM_TYPE_OF_COATING,
+                RECOM_NO_OF_REGRINDING_DONE,
+                RECOM_AVERAGE_LIFE_PER_EDGE,
+                RECOM_UNIT_PRICE,
+                EXIST_TOTAL_MATERIAL_REMOVAL,
+                EXIST_NO_OF_PASSES,
+                EXIST_DEPTH_OF_CUT,
+                EXIST_WIDTH_OF_CUT,
+                EXIST_SPINDLE_SPEED,
+                EXIST_CUTTING_SPEED,
+                EXIST_FEED_PER_TOOTH,
+                EXIST_TABLE_FEED,
+                EXIST_CYCLE_TIME,
+                RECOM_TOTAL_MATERIAL_REMOVAL,
+                RECOM_NO_OF_PASSES,
+                RECOM_DEPTH_OF_CUT,
+                RECOM_WIDTH_OF_CUT,
+                RECOM_SPINDLE_SPEED,
+                RECOM_CUTTING_SPEED,
+                RECOM_FEED_PER_TOOTH,
+                RECOM_TABLE_FEED,
+                RECOM_CYCLE_TIME,
+                RESULT_AVG_LIFE_EDGE,
+                RESULT_AVG_CONTACT_TIME,
+                RESULT_CYLE_TIME_DIFFERENCE,
+                RESULT_PRODUCTIVITY_IMPROVED,
+                decode(TRIAL_RESULT, 'F', 'Fail', 'P', 'Pass')TRIAL_RESULT,
+                decode(STATUS, 'N', 'New', 'I', 'In Progress', 'C', 'Closed')STATUS,
+                deal.deal_name,
+                deal.customer_name,
+                created_date,
+                created_by,
+                (case when STATUS = 'C' then null else
+                --'<i class="fa fa-check-circle"></i>' 
+                 '<img src="#APP_IMAGES#result_icon.png" alt="result">'
+                 end) as result,
+                 (select REP_FIRST_NAME  from eba_sales_salesreps where ID=deal.salesrep_id_01 ) as Sales_Rep,
+                  (NVL(RECOM_UNIT_PRICE,0) * NVL(RECOM_NO_OF_FLUTES,0)) AS val
+                from XXEBA_TRIAL_DETAILS trial, (SELECT d.id,
+                  d.deal_name,
+                  d.salesrep_id_01,
+                  c.customer_name
+                FROM eba_sales_deals d,
+                  eba_sales_customers c
+                WHERE c.id = d.customer_id
+                )deal
+                where DEAL_ID = deal.id
+                ```
+        }
+    )
+
+    button create (
+        buttonName: CREATE_1
+        label: New Trial
+        layout {
+            sequence: 10
+            region: @in-progress
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 222
+                clearCache: [
+                    222
+                    223
+                    224
+                    225
+                ]
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create-2 (
+        buttonName: CREATE_1_1
+        label: New Trial
+        layout {
+            sequence: 10
+            region: @closed
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 222
+                clearCache: [
+                    222
+                    223
+                    224
+                    225
+                ]
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create-3 (
+        buttonName: CREATE
+        label: New Trial
+        layout {
+            sequence: 10
+            region: @new
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 222
+                clearCache: [
+                    222
+                    223
+                    224
+                    225
+                ]
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

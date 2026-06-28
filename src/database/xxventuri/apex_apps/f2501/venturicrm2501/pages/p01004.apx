@@ -1,0 +1,1075 @@
+page 1004 (
+    name: New Reports
+    title: New Reports
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region brand-wise-report (
+        name: Brand Wise Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  SALES_YEAR, TOTAL_AMOUNT,BRAND_NAME from
+                  (
+                SELECT 
+                TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                BRAND_NAME
+                FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_SALES_PRODUCT_BRANDS  B , EBA_SALES_CUSTOMERS C
+                WHERE T.product_code=p.row_key
+                  AND T.CUSTOMER_ID = C.ROW_KEY
+                  AND C.DEFAULT_REP_ID	= :P1004_SALES_REP
+                  AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                  AND  P.BRAND_ID = B.BRAND_ID  
+                group by BRAND_NAME,to_char(INVOICE_DATE,'YYYY'))
+                
+                where SALES_YEAR= :P1004_YEAR 
+                 -- and rownum <=10;
+                ```
+            pageItemsToSubmit: [
+                P1004_SALES_REP
+                P1004_YEAR
+            ]
+        }
+        layout {
+            sequence: 10
+            parentRegion: @brand-wise-sales
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688766754417952111
+        }
+
+        column BRAND_NAME (
+            type: plainText
+            heading {
+                heading: Brand Name
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SALES_YEAR (
+            type: plainText
+            heading {
+                heading: Sales Year
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TOTAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Total Amount
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6905787 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn BRAND_NAME (
+                sequence: 1
+            )
+
+            displayColumn SALES_YEAR (
+                sequence: 3
+            )
+
+            displayColumn TOTAL_AMOUNT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    region brand-wise-sales (
+        name: Brand Wise Sales
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region new-reports (
+        name: New Reports
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 30
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region product-class-report (
+        name: Product Class Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_CLASS_NAME  from
+                  (
+                SELECT 
+                TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                PRODUCT_CLASS_NAME 
+                FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_PRODUCT_CLASS C , EBA_SALES_CUSTOMERS CU
+                WHERE T.product_code=p.row_key
+                  AND T.CUSTOMER_ID = CU.ROW_KEY
+                  AND CU.DEFAULT_REP_ID	= :P1004_SALES_REP_DUP
+                  AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                  AND  C.ID =P.PRODUCT_CLASS_ID   
+                group by PRODUCT_CLASS_NAME ,to_char(INVOICE_DATE,'YYYY'))
+                
+                where SALES_YEAR= :P1004_YEAR_DUP
+                --  and rownum <=10;
+                ```
+            pageItemsToSubmit: [
+                P1004_SALES_REP_DUP
+                P1004_YEAR_DUP
+            ]
+        }
+        layout {
+            sequence: 10
+            parentRegion: @product-class-wise-sales
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688767823102952122
+        }
+
+        column PRODUCT_CLASS_NAME (
+            type: plainText
+            heading {
+                heading: Product Class
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SALES_YEAR (
+            type: plainText
+            heading {
+                heading: Sales Year
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TOTAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Total Amount
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6906326 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn PRODUCT_CLASS_NAME (
+                sequence: 1
+            )
+
+            displayColumn SALES_YEAR (
+                sequence: 3
+            )
+
+            displayColumn TOTAL_AMOUNT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    region product-class-wise-sales (
+        name: Product Class Wise Sales
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region product-group-wise-report (
+        name: Product Group-wise Report
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_FAMILY from
+                  (
+                SELECT 
+                TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                PRODUCT_FAMILY
+                FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,eba_sales_product_families  B, EBA_SALES_CUSTOMERS CU
+                
+                WHERE T.product_code=p.row_key
+                  AND T.CUSTOMER_ID = CU.ROW_KEY
+                  AND CU.DEFAULT_REP_ID	= :P1004_REP_ID
+                  AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                  AND  P.PRODUCT_FAMILY_ID = B.ID  
+                group by PRODUCT_FAMILY,to_char(INVOICE_DATE,'YYYY'))
+                
+                where SALES_YEAR= :P1004_YEAR_1;
+                ```
+            pageItemsToSubmit: [
+                P1004_REP_ID
+                P1004_YEAR_1
+            ]
+        }
+        layout {
+            sequence: 10
+            parentRegion: @product-group-wise-sales
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688769832039952142
+        }
+
+        column PRODUCT_FAMILY (
+            type: plainText
+            heading {
+                heading: Product Family
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SALES_YEAR (
+            type: plainText
+            heading {
+                heading: Sales Year
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TOTAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Total Amount
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6913760 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn PRODUCT_FAMILY (
+                sequence: 1
+            )
+
+            displayColumn SALES_YEAR (
+                sequence: 3
+            )
+
+            displayColumn TOTAL_AMOUNT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    region product-group-wise-sales (
+        name: Product Group Wise Sales
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region region-display (
+        name: Region Display
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            includeShowAll: false
+            rememberSelection: bySession
+        }
+    )
+
+    region sales-target-vs-actual (
+        name: Sales Target vs Actual
+        type: chart
+        layout {
+            sequence: 50
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        comments {
+            comments:
+                ```
+                /*select   SALES_YEAR,TOTAL_AMOUNT,sales_rep from
+                  (
+                SELECT 
+                TO_CHAR(t.INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                SUM(to_number(NVL(t.TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                      
+                (select sum(TARGET_AMOUNT)  from XXEBA_SALES_PERSON_TARGET where TARGET_PERIOD in 
+                (SELECT ID FROM EBA_SALES_SALES_PERIODS where FISCAL_YEAR = ( select to_char (to_date(:P237_YEAR_WISE,'YY'),'YY') from dual ))) as max,   
+                      
+                (s.REP_FIRST_NAME ||' ' || s.REP_LAST_NAME )as sales_rep
+                FROM XXEBA_TALLY_INVOICES_T t,EBA_SALES_CUSTOMERS c,EBA_SALES_SALESREPS s 
+                WHERE 
+                t.customer_id = c.ROW_KEY
+                and c.DEFAULT_REP_ID =S.id
+                and  t.batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                group by  s.REP_FIRST_NAME,s.REP_LAST_NAME,to_char(t.INVOICE_DATE,'YYYY'))
+                where 
+                SALES_YEAR = :P237_YEAR_WISE
+                and rownum <=5 ; 
+                */
+                
+                select 50 as a, 100 as b from dual
+                ```
+        }
+        chart {
+            type: statusMeterGauge
+        }
+        chartLayout {
+            maxWidth: 400
+            height: 300
+        }
+        gauge {
+            innerRadius: 0.7
+        }
+
+        series target (
+            name: Target
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT   SALES_YEAR,TOTAL_AMOUNT,sales_rep,
+                    NVL ((SELECT TARGET_AMOUNT  FROM XXEBA_SALES_PERSON_TARGET WHERE TARGET_PERIOD = :P1004_YEAR_WISE),0)max_amd
+                    FROM
+                      (
+                    SELECT 
+                    TO_CHAR(t.INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(t.TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    (s.REP_FIRST_NAME ||' ' || s.REP_LAST_NAME )as sales_rep
+                    FROM XXEBA_TALLY_INVOICES_T t,EBA_SALES_CUSTOMERS c,EBA_SALES_SALESREPS s 
+                    WHERE 
+                           t.customer_id = c.ROW_KEY
+                    AND    c.DEFAULT_REP_ID =s.id
+                    AND    s.id=:P1004_REP_NAME
+                    AND    t.batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                    AND    to_char(t.INVOICE_DATE,'DD-Mon-YYYY') BETWEEN TO_DATE(: P1004_FIRST_DATE,'DD-Mon-YYYY') AND TO_DATE(:P1004_LAST_DATE,'DD-Mon-YYYY')
+                    
+                    GROUP BY  to_char(t.INVOICE_DATE,'YYYY'),s.REP_FIRST_NAME,s.REP_LAST_NAME )
+                    ```
+                pageItemsToSubmit: [
+                    P1004_YEAR_1
+                    P1004_REP_NAME
+                ]
+            }
+            columnMapping {
+                label: SALES_YEAR
+                value: TOTAL_AMOUNT
+                maxValue: MAX_AMD
+            }
+            appearance {
+                color: RED
+            }
+            thresholds {
+                display: onIndicator
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+            }
+        )
+
+    )
+
+    region target-vs-actual-sub-region (
+        name: Target vs Actual Sub Region
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @sales-target-vs-actual
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+    )
+
+    pageItem P1004_FIRST_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @target-vs-actual-sub-region
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: SELECT FIRST_DAY FROM EBA_SALES_SALES_PERIODS where PERIOD_NAME =:P1004_YEAR_WISE;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_LAST_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @target-vs-actual-sub-region
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: SELECT LAST_DAY FROM EBA_SALES_SALES_PERIODS where PERIOD_NAME =:P1004_YEAR_WISE;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_REP_ID (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-sales-rep-lov
+        }
+        layout {
+            sequence: 10
+            region: @product-group-wise-report
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_REP_NAME (
+        type: selectList
+        label {
+            label: Rep Name
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-sales-rep-lov
+        }
+        layout {
+            sequence: 40
+            region: @target-vs-actual-sub-region
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_SALES_REP (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-sales-rep-lov
+        }
+        layout {
+            sequence: 10
+            region: @brand-wise-report
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_SALES_REP_DUP (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-sales-rep-lov
+        }
+        layout {
+            sequence: 20
+            region: @product-class-report
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_YEAR (
+        type: selectList
+        label {
+            label: "Year "
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct to_char(ORDER_DATE,'YYYY')d, to_char(ORDER_DATE,'YYYY')r from XXEBA_SALES_ORDER order by 1 desc ;
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 30
+            region: @brand-wise-report
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_YEAR_1 (
+        type: selectList
+        label {
+            label: Year
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct to_char(ORDER_DATE,'YYYY')d, to_char(ORDER_DATE,'YYYY')r from XXEBA_SALES_ORDER order by 1 desc ;
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product-group-wise-report
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_YEAR_DUP (
+        type: selectList
+        label {
+            label: "Year "
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct to_char(ORDER_DATE,'YYYY')d, to_char(ORDER_DATE,'YYYY')r from XXEBA_SALES_ORDER order by 1 desc ;
+                
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 40
+            region: @product-class-report
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1004_YEAR_WISE (
+        type: selectList
+        label {
+            label: Year
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT PERIOD_NAME D,ID R FROM EBA_SALES_SALES_PERIODS where FISCAL_YEAR IN
+                (
+                SELECT DISTINCT
+                    to_char(invoice_date, 'YY')
+                FROM
+                    xxeba_tally_invoices_t
+                WHERE
+                    to_char(invoice_date, 'YYYY') = to_char(sysdate, 'YYYY')
+                    OR to_char(invoice_date, 'YYYY') = to_char(sysdate, 'YYYY') - 1);
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @target-vs-actual-sub-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 50
+            region: @brand-wise-report
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button go-dup (
+        buttonName: GO_DUP
+        label: Go
+        layout {
+            sequence: 50
+            region: @product-class-report
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button submit (
+        buttonName: SUBMIT
+        label: Go
+        layout {
+            sequence: 30
+            region: @product-group-wise-report
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go-dup
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @product-class-report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction region-refresh (
+        name: REGION REFRESH
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @brand-wise-report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

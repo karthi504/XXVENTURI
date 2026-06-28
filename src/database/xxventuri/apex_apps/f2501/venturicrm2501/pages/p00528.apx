@@ -1,0 +1,62 @@
+page 528 (
+    name: Barcode Scanner
+    title: Barcode Scanner
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region barcode-print-view (
+        name: Barcode Print View
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                  <script src="#APP_IMAGES#barcode.js"></script>
+                        <script>
+                            function getcode(){
+                                javascriptBarcodeReader({
+                                /* Image ID || HTML5 Image || HTML5 Canvas || HTML5 Canvas ImageData || Image URL */
+                                image: document.getElementById('barcodeimage').src,
+                                barcode: 'code-128',
+                                // barcodeType: 'industrial',
+                                options: {
+                                }
+                                })
+                                .then(code => {
+                                    alert('code:'+code);
+                                    console.log(code)
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                })
+                        }
+                        </script>
+                        <img src="./6.png" id="barcodeimage"/>
+                        <button onclick="getcode()">get code</button>
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+)
+

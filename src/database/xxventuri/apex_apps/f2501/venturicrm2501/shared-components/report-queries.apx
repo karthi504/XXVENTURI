@@ -1,0 +1,19 @@
+reportQuery SALES_ORDER_EXPORT_897790182261731098 (
+    name: Sales_order_export
+    output {
+        fileName: Sales_order_export
+        format: excel
+        layout: @SALES_REPORT_897790464409733110
+    }
+
+    sourceQuery (
+        name: Sales_order_export12
+        sequence: 12
+        source {
+            type: sqlQuery
+            sqlQuery: select ORDER_ID, nvl(TERRITORY_ID,'null') TERRITORY_ID, nvl(SALES_REP,'null') SALES_REP, nvl(BILLING_LOCATION,'null') BILLING_LOCATION, nvl(DELIVERY_LOCATION,'null') DELIVERY_LOCATION, nvl(PO_DATE,'null') PO_DATE from XXEBA_SALES_ORDER
+        }
+    )
+
+)
+

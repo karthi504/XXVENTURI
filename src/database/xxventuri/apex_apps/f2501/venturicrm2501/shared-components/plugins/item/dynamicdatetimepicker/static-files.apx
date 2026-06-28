@@ -1,0 +1,90 @@
+file "css/datepicker.min.css" (
+    mimeType: text/css
+    charSet: utf-8
+)
+
+file "js/datepicker.min.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/dynamicDateTimePicker.min.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.cs.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.da.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.de.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.es.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.fi.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.fr.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.hu.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.nl.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.pl.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.pt-BR.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.pt.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.ro.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.ru.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.sk.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+
+file "js/i18n/datepicker.zh.js" (
+    mimeType: application/javascript
+    charSet: utf-8
+)
+

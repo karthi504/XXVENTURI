@@ -1,0 +1,21 @@
+authentication application-express-accounts (
+    name: Application Express Accounts
+    type: oracleApexAccounts
+    postLogout {
+        redirectTo: url
+        url: f?p=&APP_ID.:1
+    }
+    sessionSharing {
+        type: custom
+        cookieName: ORA_WWV_PACKAGED_APPLICATIONS
+    }
+)
+
+authentication custom-authentication (
+    name: Custom Authentication
+    type: custom
+    settings {
+        authFunctionName: XXEBS_SALES_SECURITY_PKG.GET_USER_AUTHENTICATION
+    }
+)
+

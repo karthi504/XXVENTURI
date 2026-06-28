@@ -1,0 +1,334 @@
+page 195 (
+    name: Verified Details
+    title: Verified Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region verified-details (
+        name: Verified Details
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+            excludeTitleFromTranslation: true
+        }
+    )
+
+    pageItem P195_COMPLAINT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @verified-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: complaint_id
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P195_RESOLVED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @verified-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P195_VERIFIED_BY (
+        type: textField
+        label {
+            label: Verified By
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @verified-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 78
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P195_VERIFIED_DATE (
+        type: datePickerJquery
+        label {
+            label: Verified On
+            alignment: left
+        }
+        settings {
+            minDate: &P195_RESOLVED_DATE.
+            maxDate: +0d
+        }
+        layout {
+            sequence: 40
+            region: @verified-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P195_VERIFIED_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @verified-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 67
+            height: 5
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @verified-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 30
+            region: @verified-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to delete?', 'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button verify (
+        buttonName: VERIFY
+        label: Verify
+        layout {
+            sequence: 10
+            region: @verified-details
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-close (
+            action: closeDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 295871543901998585
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: VERIFY,DELETE
+        }
+    )
+
+    process delete-complaints (
+        name: Delete Complaints
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  IF :P194_COMPLAINT_ID IS NOT NULL THEN
+                    UPDATE xxeba_customer_complaints_t
+                    SET status         = 'X'
+                    WHERE complaint_id = :P195_COMPLAINT_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 299294432794587260
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process set-resolved-date (
+        name: Set Resolved Date
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                SELECT resolved_date
+                INTO :P195_RESOLVED_DATE
+                FROM xxeba_customer_complaints_t
+                WHERE COMPLAINT_ID = :P195_COMPLAINT_ID;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 299294332215587259
+        }
+    )
+
+    process update-verified-details (
+        name: Update Verified Details
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  IF :P195_COMPLAINT_ID IS NOT NULL THEN
+                    UPDATE xxeba_customer_complaints_t
+                    SET verified_remarks = :P195_VERIFIED_REMARKS,
+                        verified_by      = :P195_VERIFIED_BY,
+                        verified_date    = :P195_VERIFIED_DATE,
+                        status           = 'V'
+                    WHERE complaint_id   = :P195_COMPLAINT_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 295870871456998578
+        }
+        serverSideCondition {
+            whenButtonPressed: @verify
+        }
+    )
+
+)
+

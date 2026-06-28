@@ -1,0 +1,368 @@
+page 1002 (
+    name: Test
+    title: Test
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region sales-vs-collection (
+        name: Sales vs Collection
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select SALES_YEAR, TOTAL_AMOUNT,CUSTOMER_NAME from
+                  (
+                SELECT 
+                TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                SUM(to_number(NVL(t.TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                c.CUSTOMER_NAME
+                
+                FROM XXEBA_TALLY_INVOICES_T t , EBA_SALES_CUSTOMERS c
+                WHERE 
+                t.customer_id = c.ROW_KEY
+                and c.DEFAULT_REP_ID=:P1002_SALES_REP
+                and   t.batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                group by TO_CHAR(t.INVOICE_DATE,'YYYY'), c.CUSTOMER_NAME)
+                where SALES_YEAR = :P1002_YEAR ; 
+                ```
+            pageItemsToSubmit: [
+                P1002_SALES_REP
+                P1002_YEAR
+            ]
+        }
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 688768913035952133
+        }
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column SALES_YEAR (
+            type: plainText
+            heading {
+                heading: Sales Year
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column TOTAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Total Amount
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 6908100 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 1
+            )
+
+            displayColumn SALES_YEAR (
+                sequence: 3
+            )
+
+            displayColumn TOTAL_AMOUNT (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    pageItem P1002_SALES_REP (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @xx-sales-rep-lov
+        }
+        layout {
+            sequence: 10
+            region: @sales-vs-collection
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1002_YEAR (
+        type: selectList
+        label {
+            label: Year
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct to_char(ORDER_DATE,'YYYY')d, to_char(ORDER_DATE,'YYYY')r from XXEBA_SALES_ORDER order by 1 desc ;
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 20
+            region: @sales-vs-collection
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: GO
+        label: Go
+        layout {
+            sequence: 30
+            region: @sales-vs-collection
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction new-account-refresh (
+        name: New Account Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P1002_YEARWISE_ACCOUNTS
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P1002_TRIAL_CREATED_PASSED_ID
+        }
+    )
+
+    dynamicAction refresh-bill (
+        name: Refresh Bill
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P1002_YEAR
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: "Region Refresh "
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: [
+                P1002_FISCAL_YEAR
+                P1002_MONTH
+            ]
+        }
+    )
+
+    dynamicAction set-value (
+        name: Set value
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P1002_MONTH
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P1002_MONTH
+                itemsToSubmit: P1002_MONTH
+            }
+            affectedElements {
+                selectionType: items
+                items: P1002_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select to_char(FIRST_DAY,'DD-Mon-YYYY') from eba_sales_sales_periods where id= :P1002_MONTH;
+                itemsToSubmit: P1002_MONTH
+            }
+            affectedElements {
+                selectionType: items
+                items: P1002_FIRST_DAY
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-set-value-3 (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select  to_char(LAST_DAY,'DD-Mon-YYYY') from eba_sales_sales_periods where id= :P1002_MONTH;
+                itemsToSubmit: P1002_MONTH
+            }
+            affectedElements {
+                selectionType: items
+                items: P1002_LAST_DAY
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    process process-row-of-test (
+        name: Process Row of TEST
+        type: executeCode
+        source {
+            plsqlCode: insert into test(CREATED_DATE, CREATED_DATE_LOCAL)VALUES(:P1002_CREATED_DATE, :P1002_CREATED_DATE_LOCAL);
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 154953198189545697
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+)
+

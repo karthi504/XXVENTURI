@@ -1,0 +1,584 @@
+page 256 (
+    name: Leave Summary
+    title: Leave Summary
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                LEAVE_REQUEST_ID, 
+                SALES_REP_ID,
+                FROM_DATE,
+                TO_DATE,
+                FROM_PERIOD,
+                TO_PERIOD,
+                NO_OF_DAYS,
+                CONTACT_NUMBER,
+                CONTACT_ADDRESS,
+                LEAVE_REASON,
+                decode(TRIM(LEAVE_STATUS), 'S','Submitted', 'A','Approved', 'R','Rejected')  LEAVE_STATUS,
+                STATUS,
+                CREATED_BY,
+                CREATION_DATE,
+                UPDATED_BY,
+                UPDATE_DATE,
+                APPROVED_BY,
+                APPROVED_DATE,
+                APPROVER_COMMENTS,
+                (select LIST_VALUE from XXEBA_LIST_VALUES v where v.LIST_ID = LEAVE_TYPE_ID and LIST_CODE = 'LEAVE_TYPE') as LEAVE_TYPE_ID,
+                decode(TRIM(LEAVE_STATUS), 'S','#404040', 'A','#09B509', 'R','#FF7755') COLOR_CODE
+                from XXEBA_SALES_LEAVE_REQUESTS_T  where SALES_REP_ID = :USER_ID 
+                  
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 257
+                items: {
+                    P257_LEAVE_REQUEST_ID: #LEAVE_REQUEST_ID#
+                    P257_PAGE_SOURCE: 256
+                }
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="Edit">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 298540115426414869
+        }
+
+        column APPROVED_BY (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Approved By
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 22
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column APPROVED_DATE (
+            type: plainText
+            heading {
+                heading: Approved Date
+            }
+            layout {
+                sequence: 23
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column APPROVER_COMMENTS (
+            type: plainText
+            heading {
+                heading: Approver Comments
+            }
+            layout {
+                sequence: 24
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column COLOR_CODE (
+            type: hidden
+            heading {
+                heading: Color code
+            }
+            layout {
+                sequence: 35
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CONTACT_ADDRESS (
+            type: plainText
+            heading {
+                heading: Contact Address
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column CONTACT_NUMBER (
+            type: plainText
+            heading {
+                heading: Contact Number
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATION_DATE (
+            type: plainText
+            heading {
+                heading: Requested On
+                alignment: center
+            }
+            layout {
+                sequence: 14
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column FROM_DATE (
+            type: plainText
+            heading {
+                heading: From Date
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column FROM_PERIOD (
+            type: plainText
+            heading {
+                heading: From Period
+            }
+            layout {
+                sequence: 5
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column LEAVE_REASON (
+            type: plainText
+            heading {
+                heading: Leave Reason
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column LEAVE_REQUEST_ID (
+            type: hidden
+            heading {
+                heading: Leave Request Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column LEAVE_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 11
+            }
+            columnFormatting {
+                htmlExpression: <span style="color:#COLOR_CODE#">#LEAVE_STATUS#</span>
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column LEAVE_TYPE_ID (
+            type: plainText
+            heading {
+                heading: "Leave Type "
+            }
+            layout {
+                sequence: 45
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column NO_OF_DAYS (
+            type: plainText
+            heading {
+                heading: No. of Days
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column SALES_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Sales Rep Name
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column STATUS (
+            type: hidden
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TO_DATE (
+            type: plainText
+            heading {
+                heading: To Date
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column TO_PERIOD (
+            type: plainText
+            heading {
+                heading: To Period
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATE_DATE (
+            type: hidden
+            heading {
+                heading: Update Date
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: P
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2985528 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn APPROVED_BY (
+                sequence: 6
+            )
+
+            displayColumn CREATION_DATE (
+                sequence: 7
+            )
+
+            displayColumn FROM_DATE (
+                sequence: 1
+            )
+
+            displayColumn LEAVE_REASON (
+                sequence: 4
+            )
+
+            displayColumn LEAVE_STATUS (
+                sequence: 8
+            )
+
+            displayColumn LEAVE_TYPE_ID (
+                sequence: 5
+            )
+
+            displayColumn NO_OF_DAYS (
+                sequence: 3
+            )
+
+            displayColumn TO_DATE (
+                sequence: 2
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 257
+                clearCache: 257
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction create-button-dialog-closed (
+        name: Create Button - Dialog Closed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @create
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction edit-report-dialog-closed (
+        name: Edit Report - Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @report
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

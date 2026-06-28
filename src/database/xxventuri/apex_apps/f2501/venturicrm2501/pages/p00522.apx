@@ -1,0 +1,327 @@
+page 522 (
+    name: Accounts
+    title: Accounts
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region step (
+        name: Step 3
+        type: list
+        source {
+            list: @mass-emails
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    region step-2 (
+        name: Step 3
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @step
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P522_ACCOUNTS (
+        type: shuttle
+        label {
+            label: Accounts
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    sc.customer_name   display_value,
+                    sc.id              return_value
+                FROM
+                    eba_sales_customers sc
+                WHERE
+                    sc.status = 'A'
+                    and (
+                        (instr(':'|| :P522_INDUSTRY||':', ':'||INDUSTRY_ID||':') > 0)
+                        )
+                    AND ( upper(sc.default_rep_id) IN (
+                        SELECT
+                            upper(r.id)
+                        FROM
+                            eba_sales_salesreps r
+                        START WITH
+                            r.id = :user_id
+                        CONNECT BY
+                            PRIOR r.id = r.rep_manager_id
+                    )
+                          OR EXISTS (
+                        SELECT
+                            'Y'
+                        FROM
+                            eba_sales_salesreps        r,
+                            eba_sales_salesrep_roles   sr
+                        WHERE
+                            r.id = :user_id
+                            AND sr.id = r.rep_role
+                            AND sr.role_name = 'Administrator'
+                    ) )
+                ORDER BY
+                    1;
+                ```
+            displayExtraValues: false
+        }
+        cascadingLov {
+            parentItems: P522_INDUSTRY
+            itemsToSubmit: P522_INDUSTRY
+        }
+        layout {
+            sequence: 20
+            region: @step-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 10
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P522_INDUSTRY (
+        type: shuttle
+        label {
+            label: Industry
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    industry_name   AS d,
+                    id              AS r
+                FROM
+                    eba_sales_industries
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @step-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 5
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @step
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 519
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @step
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @step
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-accounts (
+        name: Set Accounts
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P522_INDUSTRY
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    cursor c1 is
+                    SELECT   
+                        listagg(sc.id,':') within group ( order by sc.id) as id
+                    FROM
+                        eba_sales_customers sc
+                    WHERE
+                        sc.status = 'A'
+                        and (
+                            (instr(':'|| :P522_INDUSTRY||':', ':'||INDUSTRY_ID||':') > 0)
+                            )
+                        AND ( upper(sc.default_rep_id) IN (
+                            SELECT
+                                upper(r.id)
+                            FROM
+                                eba_sales_salesreps r
+                            START WITH
+                                r.id = :user_id
+                            CONNECT BY
+                                PRIOR r.id = r.rep_manager_id
+                        )
+                              OR EXISTS (
+                            SELECT
+                                'Y'
+                            FROM
+                                eba_sales_salesreps        r,
+                                eba_sales_salesrep_roles   sr
+                            WHERE
+                                r.id = :user_id
+                                AND sr.id = r.rep_role
+                                AND sr.role_name = 'Administrator'
+                        ) );
+                        r1 c1%rowtype;
+                    
+                    begin
+                    open c1;
+                    fetch c1 into r1;
+                    close c1;
+                    
+                    :P522_ACCOUNTS := r1.id;
+                    
+                    end;
+                        
+                    ```
+                itemsToSubmit: P522_INDUSTRY
+                itemsToReturn: P522_ACCOUNTS
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    branch (
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 521
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 523
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

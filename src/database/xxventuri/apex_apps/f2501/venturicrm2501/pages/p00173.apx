@@ -1,0 +1,2625 @@
+page 173 (
+    name: Direct Sales Order
+    title: Sales Order
+    appearance {
+        pageTemplate: @standard
+        templateOptions: [
+            
+                ```
+                DECLARE    
+                l_margin                      number;
+                  BEGIN  
+                  
+                       
+                        FOR c IN (SELECT n001 order_products_id, 
+                                  n002  order_id, 
+                                  c001  product_name, 
+                                  n003 product_price, 
+                                  c002 currency_type, 
+                                  n004 brand_id,  
+                                  c003 quantity, 
+                                  c004 delivery_date,
+                                  n005 product_id ,
+                                  c008  margin
+                                  FROM apex_collections WHERE collection_name = 'PRODUCT_COLLECTION')
+                         LOOP
+                              SELECT  
+                   trunc((((PRODUCT_PRICE - 
+                ```
+            P103_PRODUCT_COST  )/
+            
+                ```
+                P103_PRODUCT_COST) * 100),2) AS MARGIN into l_margin
+                FROM 
+                    XXEBA_ORDER_PRODUCTS 
+                     where  ORDER_PRODUCTS_ID = 
+                ```
+            
+                ```
+                P103_ORDER_PRODUCTS_ID;
+                           if c.order_products_id is null then
+                           INSERT INTO XXEBA_ORDER_PRODUCTS (ORDER_PRODUCTS_ID, 
+                											 ORDER_ID, 
+                											 PRODUCT_NAME, 
+                											 PRODUCT_PRICE, 
+                											 CURRENCY_TYPE, 
+                											 BRAND_ID,
+                                                             QUANTITY,
+                                                             DELIVERY_DATE,
+                                                             PRODUCT_ID,
+                                                             margin
+                											)
+                                                      VALUES (c.order_products_id,
+                                                              
+                ```
+            
+                ```
+                P103_ORDER_ID,
+                                                              c.product_name,
+                                                              c.product_price,
+                                                              c.currency_type,
+                											  c.brand_id,
+                                                              c.quantity,
+                                                              c.delivery_date,
+                                                              c.product_id,
+                                                              l_margin
+                                                              );
+                              else 
+                                   UPDATE XXEBA_ORDER_PRODUCTS 
+                                           SET ORDER_ID = c.order_id, 
+                                                     PRODUCT_NAME  = c.product_name, 
+                                                     PRODUCT_PRICE = c.product_price, 
+                                                     CURRENCY_TYPE = c.currency_type, 
+                                                     BRAND_ID      = c.brand_id,
+                                                     QUANTITY      = c.quantity,
+                                                     DELIVERY_DATE = TO_DATE(c.delivery_date,'DD/MM/RRRR'),
+                                                     PRODUCT_ID    = c.product_id,
+                                                        margin     = l_margin
+                                                     
+                				  WHERE ORDER_PRODUCTS_ID = c.order_products_id;
+                           end if;
+                        END LOOP; 
+                          EXCEPTION
+                    WHEN OTHERS THEN
+                     xxfs_pm_error_log_pkg.record_log('ERROR-So1','MSK_Tools_Quotation_Email-so1',NULL,4); 
+                  
+                
+                END;
+                
+                ```
+        ]
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            
+            function change_price(seq_id)
+            {
+                updateTimeSheet(seq_id);
+            }
+            
+            function change_Quantity(seq_id)
+            {
+                updateTimeSheet(seq_id);
+            }
+            
+            function change_Delivery(seq_id)
+            {
+                updateTimeSheet(seq_id);
+            }
+            
+            // Update collection function
+            function updateTimeSheet(pSeqId) {
+                //alert(pSeqId);
+                //alert($("#pr09_"+pSeqId).val());
+                $x('P173_SEQ_ID').value = $("#pr01_"+pSeqId).val();
+                $x('P173_ORDER_PRODUCTS_ID').value = $("#pr02_"+pSeqId).val();
+                $x('P173_ORDER_ID_HID').value = $("#pr03_"+pSeqId).val();
+                $x('P173_PRODUCT_NAME').value = $("#pr04_"+pSeqId).val();
+            	$x('P173_PRODUCT_PRICE').value = $("#pr05_"+pSeqId).val();
+            	$x('P173_CURRENCY_TYPE').value = $("#pr06_"+pSeqId).val();
+            	$x('P173_BRAND_ID').value = $("#pr07_"+pSeqId).val();
+                $x('P173_DELIVERY_DATE').value = $("#pr08_"+pSeqId).val();
+                $x('P173_QUANTITY').value = $("#pr09_"+pSeqId).val();
+               // $x('P173_PRODUCT_FAMILY_ID').value = $("#pr11_"+pSeqId).val();
+              
+               // alert($x('P173_SEQ_ID').value+'-'+$x('P173_PRODUCT_PRICE').value);
+                
+            	$.event.trigger("UPDATE_PRODUCT_ROW"); // call update collection function 
+            }
+            
+            function delete_order(pSeqId) {
+                 if (confirm("Are you sure you want to delete this Product?")) {
+                     $x('P173_SEQ_ID').value = $("#pr01_"+pSeqId).val();
+                     $x('P173_DELETED_IDS').value = $x('P173_DELETED_IDS').value+','+$("#pr02_"+pSeqId).val();
+                    $.event.trigger("DELETE_PRODUCT_ROW"); // call update collection function 
+                } 
+            }
+            
+            
+            // number validation in hours field
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                return true;
+            }
+            
+            ```
+    }
+    css {
+        inline:
+            ```css
+            #order_product table th:nth-child(2),#order_product table th:nth-child(3),#order_product table th:nth-child(4),#order_product table th:nth-child(9)
+            {
+                display:none;
+            }
+            #order_product table td:nth-child(2),#order_product table td:nth-child(3),#order_product table td:nth-child(4),#order_product table td:nth-child(9)
+            {
+                display:none;
+            }
+            
+            #order_product table.t-Report-report td, #order_product table.t-Report-report th
+            {
+                border-right:1px solid #e6e6e6;
+            }
+            
+            .p-number-label{
+                    text-align: right;
+            }
+            
+            .p-text-label{
+                border: none;
+                background: transparent;
+                pointer-events: none;
+            }
+            
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region products (
+        name: Products
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                    ROWNUM row_num,
+                    n005 as margin,
+                    --APEX_ITEM.TEXT(11, n002, 50, 50, 'class="p-text-label-ro" style="text-align: right;" readonly', 'pr02_'||seq_id) AS margin_text,
+                    APEX_ITEM.HIDDEN(1, seq_id, NULL, 'pr01_'||seq_id) AS seq_id,
+                    APEX_ITEM.HIDDEN(2, n001, NULL, 'pr02_'||seq_id) AS order_products_id,
+                    APEX_ITEM.HIDDEN(3, n002, NULL, 'pr03_'||seq_id) AS order_id,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.TEXT(4, c001, 50, 50, 'class="p-text-label" style="color:red;border:none;background-color:snow;" disabled', 'pr04_'||seq_id)
+                        ELSE APEX_ITEM.TEXT(4, c001, 50, 50, 'class="p-text-label" style="border:none;background-color:snow;" disabled', 'pr04_'||seq_id)
+                    END) AS product_name,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.TEXT(5, n003, 10, 50, 'class="p-number-label" style="color:red" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"', 'pr05_'||seq_id)
+                        ELSE APEX_ITEM.TEXT(5, n003, 10, 50, 'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"', 'pr05_'||seq_id)
+                    END) AS product_price,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.TEXT(6, c002, 5, 50, 'class="p-text-label" style="color:red" disabled', 'pr06_'||seq_id)
+                        ELSE APEX_ITEM.TEXT(6, c002, 5, 50, 'class="p-text-label" disabled', 'pr06_'||seq_id)
+                    END) AS currency_type,
+                    APEX_ITEM.HIDDEN(7, n004, NULL, 'pr07_'||seq_id) AS brand_id,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.DATE_POPUP2(8, TO_DATE(c004, 'DD/MM/YYYY'), 'DD-Mon-YYYY', 10, 12, 'class="p-date-label" style="color:red" onchange="change_Delivery('||seq_id||')"', 'pr08_'||seq_id)
+                        ELSE APEX_ITEM.DATE_POPUP2(8, TO_DATE(c004, 'DD/MM/YYYY'), 'DD-Mon-YYYY', 10, 12, 'class="p-date-label" onchange="change_Delivery('||seq_id||')"', 'pr08_'||seq_id)
+                    END) AS delivery_date,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.TEXT(9, c003, 10, 50, 'class="p-number-label" style="color:red" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')"', 'pr09_'||seq_id)
+                        ELSE APEX_ITEM.TEXT(9, c003, 10, 50, 'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')"', 'pr09_'||seq_id)
+                    END) AS quantity,
+                    (CASE 
+                        WHEN n003 < (SELECT NVL(P.PRODUCT_COST + (P.PRODUCT_COST * (PF.MARGIN_PERCENTAGE / 100)), 0) AS Minimum_Price
+                                     FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                                     WHERE P.PRODUCT_FAMILY_ID = PF.ID AND P.ID = n001) 
+                        THEN APEX_ITEM.TEXT(10, n003 * TO_NUMBER(c003), 5, 50, 'class="p-text-label" style="text-align:right;color:red" disabled', 'pr10_'||seq_id)
+                        ELSE APEX_ITEM.TEXT(10, n003 * TO_NUMBER(c003), 5, 50, 'class="p-text-label" style="text-align:right;" disabled', 'pr10_'||seq_id)
+                    END) AS total_amount,
+                    '<span class="delete_order" onclick="delete_order('||seq_id||')"><i class="fa fa-trash" aria-hidden="true"></i><span>' AS delete_order
+                    -- APEX_ITEM.HIDDEN(11, n005, NULL, 'pr11_'||seq_id) AS product_family_id
+                FROM 
+                    apex_collections
+                WHERE 
+                    collection_name = 'PRODUCT_COLLECTION';
+                
+                  
+                
+                ```
+        }
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            htmlDomId: order_product
+            regionDisplaySelector: true
+        }
+        comments {
+            comments:
+                ```
+                SELECT ROWNUM row_num,
+                       APEX_ITEM.HIDDEN(1,seq_id,NULL,'pr01_'||seq_id) seq_id,
+                       APEX_ITEM.HIDDEN(2,n001,NULL,'pr02_'||seq_id) ORDER_PRODUCTS_ID,
+                       APEX_ITEM.HIDDEN(3,n002,NULL,'pr03_'||seq_id) ORDER_ID,
+                	  (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n001) 
+                		THEN APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="color:red;border:none;background-color:snow;" disabled  ','pr04_'||seq_id) 
+                        ELSE
+                        APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="border:none;background-color:snow;" disabled ','pr04_'||seq_id) 
+                        END) PRODUCT_NAME,
+                          --APEX_ITEM.TEXT(4,c001,50,50,'class="p-text-label" disabled ','pr04_'||seq_id) PRODUCT_NAME,
+                        (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n001) 
+                		THEN APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" style="color:red" onkeypress="return isNumber(event)" onchange="change_price(' ||seq_id||')" ','pr05_' ||seq_id)     
+                        ELSE
+                        APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price(' ||seq_id||')" ','pr05_' ||seq_id)
+                        END) PRODUCT_PRICE,
+                        --APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price(' ||seq_id||')" ','pr05_' ||seq_id) PRODUCT_PRICE,
+                        APEX_ITEM.TEXT(6,c002,5,50,'class="p-text-label" disabled ','pr06_' ||seq_id) CURRENCY_TYPE,
+                        APEX_ITEM.HIDDEN(7,n004,NULL,'pr07_'||seq_id) BRAND_ID,
+                        APEX_ITEM.DATE_POPUP2(8,TO_DATE(c004, 'DD/MM/YYYY'),'DD-Mon-YYYY',10,12,' class="p-date-label" onchange="change_Delivery('||seq_id||')"','pr08_'||seq_id) Delivery_date,
+                        APEX_ITEM.TEXT(9,c003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id ||')" ','pr09_'||seq_id) Quantity,
+                        APEX_ITEM.TEXT(10,n003*to_number(c003),5,50,'class="p-text-label" style="text-align: right;" disabled ','pr10_'||seq_id) TOTAL_AMOUNT,
+                    '<span class="delete_order" onclick="delete_order('||seq_id||')"><i class="fa fa-trash" aria-hidden="true"></i><span>' delete_order
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                 
+                ```
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column BRAND_ID (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Brand
+                alignment: center
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CURRENCY_TYPE (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DELETE_ORDER (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 31
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DELIVERY_DATE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Delivery Date
+                alignment: center
+            }
+            layout {
+                sequence: 11
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column MARGIN (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Margin
+                alignment: end
+            }
+            layout {
+                sequence: 21
+                columnAlignment: end
+            }
+            security {
+                authorizationScheme: @xxeba-admin
+            }
+        )
+
+        column ORDER_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Order id
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ORDER_PRODUCTS_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Order products id
+                alignment: center
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column PRODUCT_PRICE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Price
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column QUANTITY (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ROW_NUM (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: SNo.
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SEQ_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Seq id
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TOTAL_AMOUNT (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Amount
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+    )
+
+    region sales-order (
+        name: Sales Order
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P173_ACCOUNT_OWNER (
+        type: hidden
+        layout {
+            sequence: 110
+            region: @products
+            slot: regionBody
+        }
+        default {
+            type: sqlQuerySingleValue
+            sqlQuerySingleValue:
+                ```sql
+                select default_rep_id from eba_sales_CUSTOMERS
+                WHERE ID =:P173_CUSTOMER_NAME;
+                ```
+        }
+    )
+
+    pageItem P173_AMOUNT (
+        type: textField
+        label {
+            label: Total Amount
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: 99999990D00
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_BILLING_LOCATION (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 180
+            region: @sales-order
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: BILLING_LOCATION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_BRAND_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_COPY_ORDER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 250
+            region: @sales-order
+            slot: regionBody
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_CURRENCY_TYPE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_CUSTOMER_LOCATION (
+        type: selectList
+        label {
+            label: Billing Location
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: "select  CUSTOMER_LOCATION_NAME as d,ID as r from EBA_SALES_CUSTOMER_LOCATIONS where CUSTOMER_ID=:P173_CUSTOMER_NAME "
+        }
+        cascadingLov {
+            parentItems: P173_CUSTOMER_NAME
+            itemsToSubmit: P173_CUSTOMER_NAME
+        }
+        layout {
+            sequence: 90
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw220
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_CUSTOMER_NAME (
+        type: popupLov
+        label {
+            label: Account
+            alignment: left
+        }
+        settings {
+            fetchOnSearch: true
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT DISTINCT
+                    customer_name AS d,
+                    id            r
+                FROM
+                    eba_sales_customers
+                WHERE
+                    status = 'A'
+                ORDER BY
+                    1;
+                ```
+        }
+        layout {
+            sequence: 70
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                select sc.CUSTOMER_NAME display_value, sc.ID return_value  
+                from  
+                eba_sales_CUSTOMERS  sc 
+                where  sc.status='Y' AND
+                   sc.ID in (select CUST_ID from EBA_SALES_VERIFICATIONS) 
+                   AND
+                  (upper(sc.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS (select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR 
+                                 where R.id = :USER_ID and SR.ID = R.REP_ROLE and upper(SR.ROLE_NAME) in ('ADMINISTRATOR', 'SALES CO-ORDINATOR'))
+                    )                                
+                order by 1;
+                ```
+        }
+    )
+
+    pageItem P173_DEAL_NAME (
+        type: textField
+        label {
+            label: Opportunity Name
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_DELETED_IDS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_DELIVERY_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_DELIVERY_LOCATION (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 190
+            region: @sales-order
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DELIVERY_LOCATION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_GROUP_NAME (
+        type: hidden
+        layout {
+            sequence: 270
+            region: @sales-order
+            slot: regionBody
+        }
+    )
+
+    pageItem P173_LOCATION (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @sales-order
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_NEXT_ORDER_DATE (
+        type: datePickerJquery
+        label {
+            label: Next Order Date
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: NEXT_ORDER_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_OPP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @sales-order
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_DATE (
+        type: datePickerJquery
+        label {
+            label: Order Date
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ORDER_DATE
+            used: always
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_FREQUENCY (
+        type: selectList
+        label {
+            label: Order Frequency
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Weekly;7,Bi-Monthly;15,Monthly;30,Quarterly;90,Half-Yearly;180,Yearly;365
+            displayExtraValues: false
+            nullDisplayValue: One-time
+        }
+        layout {
+            sequence: 200
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ORDER_FREQUENCY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @sales-order
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_ID_HID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_NUMBER (
+        type: textField
+        label {
+            label: Order Number
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P173_ORDER_PRODUCTS_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_ORDER_TYPE (
+        type: selectList
+        label {
+            label: Order Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIST_VALUE AS D,LIST_ID AS R  from XXEBA_LIST_VALUES
+                where  LIST_CODE='SALES_ORDER_TYPE'
+                order by DISPLAY_SEQUENCE;
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 130
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_PO_DATE (
+        type: datePickerJquery
+        label {
+            label: PO Date
+            alignment: left
+        }
+        settings {
+            maxDate: +0d
+        }
+        layout {
+            sequence: 150
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PO_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_PO_NUMBER (
+        type: textField
+        label {
+            label: PO Number
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PO_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_PRODUCT_FAMILY_ID (
+        type: hidden
+        layout {
+            sequence: 260
+            region: @sales-order
+            slot: regionBody
+        }
+    )
+
+    pageItem P173_PRODUCT_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_PRODUCT_PRICE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_QUANTITY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_REFERENCE (
+        type: textField
+        label {
+            label: Quote Ref.
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REFERENCE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_REMARKS (
+        type: textField
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 230
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_REP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @sales-order
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_SALES_REP (
+        type: displayOnly
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 120
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_SEQ_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @products
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 240
+            region: @sales-order
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_TERRITORY_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @sales-order
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P173_TERRITORY_NAME (
+        type: displayOnly
+        label {
+            label: Territory
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 100
+            region: @sales-order
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button add (
+        buttonName: ADD
+        label: Add
+        layout {
+            sequence: 10
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--simple
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 108
+                items: {
+                    P108_SOURCE_PAGE: 173
+                }
+                clearCache: 108
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @sales-order
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 102
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Order
+        layout {
+            sequence: 40
+            region: @sales-order
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P173_ORDER_ID is null or nvl(:P173_COPY_ORDER,'N') = 'S'
+        }
+    )
+
+    button create-repeat (
+        buttonName: CREATE_REPEAT
+        label: Create Repeat Order
+        layout {
+            sequence: 20
+            region: @sales-order
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 173
+                items: {
+                    P173_ORDER_ID: &P173_ORDER_ID.
+                    P173_COPY_ORDER: S
+                    P173_ORDER_DATE: &P173_NEXT_ORDER_DATE.
+                }
+                clearCache: 103
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P173_ORDER_ID is not null and nvl(:P173_COPY_ORDER,'N') != 'S'
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @sales-order
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P173_ORDER_ID is not null and nvl(:P173_COPY_ORDER,'N') != 'S'
+        }
+    )
+
+    dynamicAction delete-product-row (
+        name: DELETE_PRODUCT_ROW
+        execution {
+            sequence: 50
+        }
+        when {
+            event: custom
+            customEvent: DELETE_PRODUCT_ROW
+            selectionType: jsExpression
+            javaScriptExpression: document
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                    	v_collection_name  		VARCHAR2 (30) := 'PRODUCT_COLLECTION';
+                    BEGIN
+                    APEX_COLLECTION.DELETE_MEMBER (
+                        v_collection_name ,
+                        :P173_SEQ_ID);
+                    END;
+                    ```
+                itemsToSubmit: P173_SEQ_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @products
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New_1
+        execution {
+            sequence: 80
+        }
+        when {
+            event: apexafterrefresh
+            selectionType: region
+            region: @products
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var total_amount = 0;
+                    $('#order_product table tr td:nth-child(10) input[name="f10"]').each(function(){
+                           var amount=$(this).val();
+                        // alert(t);
+                        total_amount = parseInt(total_amount)+parseInt(amount);
+                        });
+                     //alert(total_amount);
+                    $("#P173_AMOUNT").val(total_amount);
+                    
+                    
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 70
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @add
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @products
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-frequency-date (
+        name: Set Frequency Date
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P173_ORDER_FREQUENCY
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select sysdate+:P173_ORDER_FREQUENCY from dual
+                itemsToSubmit: P173_ORDER_FREQUENCY
+            }
+            affectedElements {
+                selectionType: items
+                items: P173_NEXT_ORDER_DATE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-location (
+        name: Set Location
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P173_BILLING_LOCATION
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P173_BILLING_LOCATION
+                itemsToSubmit: P173_BILLING_LOCATION
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P173_CUSTOMER_LOCATION
+                    P173_DELIVERY_LOCATION
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-value (
+        name: Set Value
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P173_CUSTOMER_NAME
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                      SELECT T.TERRITORY_NAME,
+                        SR.REP_FIRST_NAME
+                        ||' '
+                        ||SR.REP_LAST_NAME Rep_name,
+                        C.DEFAULT_REP_ID,
+                        C.CUSTOMER_TERRITORY_ID
+                      INTO :P173_TERRITORY_NAME,
+                           :P173_SALES_REP,
+                           :P173_REP_ID,
+                           :P173_TERRITORY_ID
+                      FROM EBA_SALES_CUSTOMERS C,
+                        EBA_SALES_TERRITORIES T,
+                        EBA_SALES_SALESREPS SR
+                      WHERE C.CUSTOMER_TERRITORY_ID = T.ID
+                      AND C.DEFAULT_REP_ID          = SR.ID
+                      AND C.ID                      = :P173_CUSTOMER_NAME;
+                    
+                    
+                    
+                    END;
+                    ```
+                itemsToSubmit: P173_CUSTOMER_NAME
+                itemsToReturn: [
+                    P173_TERRITORY_NAME
+                    P173_SALES_REP
+                    P173_REP_ID
+                    P173_TERRITORY_ID
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+            comments {
+                comments:
+                    ```
+                    BEGIN
+                      SELECT T.TERRITORY_NAME,
+                        SR.REP_FIRST_NAME
+                        ||' '
+                        ||SR.REP_LAST_NAME Rep_name,
+                        C.DEFAULT_REP_ID,
+                        C.CUSTOMER_TERRITORY_ID
+                       -- C.ROW_KEY
+                      INTO :P173_TERRITORY_NAME,
+                           :P173_SALES_REP,
+                           :P173_REP_ID,
+                           :P173_TERRITORY_ID
+                          -- :P173_ROW_KEY
+                      FROM EBA_SALES_CUSTOMERS C,
+                        EBA_SALES_TERRITORIES T,
+                        EBA_SALES_SALESREPS SR
+                      WHERE C.CUSTOMER_TERRITORY_ID = T.ID
+                      AND C.DEFAULT_REP_ID          = SR.ID
+                      AND C.ID                      = :P173_CUSTOMER_NAME;
+                    
+                    
+                     --- SELECT TO_CHAR( nvl(get_amount_pkg.get_overdue_amount (:P173_ROW_KEY),0), '999G999G999G999G990D00') INTO :P173_OVERDUE_AMOUNT FROM DUAL;
+                    
+                    END;
+                    ```
+            }
+        )
+
+        action native-execute-plsql-code-2 (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    APEX_UTIL.SET_SESSION_STATE (
+                        'P173_CUSTOMER_NAME',
+                        :P173_CUSTOMER_NAME);
+                    ```
+                itemsToSubmit: P173_CUSTOMER_NAME
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction update-product-row (
+        name: UPDATE_PRODUCT_ROW
+        execution {
+            sequence: 40
+        }
+        when {
+            event: custom
+            customEvent: UPDATE_PRODUCT_ROW
+            selectionType: jsExpression
+            javaScriptExpression: document
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    /*
+                       *****************************************************************************
+                       **
+                       **  Page Details	   : Page 23 (TimeSheet page)
+                       **  object type     : PLSQL Block
+                       **  description     : This block content used to create collections data for 
+                       **   					TimeSheet.			
+                       **
+                       **  change history
+                       **   
+                       **  date                 name                   version        modification
+                       **  -------            -------                  -------        ------------
+                       ** 03-20-2017	      4iapps 				 	 1.0         Block created.
+                       **   
+                       *****************************************************************************
+                     */
+                     
+                    DECLARE
+                        l_seq_id		   		apex_application_global.vc_arr2;
+                        l_products_id		apex_application_global.n_arr;
+                        l_order_id		   	  apex_application_global.n_arr;
+                    	l_product_name	apex_application_global.vc_arr2;
+                        l_product_price   apex_application_global.n_arr;
+                        l_currency_type  apex_application_global.vc_arr2;
+                        l_brand_id          apex_application_global.n_arr;
+                    
+                         l_delivery_date    apex_application_global.vc_arr2;
+                         l_quantity            apex_application_global.vc_arr2;
+                       -- l_product_family_id    apex_application_global.n_arr;
+                    	v_collection_name  		VARCHAR2 (30) := 'PRODUCT_COLLECTION';
+                    	
+                    	v_start_date			VARCHAR2 (30);
+                    	v_end_date				VARCHAR2 (30);
+                    	
+                    BEGIN
+                        l_seq_id(1)  := :P173_SEQ_ID;
+                    	l_products_id(1) := to_number(:P173_ORDER_PRODUCTS_ID);
+                        l_order_id(1) := to_number(:P173_ORDER_ID_HID);
+                        l_product_name(1)  := :P173_PRODUCT_NAME;
+                        l_product_price(1) := to_number(:P173_PRODUCT_PRICE);
+                    	l_currency_type(1)    := :P173_CURRENCY_TYPE; 
+                    	l_brand_id(1)   := to_number(:P173_BRAND_ID);
+                        
+                        l_delivery_date(1)   := TO_CHAR(TO_DATE(:P173_DELIVERY_DATE,'DD-Mon-RRRR'),'DD-Mon-RRRR');  --DD/MM/RRRR
+                        l_quantity(1)   := :P173_QUANTITY;
+                       -- l_product_family_id(1)    := to_number(:P173_PRODUCT_FAMILY_ID);
+                        
+                         APEX_COLLECTION.UPDATE_MEMBERS (
+                            p_collection_name => v_collection_name,
+                            p_seq    => l_seq_id,
+                            p_n001  => l_products_id,
+                            p_n002  => l_order_id,
+                            p_c001  => l_product_name,
+                            p_n003  => l_product_price,
+                            p_c002  => l_currency_type,
+                            p_n004  => l_brand_id,
+                            p_c003  => l_quantity,
+                            p_c004  => l_delivery_date
+                           -- p_n005  => l_product_family_id
+                            );  
+                    		
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P173_SEQ_ID
+                    P173_ORDER_PRODUCTS_ID
+                    P173_ORDER_ID_HID
+                    P173_PRODUCT_NAME
+                    P173_PRODUCT_PRICE
+                    P173_CURRENCY_TYPE
+                    P173_BRAND_ID
+                    P173_DELIVERY_DATE
+                    P173_QUANTITY
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation delivery-date-validation-for-same-product (
+        name: Delivery Date validation for same product
+        execution {
+            sequence: 80
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                     product_id  NUMBER;
+                    v_error_text  VARCHAR2(1000) := NULL;
+                BEGIN
+                  FOR c1 IN
+                  (SELECT seq_id s_no,n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    n004 brand_id,
+                    c004 Delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                  )
+                 LOOP
+                  FOR c2 IN (SELECT seq_id s_no,n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    n004 brand_id,
+                    c004 Delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION')
+                  LOOP 
+                  if c2.order_products_id=c1.order_products_id and c2.Delivery_date=c1.Delivery_date and c2.s_no <>c1.s_no then 
+                  v_error_text :='Sorry! Same Delivery Date is available for this product '||c2.product_name||'.';
+                   end if;
+                   end loop;
+                  END LOOP;
+                  RETURN v_error_text; 
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation p173-sales-rep-not-null (
+        name: P173_SALES_REP Not null
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P173_REP_ID
+        }
+        error {
+            errorMessage: Please fill out this field.
+            displayLocation: inlineWithField
+            associatedItem: @P173_SALES_REP
+        }
+    )
+
+    validation p173-territory-name-not-null (
+        name: P173_TERRITORY_NAME Not null
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsNotNull
+            item: P173_TERRITORY_ID
+        }
+        error {
+            errorMessage: Please fill out this field.
+            displayLocation: inlineWithField
+            associatedItem: @P173_TERRITORY_NAME
+        }
+    )
+
+    validation product-null (
+        name: Product null
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare
+                    v_error_text    varchar2(1000) := null;
+                    v_count            number;
+                Begin
+                    SELECT count(*) into v_count FROM apex_collections WHERE collection_name = 'PRODUCT_COLLECTION';
+                    if v_count = 0 then
+                         v_error_text := 'At least one product must be selected to continue';
+                   end if;
+                    
+                    return v_error_text;
+                   
+                End;
+                ```
+        }
+    )
+
+    validation product-price-null-validation (
+        name: Product Price Null validation
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare
+                    v_error_text    varchar2(1000) := null;
+                Begin
+                    FOR c IN (SELECT n001 order_products_id, n002  order_id, c001  product_name, n003 product_price, c002 currency_type, n004 brand_id, c004 Delivery_date FROM apex_collections WHERE collection_name = 'PRODUCT_COLLECTION')
+                    LOOP
+                        if trim(c.product_price) is null then
+                            v_error_text := v_error_text||'Price can not be null for '||c.product_name||'<br>';
+                        end if;
+                         if to_date(trim(c.Delivery_date), 'DD-Mon-YYYY') < trunc(sysdate) then
+                            v_error_text := v_error_text||'Delivery Date should be greater than OR equal to current date for'||c.product_name||'<br>';
+                         --     return to_date(c.Delivery_date, 'DD-Mon-YYYY');
+                       end if;
+                    END LOOP;
+                    
+                    return v_error_text;
+                   
+                End;
+                ```
+        }
+    )
+
+    validation quantity-validations (
+        name: Quantity Validations
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  minimum_quantity VARCHAR2(100); /* VARCHAR2(20) into VARCHAR2(100)  Modified on 01-SEP-18*/
+                  v_error_text VARCHAR2(4000) := NULL; /* v_error_text  VARCHAR2(4000)  Modified on 01-SEP-18 */
+                  pack_quantity VARCHAR2(100);
+                  lv_remainder  NUMBER;
+                BEGIN
+                  FOR c IN
+                  (SELECT n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    c003 quantity,
+                    n004 brand_id,
+                    c004 Delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                  )
+                  LOOP
+                    SELECT MINIMUM_ORDER_QUANTITY,
+                      PACK_QUANTITY
+                    INTO minimum_quantity,
+                      pack_quantity
+                    FROM EBA_SALES_PRODUCT_FAMILIES PF,
+                      EBA_SALES_PRODUCTS P
+                    WHERE P.PRODUCT_FAMILY_ID      = PF.ID
+                    AND P.ID                       =c.order_products_id;
+                    
+                    IF to_number(trim(c.quantity)) < 1 THEN
+                      v_error_text                :='Sorry! Quantity is less than one.';
+                    END IF;
+                    
+                    IF minimum_quantity IS NOT NULL  THEN
+                      
+                      IF to_number(trim(c.quantity)) < to_number(minimum_quantity) THEN
+                        v_error_text                :='Sorry! Order Quantity of '||trim(c.quantity)||' is less than its Minimum Order Quantity of  '||minimum_quantity ||'.';
+                      END IF;
+                      
+                    ELSIF  pack_quantity IS NOT NULL and  minimum_quantity is null  THEN
+                      SELECT MOD(to_number(c.quantity), to_number(pack_quantity))
+                      INTO lv_remainder
+                      FROM dual;
+                      
+                      IF lv_remainder <> 0 THEN
+                        RETURN 'Sorry! Order Quantity should be multiples of Pack Quantity '|| pack_quantity ||'.';
+                      END IF;
+                      
+                    END IF ;
+                  END LOOP;
+                  RETURN v_error_text;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation unit-price-validations (
+        name: Unit Price Validations
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  minimum_price NUMBER;
+                    v_error_text  VARCHAR2(1000) := NULL;
+                BEGIN
+                  FOR c IN
+                  (SELECT n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    n004 brand_id,
+                    c004 Delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                  )
+                  LOOP
+                    SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0)
+                    INTO minimum_price
+                    FROM EBA_SALES_PRODUCT_FAMILIES PF,
+                      EBA_SALES_PRODUCTS P
+                    WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                    AND P.ID                  =c.order_products_id;
+                    IF trim(c.product_price) < round(minimum_price)  THEN
+                     v_error_text :='Sorry! Unit Price is lesser than the minimum price of this Product.';
+                     
+                    END IF;
+                  END LOOP;
+                  RETURN v_error_text; 
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+            type: never
+        }
+    )
+
+    process add-product-to-account-master (
+        name: Add_Product_to_Account_Master
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  lv_group_id  NUMBER ;
+                  lv_acc_count NUMBER;
+                BEGIN
+                  FOR c IN
+                  (SELECT n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    n004 brand_id,
+                    c003 quantity,
+                    c004 delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                  )
+                  LOOP
+                    SELECT g.id
+                    INTO lv_group_id
+                    FROM eba_sales_product_families g,
+                      EBA_SALES_PRODUCTS p
+                    WHERE g.id=p.PRODUCT_FAMILY_ID
+                    AND p.id  = c.order_products_id;
+                    SELECT COUNT(*)
+                    INTO lv_acc_count
+                    FROM XXEBA_SALES_ACC_PRODUCTS
+                    WHERE Customer_ID = :P173_CUSTOMER_NAME
+                    AND product_id    =c.order_products_id;
+                    IF lv_acc_count   = 0 THEN
+                      INSERT
+                      INTO XXEBA_SALES_ACC_PRODUCTS
+                        (
+                          CUSTOMER_ID,
+                          PRODUCT_GROUP_ID,
+                          MONTHLY_VOLUME,
+                          UNIT_OF_MEASURES,
+                          BRAND_ID,
+                          PRODUCT_ID
+                        )
+                        VALUES
+                        (
+                          :P173_CUSTOMER_NAME,
+                          lv_group_id,
+                          to_number(c.quantity),
+                          1001,
+                          c.brand_id,
+                          c.order_products_id
+                        );
+                    END IF;
+                  END LOOP;
+                END;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 266970167008382187
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process change-closed-statues (
+        name: Change Closed Statues
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                   v_deal_status_id    EBA_SALES_DEALS.DEAL_STATUS_CODE_ID%type;
+                begin
+                
+                    select id into v_deal_status_id
+                    from EBA_SALES_DEAL_STATUS_CODES
+                    where CORRESPONDING_PROB_PCT = 100;
+                        --  raise_application_error(-20001, to_char(trunc(sysdate), 'DD-MON-YY'));
+                
+                
+                ---raise_application_error(-20100, :P173_DEAL_NAME||'  '||:P173_CUSTOMER_NAME||'   '||:P173_REP_ID||'    '||
+                   ----                      :P173_AMOUNT||'   '||SYSDATE||'  '||v_deal_status_id||'   '||:P173_LOCATION);   
+                
+                
+                  insert into EBA_SALES_DEALS (
+                    DEAL_NAME,
+                    CUSTOMER_ID,
+                    SALESREP_ID_01,
+                    DEAL_AMOUNT,
+                    DEAL_CLOSE_DATE,
+                    DEAL_STATUS_CODE_ID,
+                    LOCATION_ID,
+                    DEAL_PROBABILITY,
+                    SOURCE_TYPE
+                    )
+                    values (
+                    :P173_DEAL_NAME,
+                    :P173_CUSTOMER_NAME,
+                    :P173_REP_ID,
+                    :P173_AMOUNT,
+                     SYSDATE,
+                   ----    to_char(trunc(sysdate), 'DD-Mon-YY'),
+                    v_deal_status_id,
+                    :P173_LOCATION,
+                    100,
+                    'S')
+                    returning id into :P173_OPP_ID;
+                    
+                EXCEPTION WHEN OTHERS THEN
+                   xxfs_pm_error_log_pkg.record_log('ERROR-So1','CHANGE_CLOSED_STATUS_UPDATE_BLOCK-so1',NULL,4);    
+                end;
+                    
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 90673890863487425
+        }
+        serverSideCondition {
+            type: itemIsNullOrZero
+            item: P173_ORDER_ID_HID
+        }
+    )
+
+    process delete-products (
+        name: Delete Products
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                delete from XXEBA_ORDER_PRODUCTS
+                where :P173_DELETED_IDS like '%'||ORDER_PRODUCTS_ID||'%';
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 90676350236487435
+        }
+    )
+
+    process insert-order-products (
+        name: "Insert Order Products "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                /*
+                   *****************************************************************************
+                   **
+                   **  Page Details	   : Page 23 (TimeSheet page)
+                   **  object type     : PLSQL Block
+                   **  description     : This block content used to create collections data for 
+                   **   					TimeSheet.						
+                   **
+                   **  change history
+                   **   
+                   **  date                 name                   version        modification
+                   **  -------            -------                  -------        ------------
+                   ** 03-20-2017	      4iapps 				 	 1.0         Block created.
+                   **    
+                   *****************************************************************************
+                 */
+                 
+                
+                DECLARE    
+                    
+                BEGIN  
+                        
+                        FOR c IN (
+                       SELECT n001 order_products_id, n002  order_id, c001  product_name, n003 product_price, c002 currency_type, n004 brand_id,  c003 quantity, c004 delivery_date,c008 margin FROM apex_collections WHERE collection_name = 'PRODUCT_COLLECTION')
+                         LOOP
+                        -- RAISE_APPLICATION_ERROR(-20001,'TEST');
+                        --  INSERT INTO TEST_ERROR VALUES(
+                        --      1,
+                        --      'order_products_id: '||C.order_products_id||'order_id: '||C.order_id
+                        --  );
+                           INSERT INTO XXEBA_ORDER_PRODUCTS (PRODUCT_ID, 
+                											 ORDER_ID, 
+                											 PRODUCT_NAME, 
+                											 PRODUCT_PRICE, 
+                											 CURRENCY_TYPE, 
+                											 BRAND_ID,
+                                                             QUANTITY,
+                                                             DELIVERY_DATE,
+                                                             MARGIN
+                											)
+                                                      VALUES (c.order_products_id,
+                                                              :P173_ORDER_ID,
+                                                              c.product_name,
+                                                              c.product_price,
+                                                              c.currency_type,
+                											  c.brand_id,
+                                                              c.quantity,
+                                                              c.delivery_date,
+                                                              c.MARGIN
+                                                              );
+                    --  INSERT INTO TEST_ERROR VALUES(
+                    --          1,
+                    --          'PRODUCT_ID: '||C.order_products_id||' order_id: '||C.order_id||' product_name: '||C.PRODUCT_NAME
+                    --      );
+                        END LOOP; 
+                
+                END;
+                
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        successMessage {
+            successMessage: Order Created Successfully <br> &P173_ORDER_NUMBER.
+        }
+        advanced {
+            executionMappingIdentifier: 90675939484487435
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process insert-sales-orders (
+        name: Insert Sales Orders
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  v_seq_num      NUMBER;
+                  v_order_number VARCHAR2(50);
+                  v_account     NUMBER;
+                BEGIN
+                  --   if :P173_ORDER_ID is null or :P173_COPY_ORDER = 'S' then
+                  -- Generate Sequence Number
+                  v_seq_num      :=XXFS_PM_LEAVE_REQUESTS_SEQ.nextval();
+                  v_order_number := TO_CHAR(sysdate,'YY')||trim(TO_CHAR(v_seq_num,'00000'));
+                
+                
+                 
+                
+                
+                  --raise_application_error(-20010,v_order_number);
+                  --  update XXEBA_SALES_ORDER set ORDER_REPEAT = 'N' where ORDER_ID = :P173_ORDER_ID; -- If copy order change repeated status
+                  INSERT
+                  INTO XXEBA_SALES_ORDER
+                    (
+                      ORDER_NUMBER,
+                      DEAL_ID,
+                      CUSTOMER_ID,
+                      TERRITORY_ID,
+                      SALES_REP,
+                      PO_NUMBER,
+                      PO_DATE ,
+                      REFERENCE ,
+                      BILLING_LOCATION,
+                      DELIVERY_LOCATION,
+                      ORDER_FREQUENCY,
+                      NEXT_ORDER_DATE,
+                      ORDER_DATE,
+                      ORDER_REPEAT,
+                      REMARKS,
+                      CREATED_BY,
+                      UPDATED_BY,
+                      SOURCE_APPLICATION,
+                      ORDER_TYPE_ID,
+                      ACCOUNT_OWNER_ID
+                     
+                    )
+                    VALUES
+                    (
+                      to_number(v_order_number),
+                      :P173_OPP_ID,
+                      :P173_CUSTOMER_NAME,
+                      :P173_TERRITORY_ID,
+                      :P173_REP_ID,
+                      :P173_PO_NUMBER,
+                      :P173_PO_DATE,
+                      :P173_REFERENCE,
+                      :P173_CUSTOMER_LOCATION,
+                      :P173_DELIVERY_LOCATION,
+                      :P173_ORDER_FREQUENCY,
+                      :P173_NEXT_ORDER_DATE,
+                      :P173_ORDER_DATE,
+                      'Y',
+                      :P173_REMARKS,
+                      Nvl(V('APP_USER'), USER),
+                      Nvl(V('APP_USER'), USER),
+                      'W',
+                      :P173_ORDER_TYPE,
+                      :P173_ACCOUNT_OWNER
+                      
+                      
+                    )
+                  RETURNING ORDER_ID
+                  INTO :P173_ORDER_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 90674346124487428
+        }
+    )
+
+    process load-collection-data (
+        name: Load Collection Data
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                 /*
+                   *****************************************************************************
+                   **
+                   **  Page Details	   : Page 23 (TimeSheet page)
+                   **  object type     : PLSQL Block
+                   **  description     : This block content used to create collections data for 
+                   **   					TimeSheet.
+                   **						 
+                   **						
+                   **
+                   **  change history
+                   **   
+                   **  date                 name                   version        modification
+                   **  -------            -------                  -------        ------------
+                   ** 03-20-2017	      4iapps 				 	 1.0         Block created.
+                   **   
+                   **
+                   ** 
+                   *****************************************************************************
+                 */
+                 
+                DECLARE
+                	v_collection_name   		VARCHAR2 (30) := 'PRODUCT_COLLECTION';
+                   
+                BEGIN
+                	IF apex_collection.collection_exists
+                										(p_collection_name      => v_collection_name)
+                	THEN
+                		apex_collection.delete_collection
+                										(p_collection_name      => v_collection_name);
+                	END IF;
+                		apex_collection.create_or_truncate_collection
+                										(p_collection_name      => v_collection_name);
+                    if :P173_COPY_ORDER = 'S' then
+                        FOR prc IN (select null ORDER_PRODUCTS_ID, ORDER_ID, PRODUCT_NAME, PRODUCT_PRICE, CURRENCY_TYPE, BRAND_ID, QUANTITY, DELIVERY_DATE,null PRODUCT_FAMILY_ID,MARGIN from XXEBA_ORDER_PRODUCTS
+                                         where ORDER_ID = :P173_ORDER_ID)
+                       LOOP
+                            apex_collection.add_member (p_collection_name      => v_collection_name,
+                                                        p_n001                 => prc.ORDER_PRODUCTS_ID,
+                                                        p_n002                 => prc.ORDER_ID,
+                                                        p_c001                 => prc.PRODUCT_NAME,
+                                                        p_n003                 => prc.PRODUCT_PRICE,
+                                                        p_c002                 => prc.CURRENCY_TYPE,
+                                                        p_n004                 => prc.BRAND_ID,
+                                                        p_c003                 => prc.QUANTITY,
+                                                        p_c004                 => prc.DELIVERY_DATE,
+                                                        p_n005                 => prc.MARGIN
+                                                       );
+                	   END LOOP;
+                 
+                    else
+                    
+                        FOR prc IN (select ORDER_PRODUCTS_ID, ORDER_ID, PRODUCT_NAME, PRODUCT_PRICE, CURRENCY_TYPE, BRAND_ID, QUANTITY, DELIVERY_DATE,null PRODUCT_FAMILY_ID,MARGIN from XXEBA_ORDER_PRODUCTS
+                                             where ORDER_ID = :P173_ORDER_ID
+                                            union all 
+                                            select null ORDER_PRODUCTS_ID, null ORDER_ID, P.PRODUCT_NAME, DP.PRODUCT_PRICE, DP.CURRENCY_TYPE, DP.PRODUCT_BRAND_ID, DP.QUANTITY, DP.CLOSE_DATE,P.PRODUCT_FAMILY_ID,P.MARGIN
+                                             from EBA_SALES_DEAL_PRODUCTS DP,
+                                                      EBA_SALES_PRODUCTS P
+                                           where DP.DEAL_ID = :P173_DEAL_ID
+                                               and DP.PRODUCT_ID = P.ID
+                                               and :P173_ORDER_ID is null)
+                       LOOP
+                                apex_collection.add_member (p_collection_name      => v_collection_name,
+                                                            p_n001                 => prc.ORDER_PRODUCTS_ID,
+                                                            p_n002                 => prc.ORDER_ID,
+                                                            p_c001                 => prc.PRODUCT_NAME,
+                                                            p_n003                 => prc.PRODUCT_PRICE,
+                                                            p_c002                 => prc.CURRENCY_TYPE,
+                                                            p_n004                 => prc.BRAND_ID,
+                                                            p_c003                 => prc.QUANTITY,
+                                                            p_c004                 => prc.DELIVERY_DATE,
+                                                           p_n005                 => prc.MARGIN
+                                                           );
+                       END LOOP;
+                    end if;
+                   
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 90675531707487434
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 90675125438487434
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process special-price-status-update (
+        name: Special Price Status Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare 
+                lv_count number :=0 ;
+                minimum_price number;
+                
+                BEGIN
+                  FOR c IN
+                  (SELECT n001 order_products_id,
+                    n002 order_id,
+                    c001 product_name,
+                    n003 product_price,
+                    c002 currency_type,
+                    n004 brand_id,
+                    c004 Delivery_date
+                  FROM apex_collections
+                  WHERE collection_name = 'PRODUCT_COLLECTION'
+                  )
+                  LOOP
+                    SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) 
+                    INTO minimum_price
+                    FROM EBA_SALES_PRODUCT_FAMILIES PF,
+                      EBA_SALES_PRODUCTS P
+                    WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                    AND P.ID                  =c.order_products_id;
+                    IF trim(c.product_price) < round(minimum_price)  THEN
+                    lv_count := lv_count+1;
+                     END IF;
+                  END LOOP;
+                  IF lv_count > 0 then
+                  UPDATE XXEBA_SALES_ORDER SET STATUS='N',UPDATED_BY=Nvl(V('APP_USER'), USER) WHERE ORDER_ID =:P173_ORDER_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 69128854449427986
+        }
+    )
+
+    branch (
+        name: Go To Page 102
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 102
+                items: {
+                    P102_ORDER_ID: &P173_ORDER_ID.
+                }
+                clearCache: 102
+                request: CREATE_ORDER
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,534 @@
+page 8 (
+    name: Territories
+    title: Territories
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            
+            .t-Footer{
+            	display:none;
+            
+            
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: Accounts are organized into territories. Each account must be in one and only one territory. Territory's facilitate reporting and organization of opportunities. Click the <strong>Create Territory</strong> button to create a new territory. Click the pencil icon in the report to edit any specific territory's details. Click the <strong>Reset</strong> button to reset the interactive report. Click the <strong>Actions ∨</strong> button to define the number of rows displayed per page, filter, format, download, and/or save the interactive report.
+    }
+    config {
+        buildOption: @territories
+    }
+
+    region territories (
+        name: Territories
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id, 
+                  territory_name,TERRITORY_CODE,
+                  initcap(replace(territory_type, '_', ' ')) territory_type,
+                  BILLING_REGION,
+                  territory_description,
+                  (
+                    select count(*) 
+                    from eba_sales_customers 
+                    where customer_territory_id = t.id
+                  ) accounts,
+                  (
+                    select count(*) 
+                    from eba_sales_deals 
+                    where customer_id in (
+                      select id 
+                      from eba_sales_customers 
+                      where customer_territory_id = t.id
+                    )
+                  ) opportunities,
+                  (
+                    select count(*) 
+                    from eba_sales_states s
+                    join eba_sales_terr_map m 
+                      on s.id = m.state_id
+                    where m.territory_id = t.id
+                  ) states,
+                  (
+                    select svp_name 
+                    from eba_sales_svps svp 
+                    where svp.id = t.svp_id
+                  ) default_svp,
+                  created,
+                  lower(created_by) created_by,
+                  updated,
+                  lower(updated_by) updated_by
+                from eba_sales_territories t
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 9
+                items: {
+                    P9_ID: #ID#
+                }
+                clearCache: 9
+                action: resetPagination
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 10000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: This query returns more than #MAX_ROW_COUNT# rows, please filter your data to ensure complete results.
+        }
+        actionsMenu {
+            savePublicReport: true
+        }
+        download {
+            formats: [
+                csv
+                html
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 3737039726578743932
+        }
+
+        column ACCOUNTS (
+            type: plainText
+            heading {
+                heading: Accounts
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column BILLING_REGION (
+            type: plainText
+            heading {
+                heading: Billing Region
+            }
+            layout {
+                sequence: 21
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 8
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column DEFAULT_SVP (
+            type: hidden
+            heading {
+                heading: SVP
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: Edit
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column OPPORTUNITIES (
+            type: plainText
+            heading {
+                heading: Opportunities
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column STATES (
+            type: plainText
+            heading {
+                heading: States
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column TERRITORY_CODE (
+            type: plainText
+            heading {
+                heading: Territory Code
+                alignment: center
+            }
+            layout {
+                sequence: 51
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column TERRITORY_DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column TERRITORY_TYPE (
+            type: plainText
+            heading {
+                heading: Type
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column UPDATED (
+            type: plainText
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 31
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated by
+            }
+            layout {
+                sequence: 41
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        savedReport 9094860 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 15
+            }
+
+            displayColumn ACCOUNTS (
+                sequence: 5
+            )
+
+            displayColumn BILLING_REGION (
+                sequence: 3
+            )
+
+            displayColumn OPPORTUNITIES (
+                sequence: 6
+            )
+
+            displayColumn STATES (
+                sequence: 7
+            )
+
+            displayColumn TERRITORY_CODE (
+                sequence: 1
+            )
+
+            displayColumn TERRITORY_NAME (
+                sequence: 2
+            )
+
+            displayColumn TERRITORY_TYPE (
+                sequence: 4
+            )
+
+            sort (
+                column: TERRITORY_NAME
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region territories-2 (
+        name: Territories
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 30
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    button create-territory (
+        buttonName: CREATE_TERRITORY
+        label: Create Territory
+        layout {
+            sequence: 20
+            region: @territories-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 9
+                clearCache: 9
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button reset-report (
+        buttonName: RESET_REPORT
+        label: Reset
+        layout {
+            sequence: 10
+            region: @territories
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-undo-alt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 8
+                clearCache: [
+                    8
+                    RIR
+                    CIR
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction dialog-closed (
+        name: Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('Action Processed.');
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @territories
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

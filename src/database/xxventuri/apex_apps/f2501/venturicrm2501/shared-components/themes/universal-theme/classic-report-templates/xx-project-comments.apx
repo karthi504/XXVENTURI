@@ -1,0 +1,83 @@
+classicReportTemplate xx-project-comments (
+    name: xx_project_comments
+    templateClass: custom1
+    type: namedColumn
+    templateOptions {
+        preset: t-Comments--chat
+    }
+    reportTemplate {
+        top: <ul class="t-Comments #COMPONENT_CSS_CLASSES#" #REPORT_ATTRIBUTES# id="#REGION_STATIC_ID#_report">
+        bottom:
+            ```html
+            </ul>
+            <table class="t-Report-pagination" role="presentation">#PAGINATION#</table>
+            ```
+    }
+    rowTemplate1 {
+        template:
+            ```html
+            <li class="t-Comments-item">
+                <div class="t-Comments-body a-MediaBlock-content">
+                    <div class="t-Comments-comment">
+                        #COMMENT_TEXT#
+                    </div>
+                </div>
+            </li>
+            ```
+    }
+    pagination {
+        template: <span class="t-Report-paginationText">#TEXT#</span>
+        nextPage:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--next">
+              #PAGINATION_NEXT#<span class="a-Icon icon-right-arrow"></span>
+            </a>
+            ```
+        previousPage:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--prev">
+              <span class="a-Icon icon-left-arrow"></span>#PAGINATION_PREVIOUS#
+            </a>
+            ```
+        nextSet:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--next">
+              #PAGINATION_NEXT_SET#<span class="a-Icon icon-right-arrow"></span>
+            </a>
+            
+            ```
+        previousSet:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--prev">
+              <span class="a-Icon icon-left-arrow"></span>#PAGINATION_PREVIOUS_SET#
+            </a>
+            ```
+    }
+    advanced {
+        identifier: XX_PROJECT_COMMENTS
+    }
+
+    templateOption basic (
+        name: Basic
+        sequence: 10
+        appearance {
+            cssClasses: t-Comments--basic
+        }
+        advanced {
+            identifier: BASIC
+        }
+    )
+
+    templateOption speech-bubbles (
+        name: Speech Bubbles
+        sequence: 20
+        appearance {
+            cssClasses: t-Comments--chat
+        }
+        advanced {
+            identifier: SPEECH_BUBBLES
+        }
+    )
+
+)
+

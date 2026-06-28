@@ -1,0 +1,1024 @@
+installScript table (
+    execution {
+        sequence: 10
+    }
+    script {
+        contentFile: table.sql
+    }
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: BASE64_TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: CRM_ACCOUNTS_TEMP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: CRM_SALES_ORDERS_TEMP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: CUSTOMER_COMPLAINTS_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: DEPT
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: DML_TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: DS_ENVELOPE_CALLBACK_LOG
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_DEMO_CAL_MYSESSIONS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_DEMO_CAL_PROJECTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_DEMO_CAL_SESSIONS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_INACTIVE_PRODUCTS_LISTS_27012026
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ACCESS_LEVELS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ACCOUNT_STANDING
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ACC_SOURCES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ACT_COMPETITION
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CLICKS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_COMMENTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_COMPETITORS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_COMPETITOR_THREATS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_COUNTRIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CURRENCIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CUSTOMERS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CUSTOMERS_BK0804
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CUSTOMER_CONTACTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_CUSTOMER_LOCATIONS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEALS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEALS_BKP_12JUNE_18
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEAL_COMPETITION
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEAL_PRODUCTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEAL_STAGES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEAL_STATUS_CODES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_DEAL_TEAM
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ERRORS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_ERROR_LOOKUP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_FILES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_FIN_ASSESSMENTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_HISTORY
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_INDUSTRIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_LEADS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_LEAD_SOURCES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_LEAD_STATUS_CODES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_LINKS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_NOTIFICATIONS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PREFERENCES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_01042026_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_12NOV2018
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_25OCT2023
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_27012026
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_29OCT2024
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BK0804
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP05OCT23
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP12SEP2025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_04122025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_06112025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_08_SEP_2025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_110425
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_110425_V1
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_21SEP23
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_BKP_24042025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_COPY
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_DEL_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCTS_JAN2019
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCT_FAMILIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCT_FAMILIES_01042026_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_PRODUCT_FAMILIES_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_RISK_ASSESSMENTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_SALESREPS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_SALESREP_ROLES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_SALES_PERIODS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_SALES_PERIODS_BKUP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_STATES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_STATUS_ASSESSMENTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_SVPS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TAGS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TAGS_SUM
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TAGS_TYPE_SUM
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TERMS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TERRITORIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TERRITORY_ACL
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TERR_MAP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_TZ_PREF
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_USERS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_SALES_VERIFICATIONS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EBA_TEST_USER_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: EMP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: HTMLDB_PLAN_TABLE
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: HTTP_BLOB_TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: SHAREPOINT_TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TABLE_LOG
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TABLE_SALES_DEAL_UPLOAD_TEMP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TEST_PRODUCTS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TEST_PRODUCTS_T_ERR$
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TEST_PRODUCTS_T_ERR$1
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: TMP_SALES_CUST_REP_UP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: VISITOR_ACCESS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XLIB_JASPERREPORTS_CONF
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XLIB_JASPERREPORTS_DEMOS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XLIB_LOGS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_CREDIT_TERMS_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_CUSTOMER_COMPLAINTS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_EFFICIENCY_DATA_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_EMAIL_TEMPLATES_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_FINAL_DATA_LOAD_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_LIST_VALUES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_MASS_EMAILS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_MASS_EMAIL_DETAILS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_ORDER_PRODUCTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_PRODUCTS_UPLOAD_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_PRODUCT_CLASS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ACC_PRODUCTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_APPOINTMENT
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_APPOINTMENT_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ATTENDANCE_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_BANKS_LIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_BRANDS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CITIES_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CLASSIFICATION
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_COMPETITOR_PRODUCT
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CRM_APPOINTMENTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CRM_APPOINTMENTS_H
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CUSTOMERS_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CUSTOMER_DETAILS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CUST_BANKS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_CUST_MACHINERIES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_EFFICIENCY_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_EFFI_DETAILS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_HOLIDAYS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_KIT_FILES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_LEAVE_REQUESTS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_LEAVE_REQUEST_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_MEETING_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_MEETING_SCHEDULE
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER_BKP_08_SEP_2025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER_BKP_19122025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER_BKP_24042025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_ORDER_BKP_25022026
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PARAMETERS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PERMISSIONS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PERSON_TARGET
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PERSON_TARGET_HIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PRODUCT_BRANDS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PRODUCT_TYPES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_PRODUCT_TYPES_01042026_BKP
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_UNITS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_USER_BRANDS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_SALES_VISIT_FREQUENCY
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_STOCK_CODES
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TALLY_INVOICES_FINAL_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TALLY_INVOICES_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TALLY_RECEIVABLES_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TALLY_STOCK_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TALLY_STOCK_T_BKP03062025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRANSACTIONS_LOG_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_DETAILS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_DETAILS_BKP_06_SEP_2025
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_DETAILS_BKP_27022026
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_EDGE_RESULTS
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_EXISTS_RESULTS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_TRIAL_PRINTOUTS_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXEBA_USERS_LOG_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXFS_PM_ERROR_LOG_T
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XXFS_PM_MOB_MANAGE_DEV_LIST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XX_TEST
+    )
+
+    databaseObject (
+        owner: #OWNER#
+        type: table
+        name: XX_TEST_TALLY_INVOICE
+    )
+
+)
+

@@ -1,0 +1,32 @@
+event onchangedecade (
+    name: When Decade Changes
+)
+
+event onchangemonth (
+    name: When Month Changes
+)
+
+event onchangeview (
+    name: When View Changes
+)
+
+event onchangeyear (
+    name: When Year Changes
+)
+
+event onhide (
+    name: On Hiding
+)
+
+event onrendercell (
+    name: On Rendering
+)
+
+event onselect (
+    name: On Selection
+)
+
+event onshow (
+    name: On Showing
+)
+

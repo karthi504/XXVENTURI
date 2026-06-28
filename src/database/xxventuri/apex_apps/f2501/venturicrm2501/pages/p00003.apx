@@ -1,0 +1,1972 @@
+page 3 (
+    name: Account Details
+    title: Account Details
+    pageGroup: @accounts
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            $(document).ready(function() {
+                $("#P3_GSTNO").keypress(function(event) { 
+                    var charCode = event.which || event.keyCode;
+                    var currentVal = $(this).val();
+                    var currentLength = currentVal.length;
+            
+                    // Check if the current length is less than 15
+                    if (currentLength >= 15) {
+                        event.preventDefault();
+                        return;
+                    }
+            
+                    // Validate each position based on the specified format
+                    if (currentLength < 2) {
+                        // First 2 characters must be numbers
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength < 7) {
+                        // Next 5 characters must be alphabets
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength < 11) {
+                        // Next 4 characters must be numbers
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 11) {
+                        // Next character must be an alphabet
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 12) {
+                        // Next character must be a number
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 13) {
+                        // Next character must be an alphabet
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 14) {
+                        // Next character can be alphanumeric
+                        if (!((charCode >= 48 && charCode <= 57) || 
+                              (charCode >= 65 && charCode <= 90) || 
+                              (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    }
+                });
+            
+                // Prevent pasting if you also want to restrict pasting more than 15 characters or non-alphanumeric characters
+                $("#P3_GSTNO").on('paste', function(event) {
+                    var pasteData = (event.originalEvent || event).clipboardData.getData('text');
+                    
+                    if (pasteData.length > 15 || !/^[a-zA-Z0-9]*$/.test(pasteData)) {
+                        event.preventDefault();
+                        return;
+                    }
+            
+                    // Additional check for the specific format
+                    if (!/^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z][0-9][a-zA-Z][a-zA-Z0-9]$/.test(pasteData)) {
+                        event.preventDefault();
+                    }
+                });
+            });
+            
+            
+            
+            
+            
+            $(document).ready(function() {
+                $("#P3_PAN_NUMBER").keypress(function(event) {
+                    var charCode = event.which || event.keyCode;
+            		var currentVal = $(this).val();
+            		var currentLength = currentVal.length;
+                    
+                    // Check if the current length is less than 10
+                    if ($(this).val().length >= 10) {
+                        event.preventDefault();
+                        return;
+                    }
+            		
+            		if (currentLength <5)
+            		{
+            		 if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+            		}
+            		}
+            		else if (currentLength <9) 
+            		{
+            		 if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+            		}
+            		
+                    
+                   else if (currentLength ==9) {
+            	   if (!((charCode >= 65 && charCode <= 90) || // Uppercase A-Z
+                          (charCode >= 97 && charCode <= 122)  // Lowercase a-z
+            		
+                          )) {
+                        event.preventDefault();
+                    }
+            		}
+                });
+            
+                // Optional: Prevent pasting if you also want to restrict pasting more than 10 characters
+                $("#P3_PAN_NUMBER").on('paste', function(event) {
+                    var pasteData = (event.originalEvent || event).clipboardData.getData('text');
+                    
+                    if (pasteData.length > 10 || !/^[a-zA-Z0-9]*$/.test(pasteData)) {
+                        event.preventDefault();
+                    }
+                });
+            });
+            
+            
+            
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            
+            <script>
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region account (
+        name: Account
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region classification (
+        name: Classification
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-collapsed
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region need-more-information (
+        name: Need More Information
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-size480x320
+            ]
+        }
+        advanced {
+            htmlDomId: COMMENTS
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P3_ANNUAL_PUR_POTENTIAL_AMT (
+        type: displayOnly
+        label {
+            label: Annual Purchase Potential (Rs.)
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @account
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT ANNUAL_PUR_POTENTIAL_AMT FROM XXEBA_SALES_ACC_PRODUCTS
+                WHERE CUSTOMER_ID = :P3_ID;
+                ```
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_ANNUAL_PUR_POTENTIAL_AMT_DUP (
+        type: displayOnly
+        label {
+            label: Annual Purchase Potential (Rs.)
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @account
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: expression
+            plsqlExpression: :P3_ANNUAL_AMT_DUP
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_CLASSIFICATION (
+        type: selectList
+        label {
+            label: Classification
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select class_name as d,class_id as r from XXEBA_SALES_Classification
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 90
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CLASSIFICATION_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @need-more-information
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 40
+            height: 5
+        }
+        validation {
+            maxLength: 200
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_CODE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        settings {
+            resizable: false
+        }
+        layout {
+            sequence: 180
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 74
+            height: 3
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_DESCRIPTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_CUSTOMER_DUNS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_DUNS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_FACEBOOK (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_FACEBOOK
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_IS_KEY_ACCOUNT_YN (
+        type: selectList
+        label {
+            label: Key Account
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Yes;Y,No;N
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_IS_KEY_ACCOUNT_YN
+            used: always
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_CUSTOMER_LINKEDIN (
+        type: textField
+        label {
+            label: LinkedIn
+            alignment: left
+        }
+        settings {
+            subtype: url
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @classification
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-linkedin-square
+            width: 80
+            valuePlaceholder: https://www.linkedin.com/company/account-name
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_LINKEDIN
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 86
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_CUSTOMER_SIC (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_SIC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_STOCK_SYMB (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_STOCK_SYMB
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_TERRITORY_ID (
+        type: selectList
+        label {
+            label: Territory
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @territory
+            displayExtraValues: false
+            nullDisplayValue: - Select a Territory -
+        }
+        layout {
+            sequence: 40
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_TERRITORY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    pageItem P3_CUSTOMER_TWITTER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_TWITTER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_CUSTOMER_WEB_SITE (
+        type: textField
+        label {
+            label: Web Site
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 110
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-link
+            width: 86
+            valuePlaceholder: http://account-name.com
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_WEB_SITE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_DEFAULT_REP_ID (
+        type: plugin/select2
+        label {
+            label: Default Rep
+            alignment: left
+        }
+        settings {
+            width: 93.5%
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS where STATUS='Y'
+                order by 1
+                ```
+            nullDisplayValue: - Select Rep -
+        }
+        layout {
+            sequence: 150
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DEFAULT_REP_ID
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_number  number;
+                Begin
+                lv_number :=:user_id;
+                return lv_number;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_DEFAULT_REP_ID_DUP (
+        type: hidden
+        layout {
+            sequence: 160
+            region: @account
+            slot: regionBody
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_number  number;
+                Begin
+                lv_number :=:user_id;
+                return lv_number;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P3_EMAIL (
+        type: textField
+        label {
+            label: Contact Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            icon: fa-envelope
+            width: 86
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EMAIL_ADDRESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_GSTNO (
+        type: textField
+        label {
+            label: "GST Number "
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @account
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 27
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GST_NO
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_INDUSTRY_TYPE (
+        type: selectList
+        label {
+            label: Industry
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: "select INDUSTRY_NAME As d  ,ID as r from  eba_sales_industries "
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 60
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw540
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: INDUSTRY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_MOBILE_NUMBER (
+        type: textField
+        label {
+            label: Mobile No.
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 130
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            icon: fa-mobile
+            width: 27
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event);"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MOBILE_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_P3_ANNUAL_AMT_DUP (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 210
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select ANNUAL_PUR_POTENTIAL_AMT from eba_sales_CUSTOMERS where id=:P3_ID;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_PAN_NUMBER (
+        type: textField
+        label {
+            label: PAN Number
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @account
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 27
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PAN_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_PHONE_NUMBER (
+        type: textField
+        label {
+            label: Phone Number
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 140
+            region: @account
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-phone
+            width: 26
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event);"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PHONE_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_REP_ID (
+        type: displayOnly
+        label {
+            label: Default Rep
+            alignment: left
+        }
+        layout {
+            sequence: 170
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select REP_FIRST_NAME ||' '|| REP_LAST_NAME from EBA_SALES_SALESREPS where id=:P3_DEFAULT_REP_ID_DUP;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_REP_ROLE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 230
+            region: @account
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: SELECT REP_ROLE  FROM EBA_SALES_SALESREPS WHERE ID =:USER_ID;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_SOURCE (
+        type: selectList
+        label {
+            label: Source
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select lead_source, id from EBA_SALES_ACC_SOURCES  order by 1
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 50
+            region: @account
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+            customAttributes: style="min-width: 187px;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ACCOUNT_SOURCE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P3_TAGS (
+        type: plugin/tagEntry
+        label {
+            label: Tags
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tag
+                  from eba_sales_tags_type_sum
+                 where content_type = 'ACCOUNT'
+                ```
+        }
+        layout {
+            sequence: 220
+            region: @account
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 87
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TAGS
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button cancel-i (
+        buttonName: CANCEL_I
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @need-more-information
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Account
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P3_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--danger
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button need-more-info (
+        buttonName: Need_MORE_INFO
+        label: Need More Information
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:openModal('COMMENTS');
+            warnOnUnsavedChanges: doNotCheck
+        }
+        security {
+            authorizationScheme: @xxeba-admin-tl-co-ordinator
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3_ID
+        }
+    )
+
+    button submit (
+        buttonName: SUBMIT
+        label: Submit
+        layout {
+            sequence: 20
+            region: @need-more-information
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction not-null-validations (
+        name: Not Null validations
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @submit
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P3_COMMENTS') == "")
+                    {
+                         apex.message.alert('Comments is mandatory.', function(){ afterLoad() });
+                    }
+                    else
+                        {
+                            apex.submit('SUBMIT')
+                        }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-annual-pur-amt-rep (
+        name: Show/Hide/Annual-Pur-Amt-Rep
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: P3_REP_ROLE
+            value: 136122016150888101052645887486397129436
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3_ANNUAL_PUR_POTENTIAL_AMT
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3_ANNUAL_PUR_POTENTIAL_AMT_DUP
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3_ANNUAL_PUR_POTENTIAL_AMT
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3_ANNUAL_PUR_POTENTIAL_AMT_DUP
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-default-rep (
+        name: Show/Hide/Default-Rep
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: itemIsInList
+            item: P3_REP_ROLE
+            list: [
+                136122016150886892126826272857222423260
+                136122016150888101052645887486397129436
+            ]
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3_DEFAULT_REP_ID
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P3_REP_ID
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3_DEFAULT_REP_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P3_REP_ID
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    validation account-deletion (
+        name: Account Deletion
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_lead Number;
+                lv_opp Number;
+                lv_sales_order Number;
+                lv_lead_msg varchar2(200);
+                lv_opp_msg varchar2(200);
+                lv_sales_order_msg varchar2(200);
+                begin
+                SELECT Count(*) into lv_lead from EBA_SALES_LEADS WHERE ACCOUNT_ID=:P3_ID ;
+                SELECT Count(*) into lv_opp  from EBA_SALES_DEALS WHERE CUSTOMER_ID =:P3_ID ;
+                SELECT Count(*) into lv_sales_order from  XXEBA_SALES_ORDER WHERE CUSTOMER_ID =:P3_ID;
+                lv_lead_msg:= 'Sorry! Cannot delete this Account.'||' '||'Leads'||'['||lv_lead||']'||' '||'available for this Account.';
+                lv_opp_msg := 'Sorry! Cannot delete this Account.'||' '||'Opportunities'||'['||lv_opp||']'||' '||'available for this Account.';
+                lv_sales_order_msg :='Sorry! Cannot delete this Account.' ||' '||'Sales Orders'||'['||lv_sales_order||']'||' '||'available for this Account.';
+                 if lv_lead > 0  then
+                	 return lv_lead_msg;
+                  elsif lv_opp > 0  then
+                       return lv_opp_msg;
+                    elsif lv_sales_order > 0  then
+                       return lv_sales_order_msg;
+                      end if;
+                 end;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    validation cell-number-validations (
+        name: Cell Number validations
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if length(:P3_MOBILE_NUMBER) < 10  THEN
+                        return 'Cell Number should contain  atleast 10 digit.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation gst-duplicate-validation (
+        name: GST Duplicate Validation
+        execution {
+            sequence: 100
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_no_of_records NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO v_no_of_records
+                  FROM EBA_SALES_customers
+                  WHERE upper(trim(GST_NO)) = upper(trim(:P3_GSTNO))
+                  AND (:P3_ID IS NULL OR id <> :P3_ID); -- exclude current record
+                
+                  
+                  IF v_no_of_records  > 0 THEN
+                    RETURN 'Sorry! This GST No. is already exists';
+                  END IF;
+                  
+                END;
+                ```
+        }
+    )
+
+    validation gst-len-validation (
+        name: GST_LEN_Validation
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin 
+                 if LENGTH(:P3_GSTNO) != 15  THEN 
+                 RETURN 'GST number should contain atleast 15 digits.';
+                END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation gst-validation (
+        name: GST_Validation
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if   :P3_GSTNO is null THEN
+                        return 'GST Number must have some values.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation mail-validation (
+        name: Mail_Validation
+        execution {
+            sequence: 90
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if   :P3_EMAIL is null THEN
+                        return 'Contact Email must have some values.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation mobile-number-validation (
+        name: mobile number validation
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if   :P3_MOBILE_NUMBER is null THEN
+                        return 'Mobile Number should contain  atleast 10 digit.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation p3-customer-name-not-duplicated (
+        name: P3_CUSTOMER_NAME not duplicated
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: noRowsReturned
+            sqlQuery:
+                ```sql
+                select null
+                from eba_sales_customers
+                where (:P3_ID is null or :P3_ID != id)
+                    and upper(customer_name) = upper(:P3_CUSTOMER_NAME)
+                ```
+        }
+        error {
+            errorMessage: An account with that name already exists.
+            associatedItem: @P3_CUSTOMER_NAME
+        }
+    )
+
+    validation pan-len-validation (
+        name: PAN_Len_validation
+        execution {
+            sequence: 80
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin 
+                 if LENGTH(:P3_PAN_NUMBER) != 10  THEN 
+                 RETURN 'PAN number should contain atleast 10 digits.';
+                END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation pan-validation (
+        name: PAN_validation
+        execution {
+            sequence: 70
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if   :P3_PAN_NUMBER is null THEN
+                        return 'PAN Number must have some values.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 758395049653099600
+        }
+    )
+
+    process customer-code-update (
+        name: Customer_code_Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update EBA_SALES_CUSTOMERS SET CUSTOMER_CODE=(select max(to_number(CUSTOMER_CODE)) +1 from EBA_SALES_CUSTOMERS) where ID=:P3_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 86166716104896545
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                Update  EBA_SALES_CUSTOMERS SET STATUS ='X' where ID=:P3_ID;
+                EXCEPTION WHEN others then
+                raise_application_error(-20001,SQLERRM);
+                END;
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 200884848874018145
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process fetch-row-from-eba-sales-customers (
+        name: Fetch Row from eba_sales_CUSTOMERS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_CUSTOMERS
+            pkColumn: ID
+            pkItem: P3_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 4690792227244138480
+        }
+    )
+
+    process process-need-more-info (
+        name: Process Need More Info
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update EBA_SALES_CUSTOMERS SET 
+                                     DETAILS_REQUIRED=:P3_COMMENTS,
+                                     STATUS='Y',
+                                      TEAM_LEAD_COMMENTS=null,
+                                     TEAM_LEAD_ID=null,
+                                     VERIFIED_ON=null,
+                                     VERIFIED_BY =null,
+                                     VERIFY_COMMENTS=null
+                where ID=:P3_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 119065146125307265
+        }
+        serverSideCondition {
+            type: request=Value
+            value: SUBMIT
+        }
+    )
+
+    process process-row-of-eba-sales-customers (
+        name: Process Row of eba_sales_CUSTOMERS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_CUSTOMERS
+            pkColumn: ID
+            pkItem: P3_ID
+            returnKeyIntoItem: P3_ID
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_CUSTOMERS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690792447078138488
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process update-sales-rep-when-change-new-sales-rep (
+        name: Update Sales Rep when change new sales rep
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    cursor crep is select default_rep_id from EBA_SALES_CUSTOMERS where id = :P3_ID;
+                    rrep crep%rowtype;
+                BEGIN
+                
+                open crep;
+                fetch crep into rrep;
+                close crep;
+                
+                IF rrep.default_rep_id != :P3_DEFAULT_REP_ID THEN
+                    update EBA_SALES_DEALS  set SALESREP_ID_01 = :P3_DEFAULT_REP_ID
+                     where id in  (select id from EBA_SALES_DEALS  where customer_id = :P3_ID)
+                    and DEAL_PROBABILITY > 0 and DEAL_PROBABILITY < 100;
+                    
+                    update XXEBA_SALES_ORDER  set sales_rep = :P3_DEFAULT_REP_ID
+                    where order_id in (select ORDER_ID from XXEBA_SALES_ORDER where customer_id = :P3_ID)
+                    and nvl(UPDATED_IN_TALLY,'N') = 'N';
+                
+                END IF;
+                 
+                END;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 188707310264923554
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: SAVE,Need_MORE_INFO
+        }
+    )
+
+    process update-save-process (
+        name: Update Save process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update EBA_SALES_CUSTOMERS SET 
+                                     STATUS='Y',
+                                     TEAM_LEAD_COMMENTS=null,
+                                     TEAM_LEAD_ID=null,
+                                     VERIFIED_ON=null,
+                                     VERIFIED_BY =null,
+                                     VERIFY_COMMENTS=null
+                where ID=:P3_ID;
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 119064510216307258
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: never
+        }
+    )
+
+    branch (
+        name: Branch to Accounts on delete
+        execution {
+            sequence: 40
+        }
+        behavior {
+            target: {
+                page: 2
+                clearCache: 2
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+        comments {
+            comments: Created 17-JAN-2012 10:41 by MIKE
+        }
+    )
+
+)
+

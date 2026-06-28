@@ -1,0 +1,1067 @@
+page 7 (
+    name: &REP_TITLE. Details
+    title: &REP_TITLE. Details
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        height: 500
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            $('#weekly_box .days').click(function (){
+                if ( $(this).hasClass("week_selected") ){
+                    $('#P7_WORKING_DAYS').val($('#P7_WORKING_DAYS').val().replace($(this).attr('id')+',', ""));
+                    $(this).removeClass('week_selected');
+            }
+            else{
+                $('#P7_WORKING_DAYS').val($('#P7_WORKING_DAYS').val()+$(this).attr('id')+',');
+               $(this).addClass('week_selected');
+            } 
+            });
+            ```
+        executeWhenPageLoads:
+            ```javascript-browser
+            if ($v('P7_ID') == ''){
+                $('#P7_WORKING_DAYS').val('MON,TUE,WED,THU,FRI,');
+            }
+            
+            var weeks = $v('P7_WORKING_DAYS').split(",");
+            
+            for(var i=0; i<weeks.length; i++){
+                //alert(weeks[i]);
+                 $('#'+weeks[i]).addClass('week_selected');
+            }
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .days {
+                float: left;
+                margin: 3px;
+                width: 24px;
+                text-align: center;
+                border: 1px solid;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+            
+            #weekly_box{
+                margin-top: -6px;
+                margin-left: -10px;
+            }
+            
+            .week_selected{
+                background: #0585e0;
+                color: #fff;
+                font-weight: bold;
+            }
+            
+             a {
+                padding-top: 3px !important;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region rep-title-details (
+        name: &REP_TITLE. Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P7_ADD_PHOTO (
+        type: fileUpload
+        label {
+            label: Attach Photo
+            alignment: left
+        }
+        display {
+            displayAs: nativeFileBrowse
+        }
+        storage {
+            mimeTypeColumn: ATTACH_MIMETYPE
+            filenameColumn: ATTACH_FILENAME
+            charSetColumn: ATTACH_CHARSET
+            bobLastUpdatedColumn: ATTACH_LAST_UPDATE
+            fileTypes: image/*
+        }
+        layout {
+            sequence: 150
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: style="width:191px !important;padding-bottom:2px;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FILE_BLOB
+            used: always
+        }
+    )
+
+    pageItem P7_DATE_OF_JOINING (
+        type: datePickerJquery
+        label {
+            label: Date of Joining
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DATE_OF_JOINING
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_DEPARTMENT (
+        type: selectList
+        label {
+            label: Department
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Sales,Support,Purchase,Accounts,Stores,Production,Others
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 70
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            customAttributes: style="min-width: 218px;
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DEPARTMENT_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_EMERGENCY_CONTACT (
+        type: textField
+        label {
+            label: Emergency Contact
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 91
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EMERGENCY_CONTACT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @rep-title-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_MEETINGS_PER_DAY (
+        type: numberField
+        label {
+            label: Visits Per Day
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            maxValue: 100
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 130
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MEETINGS_PER_DAY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_MPIN (
+        type: textField
+        label {
+            label: MPIN
+            alignment: left
+        }
+        layout {
+            sequence: 160
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 4
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MPIN
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P7_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_PASSWORD (
+        type: textField
+        label {
+            label: Password
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 40
+        }
+        validation {
+            valueRequired: true
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PASSWORD
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P7_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_CELL_PHONE (
+        type: textField
+        label {
+            label: Phone
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 50
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_CELL_PHONE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 110
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 64
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_EMAIL
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_FIRST_NAME (
+        type: textField
+        label {
+            label: First Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 20
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 64
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_FIRST_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_LAST_NAME (
+        type: textField
+        label {
+            label: Last Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 30
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 64
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_LAST_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_MANAGER_ID (
+        type: selectList
+        label {
+            label: Manager
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  rep_first_name ||' '||REP_LAST_NAME display_value, ID return_value 
+                from eba_sales_SALESREPS
+                where id != nvl(:P7_ID,0)
+                order by 1
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select a Manager -
+        }
+        layout {
+            sequence: 100
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+            customAttributes: style="min-width: 218px;
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_MANAGER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_OFFICE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 180
+            region: @rep-title-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_OFFICE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_OFFICE_PHONE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 190
+            region: @rep-title-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_OFFICE_PHONE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_REP_PAGER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 200
+            region: @rep-title-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_PAGER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_SALESREP_ROLE (
+        type: selectList
+        label {
+            label: Role
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select ROLE_NAME display_value, ID return_value 
+                from eba_sales_SALESREP_ROLES
+                order by 1
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select a Role -
+        }
+        layout {
+            sequence: 90
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+            customAttributes: style="min-width: 218px;
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REP_ROLE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_SIGNATURE (
+        type: textarea
+        label {
+            label: Signature
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 200
+            height: 2
+        }
+        validation {
+            maxLength: 1000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ADDRESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_USER_NAME (
+        type: textField
+        label {
+            label: User Name
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: USER_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_WORKING_DAYS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 170
+            region: @rep-title-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: WORKING_DAYS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P7_WORKING_DAYS_CAL (
+        type: displayOnly
+        label {
+            label: Visit Days
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @rep-title-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            postText:
+                ```html
+                <div id="weekly_box">
+                    <div class="days" id='MON'>M</div>
+                    <div class="days" id='TUE'>T</div>
+                    <div class="days" id='WED'>W</div>
+                    <div class="days" id='THU'>T</div>
+                    <div class="days" id='FRI'>F</div>
+                    <div class="days" id='SAT'>S</div>
+                    <div class="days" id='SUN'>S</div>
+                </div>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create &REP_TITLE.
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P7_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--danger
+            ]
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P7_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P7_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation user-deletion-validation (
+        name: User deletion validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare
+                lv_count number;
+                Begin 
+                select count(*) into lv_count from EBA_SALES_CUSTOMERS 
+                    where DEFAULT_REP_ID=:P7_ID
+                      and status != 'X';
+                IF lv_count > 0 THEN
+                   return 'Sorry! User is mapped with multiple Accounts.';
+                    end if;
+                END;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 722945725171616668
+        }
+    )
+
+    process delete-user-process (
+        name: Delete User Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                Update eba_sales_salesreps SET STATUS='N' where ID=:P7_ID; 
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 176984957124828173
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process fetch-row-from-eba-sales-salesreps (
+        name: Fetch Row from eba_sales_SALESREPS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_SALESREPS
+            pkColumn: ID
+            pkItem: P7_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 4690819228132202922
+        }
+    )
+
+    process process-row-of-eba-sales-salesreps (
+        name: Process Row of eba_sales_SALESREPS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_SALESREPS
+            pkColumn: ID
+            pkItem: P7_ID
+            supportedOperations: [
+                insert
+                update
+            ]
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_SALESREPS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690819439905202922
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690819630557202923
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process set-pasword (
+        name: "set Pasword "
+        type: executeCode
+        source {
+            plsqlCode: select XXEBS_SALES_SECURITY_PKG.get_password_hash_value(:P7_PASSWORD) into :P7_PASSWORD from dual;
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 68693524320433900
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+)
+

@@ -1,0 +1,345 @@
+page 524 (
+    name: Mass Emails History
+    title: Mass Emails History
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region mass-emails-history (
+        name: Mass Emails History
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    mass_email_detail_id,
+                    mass_email_id,
+                    mail_to,
+                    mail_cc,
+                    subject,
+                    status,
+                    created_by,
+                    created_date,
+                    updated_by,
+                    updated_date,
+                    '<i class="fa fa-envelope-open"></i>' as mail_body
+                FROM
+                    xxeba_mass_email_details_t;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 204392028270553097
+        }
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 31
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column CREATED_DATE (
+            type: plainText
+            heading {
+                heading: Created On
+            }
+            layout {
+                sequence: 41
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column MAIL_BODY (
+            type: link
+            heading {
+                heading: Mail Content
+                alignment: center
+            }
+            layout {
+                sequence: 101
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 526
+                    items: {
+                        P526_MASS_EMAIL_ID: #MASS_EMAIL_ID#
+                        P526_MASS_EMAIL_DETAIL_ID: #MASS_EMAIL_DETAIL_ID#
+                    }
+                    clearCache: 526
+                    action: resetPagination
+                }
+                linkText: #MAIL_BODY#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column MAIL_CC (
+            type: plainText
+            heading {
+                heading: Mail CC
+            }
+            layout {
+                sequence: 91
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column MAIL_TO (
+            type: plainText
+            heading {
+                heading: Mail To
+            }
+            layout {
+                sequence: 81
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column MASS_EMAIL_DETAIL_ID (
+            type: hidden
+            heading {
+                heading: Mass Email Detail Id
+            }
+            layout {
+                sequence: 71
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column MASS_EMAIL_ID (
+            type: hidden
+            heading {
+                heading: Mass Email Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS (
+            type: hidden
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 21
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SUBJECT (
+            type: plainText
+            heading {
+                heading: Subject
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 51
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED_DATE (
+            type: hidden
+            heading {
+                heading: Updated Date
+            }
+            layout {
+                sequence: 61
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: H
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2043961 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATED_BY (
+                sequence: 4
+            )
+
+            displayColumn CREATED_DATE (
+                sequence: 5
+            )
+
+            displayColumn MAIL_BODY (
+                sequence: 1
+            )
+
+            displayColumn MAIL_TO (
+                sequence: 3
+            )
+
+            displayColumn SUBJECT (
+                sequence: 2
+            )
+
+            sort (
+                column: CREATED_DATE
+                sort {
+                    direction: desc
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region mass-emails-history-2 (
+        name: Mass EMails History
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+)
+

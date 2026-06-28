@@ -1,0 +1,1491 @@
+page 257 (
+    name: Leave Details
+    title: Leave Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            function match_date()
+            {
+                if($v('P257_FROM_DATE') == $v('P257_TO_DATE'))
+                    return true;
+                else
+                    return false;
+            }
+            
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script>
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-leave-requests-t (
+        name: Form on XXEBA_SALES_LEAVE_REQUESTS_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P257_APPROVED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 200
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVED_BY
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P257_LEAVE_REQUEST_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_APPROVED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 210
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_APPROVER_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 4
+        }
+        validation {
+            maxLength: 500
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPROVER_COMMENTS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P257_LEAVE_REQUEST_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_CONTACT_ADDRESS (
+        type: textField
+        label {
+            label: Contact Address
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            maxLength: 500
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_ADDRESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_CONTACT_NUMBER (
+        type: numberField
+        label {
+            label: Contact Number
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+            columnSpan: 5
+            columnAttributes: [
+                onkeypress="return
+                isNumberKey(event)"
+            ]
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From Date
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 12
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FROM_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_FROM_PERIOD (
+        type: selectList
+        label {
+            label: From Period
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Full Day;FD,Forenoon;FN,Afternoon;AN
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 7
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            customAttributes: style="padding-right:2.5rem;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FROM_PERIOD
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_LEAVE_REASON (
+        type: textField
+        label {
+            label: Leave Reason
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 500
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LEAVE_REASON
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_LEAVE_REQUEST_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LEAVE_REQUEST_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_LEAVE_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LEAVE_STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_LEAVE_TYPE_ID (
+        type: selectList
+        label {
+            label: Leave Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select  LIST_VALUE as d,
+                LIST_ID as r
+                from XXEBA_LIST_VALUES where LIST_CODE='LEAVE_TYPE' and STATUS='Y' order by DISPLAY_SEQUENCE
+                ```
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LEAVE_TYPE_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_NO_OF_DAYS (
+        type: numberField
+        label {
+            label: No. of Days
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 5
+        }
+        validation {
+            maxLength: 255
+        }
+        advanced {
+            customAttributes: style="background: none; border: none; pointer-events: none; font-weight:bold"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: NO_OF_DAYS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_PAGE_SOURCE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 230
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_SALES_REP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SALES_REP_ID
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &USER_ID.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: To Date
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 12
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TO_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P257_TO_PERIOD (
+        type: selectList
+        label {
+            label: To Period
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Full Day;FD,Forenoon;FN,Afternoon;AN
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-sales-leave-requests-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 7
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            customAttributes: style="padding-right:2.5rem;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TO_PERIOD
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button approve (
+        buttonName: APPROVE
+        label: Approve
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--success
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P257_PAGE_SOURCE = 258 and :P257_LEAVE_REQUEST_ID is not null
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 60
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P257_LEAVE_REQUEST_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button reject (
+        buttonName: REJECT
+        label: Reject
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P257_PAGE_SOURCE = 258 and :P257_LEAVE_REQUEST_ID is not null
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P257_PAGE_SOURCE = 256 and :P257_LEAVE_REQUEST_ID is not null and trim(:P257_LEAVE_STATUS) ='S'
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction disable-to-date-section (
+        name: Disable To Date Section
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P257_NO_OF_DAYS
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: match_date()
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('#P257_TO_PERIOD').css('pointer-events','none');
+                    $('#P257_TO_PERIOD').css('color', '#989898');
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('#P257_TO_PERIOD').css('pointer-events','all');
+                    $('#257_TO_PERIOD').css('color', '#393939');
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-change-leave-days (
+        name: Set Change Leave Days
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: [
+                P257_FROM_DATE
+                P257_TO_DATE
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select (to_date(:P257_TO_DATE)-to_date(:P257_FROM_DATE))+1 days from dual
+                itemsToSubmit: [
+                    P257_FROM_DATE
+                    P257_TO_DATE
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P257_NO_OF_DAYS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-days-leave (
+        name: Set Days Leave
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: [
+                P257_FROM_DATE
+                P257_FROM_PERIOD
+                P257_TO_DATE
+                P257_TO_PERIOD
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    DECLARE
+                      total_days          NUMBER;
+                      lv_holidays_count   NUMBER;
+                      lv_total_days       NUMBER;
+                    BEGIN
+                     SELECT TO_DATE(:P257_TO_DATE)-TO_DATE(:P257_FROM_DATE)+1 days INTO lv_total_days FROM dual;
+                     select count(*)   into lv_holidays_count from XXEBA_SALES_HOLIDAYS_T where HOLIDAY_DATE >= :P257_FROM_DATE and HOLIDAY_DATE <=:P257_TO_DATE;
+                      total_days := lv_total_days-lv_holidays_count;
+                     
+                    if :P257_FROM_PERIOD ='FD' and :P257_TO_PERIOD='FD' then
+                     RETURN total_days;
+                     end if;
+                    
+                    IF :P257_TO_DATE = :P257_FROM_DATE THEN 
+                      IF :P257_FROM_PERIOD != 'FD' THEN  
+                        total_days := total_days - 0.5; 
+                        RETURN total_days;
+                      END IF; 
+                    ELSIF :P257_FROM_PERIOD = 'FN' 
+                          AND :P257_TO_PERIOD = 'FN' THEN 
+                      total_days := total_days - 0.5; 
+                      RETURN total_days;
+                    ELSIF :P257_FROM_PERIOD = 'AN' THEN 
+                      IF :P257_TO_PERIOD = 'FD' THEN 
+                        total_days := total_days - 0.5; 
+                        RETURN total_days;
+                      ELSIF :P257_TO_PERIOD = 'FN' THEN 
+                        total_days := total_days - 1; 
+                        RETURN total_days;
+                      ELSIF :P257_TO_PERIOD = 'AN' THEN 
+                        total_days := total_days - 0.5; 
+                        RETURN total_days;
+                      END IF; 
+                    ELSIF :P257_FROM_PERIOD = 'FD' 
+                          AND :P257_TO_PERIOD = 'FN' THEN 
+                      total_days := total_days - 0.5; 
+                      RETURN total_days;
+                    END IF; 
+                    
+                    END;
+                    
+                    ```
+                itemsToSubmit: [
+                    P257_FROM_DATE
+                    P257_FROM_PERIOD
+                    P257_TO_DATE
+                    P257_TO_PERIOD
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P257_NO_OF_DAYS
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-period-leave (
+        name: Set Period Leave
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: P257_TO_DATE
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    begin 
+                        if  :P257_TO_DATE = :P257_FROM_DATE  then 
+                            return :P257_FROM_PERIOD;
+                       end if;
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P257_FROM_DATE
+                    P257_FROM_PERIOD
+                    P257_TO_DATE
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P257_TO_PERIOD
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-to-period-leave (
+        name: Set To Period Leave
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P257_FROM_PERIOD
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    begin 
+                        if :P257_FROM_DATE = :P257_TO_DATE then 
+                            return :P257_FROM_PERIOD;
+                       end if;
+                    end;
+                    ```
+                itemsToSubmit: [
+                    P257_FROM_DATE
+                    P257_FROM_PERIOD
+                    P257_TO_DATE
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P257_TO_PERIOD
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-value-to-to-date-leave (
+        name: Set value To to Date leave
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P257_FROM_DATE
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $("#P257_TO_DATE").datepicker( "option","minDate",$v('P257_FROM_DATE'));
+                    $("#P257_TO_DATE").next().addClass('ui-datepicker-trigger a-Button a-Button--calendar');
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                     begin
+                         if :P257_TO_DATE is null then
+                             return :P257_FROM_DATE;
+                         elsif :P257_FROM_DATE > :P257_TO_DATE then
+                             return :P257_FROM_DATE;
+                         else  
+                             return :P257_TO_DATE ;
+                         end if;
+                     end;
+                    ```
+                itemsToSubmit: [
+                    P257_FROM_DATE
+                    P257_TO_DATE
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P257_TO_DATE
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation holiday-date-validations (
+        name: Holiday Date Validations
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                lv_holiday_count number;
+                
+                begin
+                select count(*) into lv_holiday_count  from XXEBA_SALES_HOLIDAYS_T where HOLIDAY_DATE=:P257_FROM_DATE and HOLIDAY_DATE=:P257_TO_DATE;
+                
+                    if lv_holiday_count > 0 then
+                        return 'Sorry! Leave cannot be applied during Holiday';
+                    end if;
+                    return null;
+                end;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation not-null-validation (
+        name: Not Null Validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P257_APPROVER_COMMENTS is null  then
+                        return 'Comments must have some value';
+                    end if;
+                    return null;
+                end;
+                ```
+        }
+        error {
+            displayLocation: inlineWithField
+            associatedItem: @P257_APPROVER_COMMENTS
+        }
+        serverSideCondition {
+            whenButtonPressed: @reject
+        }
+    )
+
+    validation paid-leave-month-limit-validations (
+        name: Paid Leave Month Limit Validations
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare 
+                lv_leave_count number;
+                lv_leave_type VARCHAR2(200);
+                
+                begin
+                
+                select sum(NO_OF_DAYS)  into lv_leave_count from XXEBA_SALES_LEAVE_REQUESTS_T where to_char(from_date,'Month')=to_char(sysdate,'Month') 
+                and SALES_REP_ID=:user_id and LEAVE_TYPE_ID=121 and LEAVE_STATUS in ('A','S');
+                select LIST_VALUE INTO lv_leave_type from XXEBA_LIST_VALUES where LIST_CODE='LEAVE_TYPE' AND LIST_ID=:P257_LEAVE_TYPE_ID AND STATUS='Y';
+                
+                if lv_leave_type='Paid Leave(PL)' then 
+                    if lv_leave_count >= 2 then
+                        return 'Sorry! You cannot exceed your limit more than two for this month.';
+                    end if;
+                    return null;
+                  end if;
+                end;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation same-day-leave-validations (
+        name: Same Day Leave Validations
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                v_count NUMBER;
+                lv_count NUMBER;
+                lv_count2 NUMBER;
+                CURSOR C1 is
+                
+                SELECT TO_DATE(:P257_FROM_DATE, 'DD-Mon-YYYY') + rownum -1 AS leave_date 
+                   FROM dual 
+                    connect by level <= TO_DATE(:P257_TO_DATE, 'DD-Mon-YYYY') - TO_DATE(:P257_FROM_DATE, 'DD-Mon-YYYY') + 1;
+                    
+                BEGIN 
+                
+                IF :P257_TO_DATE IS NOT NULL AND :P257_FROM_DATE IS NOT NULL THEN
+                
+                
+                
+                    SELECT (TO_DATE(:P257_TO_DATE) - TO_DATE(:P257_FROM_DATE)) INTO v_count FROM dual;
+                
+                   
+                
+                        FOR I IN C1 LOOP
+                        
+                            SELECT COUNT(1) INTO lv_count FROM XXEBA_SALES_LEAVE_REQUESTS_T 
+                            WHERE SALES_REP_ID=:USER_ID 
+                            AND TO_DATE(I.leave_date, 'DD-Mon-YY') BETWEEN TO_DATE(FROM_DATE, 'DD-Mon-YY') AND TO_DATE(TO_DATE, 'DD-Mon-YY')
+                            AND LEAVE_STATUS  IN ('S','A');
+                
+                            IF lv_count>0  then
+                            RETURN 'Leave has already applied for '|| I.leave_date;
+                            END IF;
+                        END LOOP;
+                  
+                END IF;
+                
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    process approval-mail (
+        name: Approval Mail
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  v_rep_name        VARCHAR2(500);
+                  v_rep_id          NUMBER;
+                  v_leave_type      VARCHAR2(500);
+                  v_leave_type_id   NUMBER;
+                  v_leave_reason    VARCHAR2(100);
+                  v_from_period     VARCHAR2(100);
+                  v_to_period       VARCHAR2(100);
+                  v_contact_number  NUMBER;
+                  v_number_days     NUMBER;
+                  v_to_mails        VARCHAR2(1000);
+                  v_cc_mails        VARCHAR2(1000);
+                  v_subject         VARCHAR2(500);
+                  v_manager_mail_id VARCHAR2(1000);
+                  v_manager_id      NUMBER;
+                  v_rep_mail_id     VARCHAR2(500);
+                  v_approver_name   VARCHAR2(500);
+                  v_manager_name    VARCHAR2(500);
+                  v_body CLOB;
+                  v_body_html CLOB;
+                  v_crlf            VARCHAR2(2) := chr(13)||chr(10);
+                  v_from_mail_alias VARCHAR2(100);
+                BEGIN
+                  BEGIN
+                    SELECT LEAVE_TYPE_ID,
+                      SALES_REP_ID,
+                      CONTACT_NUMBER,
+                      LEAVE_REASON
+                    INTO v_leave_type_id,
+                         v_rep_id,
+                         v_contact_number,
+                         v_leave_reason
+                    FROM XXEBA_SALES_LEAVE_REQUESTS_T
+                    WHERE LEAVE_STATUS   ='S'
+                    AND LEAVE_REQUEST_ID =:P257_LEAVE_REQUEST_ID;
+                  END;
+                  BEGIN
+                    SELECT REP_FIRST_NAME
+                      ||' '
+                      ||REP_LAST_NAME,
+                      REP_MANAGER_ID,
+                      REP_EMAIL
+                    INTO v_rep_name,
+                      v_manager_id,
+                      v_rep_mail_id
+                    FROM EBA_SALES_SALESREPS
+                    WHERE ID = v_rep_id;
+                  END;
+                  BEGIN
+                    SELECT REP_FIRST_NAME
+                      ||' '
+                      ||REP_LAST_NAME,
+                      REP_EMAIL
+                    INTO v_manager_name,
+                      v_manager_mail_id
+                    FROM EBA_SALES_SALESREPS
+                    WHERE ID =v_manager_id;
+                  END;
+                  BEGIN
+                    SELECT DECODE(:P257_FROM_PERIOD,'FD', 'Full Day','FN','Forenoon', 'AN','Afternoon'),
+                      DECODE(:P257_TO_PERIOD,'FD', 'Full Day','FN','Forenoon', 'AN','Afternoon')
+                    INTO v_from_period,
+                      v_to_period
+                    FROM dual;
+                  END ;
+                  BEGIN
+                    SELECT LIST_VALUE
+                    INTO v_leave_type
+                    FROM XXEBA_LIST_VALUES
+                    WHERE LIST_CODE='LEAVE_TYPE'
+                    AND LIST_ID    = v_leave_type_id;
+                  END;
+                  BEGIN
+                    SELECT TRIM(CHAR_VALUE)
+                    INTO v_from_mail_alias
+                    FROM XXEBA_SALES_PARAMETERS_T
+                    WHERE CODE = 'FROM_MAIL_ALIAS'
+                    AND STATUS = 'Y';
+                  END;
+                  v_body      := 'To view the content of this message, please use an HTML enabled mail client.'|| v_crlf;
+                  v_body      := v_body||'Leave details';
+                  v_body_html := '<html><head>           
+                
+                <style type="text/css">                
+                body{font-family: Tahoma, Arial, Helvetica, sans-serif;                    
+                font-size:10pt;                    
+                color:#002060;                    
+                margin:30px;                    
+                background-color:#ffffff;}                
+                span.sig{font-style:italic;                    
+                font-weight:bold;                    
+                color:#811919;}             
+                </style>          
+                
+                </head><body>Dear '||NVL(v_manager_name,'Manager')||',';
+                  v_body_html := v_body_html || '<br/><br/>'||v_rep_name||'  has submitted the below leave request for your Approval.      
+                <br/><br/>';
+                  v_subject   := v_rep_name||'''s Leave Request has been sent for your Approval';
+                  
+                  v_body_html := v_body_html || '<table border="0">
+                  <tr height="20"><td>Rep Name</td><td width="15">:</td><td>'|| v_rep_name || '</td></tr>
+                  <tr height="20"><td>From Date</td><td width="15">:</td><td>' || TO_CHAR (to_date(:P257_FROM_DATE), 'DD-Mon-YYYY') ||' '||v_from_period || '</td></tr>
+                  <tr height="20"><td>To Date</td><td width="15">:</td><td>' || TO_CHAR (to_date(:P257_TO_DATE), 'DD-Mon-YYYY') ||' '||v_to_period || '</td></tr>
+                  <tr height="20"><td>No. of Days</td><td width="15">:</td><td>' || :P257_NO_OF_DAYS || '</td></tr>
+                  <tr height="20"><td>Leave Type</td><td width="15">:</td><td>' || v_leave_type || '</td></tr>
+                  <tr height="20"><td>Reason</td><td width="15">:</td><td>' || v_leave_reason || '</td></tr>
+                  <tr height="20"><td>Contact Number</td><td width="15">:</td><td>' || v_contact_number || '</td></table>
+                  <br/>' || 'Regards,<br/>' ||v_rep_name|| v_crlf;
+                  
+                   IF v_manager_id != 137298143222070397625267765568033924482 then
+                
+                  
+                  apex_mail.send (p_to =>v_manager_mail_id, 
+                                  p_cc => v_rep_mail_id||','||'rajan@venturitool.com',
+                                  p_bcc => NULL,
+                                  p_from =>v_from_mail_alias,
+                                  p_subj => v_subject,
+                                  p_body => v_body,
+                                  p_body_html => v_body_html 
+                  );
+                  
+                 apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);  
+                  else 
+                   apex_mail.send (p_to =>v_manager_mail_id, 
+                                  p_cc => v_rep_mail_id,
+                                  p_bcc => NULL,
+                                  p_from =>v_from_mail_alias,
+                                  p_subj => v_subject,
+                                  p_body => v_body,
+                                  p_body_html => v_body_html 
+                  );
+                  
+                 apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);  
+                END if;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_leave_Email',NULL,5);
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 549502387393979345
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process approve-process (
+        name: Approve Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE xxeba_sales_leave_requests_t
+                  SET approved_by       = :USER_ID ,
+                    leave_status        ='A',
+                    approver_comments   =:P257_APPROVER_COMMENTS,
+                    approved_date       = sysdate
+                  WHERE leave_request_id=:P257_LEAVE_REQUEST_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 300201127839808445
+        }
+        serverSideCondition {
+            whenButtonPressed: @approve
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 299948595351286854
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-leave-requests-t (
+        name: Fetch Row from XXEBA_SALES_LEAVE_REQUESTS_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_LEAVE_REQUESTS_T
+            pkColumn: LEAVE_REQUEST_ID
+            pkItem: P257_LEAVE_REQUEST_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 299947385188286853
+        }
+    )
+
+    process process-row-of-xxeba-sales-leave-requests-t (
+        name: Process Row of XXEBA_SALES_LEAVE_REQUESTS_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_LEAVE_REQUESTS_T
+            pkColumn: LEAVE_REQUEST_ID
+            pkItem: P257_LEAVE_REQUEST_ID
+            returnKeyIntoItem: P257_LEAVE_REQUEST_ID
+            supportedOperations: [
+                insert
+                update
+            ]
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 299947783958286853
+        }
+    )
+
+    process reject-process (
+        name: Reject Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE xxeba_sales_leave_requests_t
+                  SET approved_by       = :USER_ID ,
+                    leave_status        ='R',
+                    approver_comments   =:P257_APPROVER_COMMENTS,
+                    approved_date       = sysdate
+                  WHERE leave_request_id=:P257_LEAVE_REQUEST_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 300201144985808446
+        }
+        serverSideCondition {
+            whenButtonPressed: @reject
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 299948167817286854
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    branch (
+        name: Go To 257
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 258
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: APPROVE,REJECT
+        }
+    )
+
+)
+

@@ -1,0 +1,179 @@
+page 200 (
+    name: Print Jasper Report
+    alias: PRINT-JASPER-REPORT
+    title: Print Jasper Report
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P200_PARAMETERS (
+        type: textField
+        label {
+            label: Parameters
+            alignment: left
+        }
+        layout {
+            sequence: 1230
+            slot: body
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    pageItem P200_REPORT_NAME (
+        type: textField
+        label {
+            label: Report Name
+            alignment: left
+        }
+        layout {
+            sequence: 1220
+            slot: body
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    process get-report (
+        name: Get Report
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_proc varchar2(100) := 'show report';
+                  l_report_url varchar2(32767 char) := 'http://10.1.4.103:8090/jri/report';
+                BEGIN
+                 
+                 
+                --   xlog (l_proc, 'url (orig):' || l_report_url);
+                 
+                  xlib_jasperreports.set_report_url(l_report_url);
+                
+                 dml_test_ins('-P200_PARAMETERS 11-'||:P200_PARAMETERS);
+                
+                --   xlib_jasperreports.show_report (p_rep_name => 'trial_report',--:P200_REPORT_NAME,--'trial_report_test',--'wsr_main_report',
+                --           p_rep_format          => 'pdf',
+                --           p_data_source         => 'prod1',
+                --           p_out_filename        => null,
+                --           p_rep_locale          => 'en_US',
+                --           p_rep_encoding        => null,
+                --           p_additional_params   => '152208566895275465963509523632900479218'--'152208566895275465963509523632900479218'--:P200_PARAMETERS
+                --           );
+                
+                xlib_jasperreports.show_report (
+                  p_rep_name          => :P200_REPORT_NAME,
+                  p_rep_format        => 'pdf',
+                  p_data_source       => 'prod1',
+                  p_out_filename      => null,
+                  p_rep_locale        => 'en_US',
+                  p_rep_encoding      => null,
+                  p_additional_params => :P200_PARAMETERS  
+                );
+                
+                
+                
+                 dml_test_ins('-P200_PARAMETERS 33-'||:P200_PARAMETERS);
+                  -- this was used before apex 4.1
+                  --apex_application.g_unrecoverable_error := true;
+                  apex_application.stop_apex_engine();
+                 
+                exception
+                  when apex_application.e_stop_apex_engine then
+                    null; -- ok, stop engine raises exception, we can ignore that
+                  when others then 
+                     xxfs_pm_error_log_pkg.record_log('ERROR','200-Preprint_invoice','Preprint_invoice Process'||SQLERRM);  
+                
+                    xlog(l_proc, substr(dbms_utility.format_error_backtrace,1,3500), 'ERROR');
+                    raise;
+                end;
+                
+                
+                
+                -- declare
+                --   l_proc varchar2(100) := 'show report';
+                --   l_report_url varchar2(32767 char) := 'http://10.1.4.103:8090/jri/report';
+                --   l_additional_params varchar2(4000);
+                -- begin
+                --   xlog(l_proc, 'url (orig):' || l_report_url);
+                
+                --   -- Construct the additional parameters string
+                --   if :P200_PARAMETERS is not null then
+                --     l_additional_params := :P200_PARAMETERS || '&P200_PRINTOUT_ID=' || :P200_PRINTOUT_ID;
+                --   else
+                --     l_additional_params := 'P200_PRINTOUT_ID=' || :P200_PRINTOUT_ID;
+                --   end if;
+                
+                --   xlib_jasperreports.set_report_url(l_report_url);
+                --   xlib_jasperreports.show_report (
+                --     p_rep_name         => :P200_REPORT_NAME, -- 'wsr_main_report'
+                --     p_rep_format       => 'pdf',
+                --     p_data_source      => 'prod',
+                --     p_out_filename     => null,
+                --     p_rep_locale       => 'en_US',
+                --     p_rep_encoding     => null,
+                --     p_additional_params => l_additional_params
+                --   );
+                
+                --   apex_application.stop_apex_engine();
+                
+                -- exception
+                --   when apex_application.e_stop_apex_engine then
+                --     null; -- expected behavior
+                --   when others then 
+                --     xxfs_pm_error_log_pkg.record_log('ERROR', '200-Preprint_invoice', 'Preprint_invoice Process' || SQLERRM);
+                --     xlog(l_proc, substr(dbms_utility.format_error_backtrace, 1, 3500), 'ERROR');
+                --     raise;
+                -- end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 150329125947579510
+        }
+    )
+
+)
+

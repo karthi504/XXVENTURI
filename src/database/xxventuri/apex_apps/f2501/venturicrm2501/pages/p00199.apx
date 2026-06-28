@@ -1,0 +1,500 @@
+page 199 (
+    name: Review
+    title: Review
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region contacts (
+        name: Contacts
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                SEQ_ID ,
+                C001 as ContactName,
+                c002 as ContactEmail,
+                c003 as Industry,
+                c004 as Account,
+                c005 as Status,
+                c006 as FirstName,
+                c007 as LastName,
+                c009 AS Phone,
+                ' ' as remove
+                FROM
+                  apex_collections
+                WHERE collection_name = 'MAILCHIMP_COLLECTION'
+                order by SEQ_ID
+                ```
+        }
+        layout {
+            sequence: 10
+            parentRegion: @step
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        reportLayout {
+            numberOfRows: 10000
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZWithPagination
+        }
+
+        column ACCOUNT (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Account Name
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CONTACTEMAIL (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Email Address
+            }
+            layout {
+                sequence: 5
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CONTACTNAME (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Contact Name
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column FIRSTNAME (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 8
+            }
+        )
+
+        column INDUSTRY (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Industry
+            }
+            layout {
+                sequence: 3
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column LASTNAME (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 9
+            }
+        )
+
+        column PHONE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Phone Number
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column REMOVE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    type: url
+                    url: javascript:void(null);
+                }
+                linkText: <span class="t-Icon fa fa-trash delete-note" aria-hidden="true"></span>
+                linkAttributes: data-id=#SEQ_ID#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SEQ_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: SNo.
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+    )
+
+    region step (
+        name: Step 2
+        type: list
+        source {
+            list: @mail-chimp-wizard
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+        }
+    )
+
+    pageItem P199_SELECTED_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @contacts
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @step
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 198
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button finish (
+        buttonName: FINISH
+        label: Sync with Mailchimp
+        layout {
+            sequence: 40
+            region: @step
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 20
+            region: @step
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: #DEFAULT#
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction delete-row (
+        name: Delete Row
+        execution {
+            sequence: 20
+            eventScope: dynamic
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: .delete-note
+        }
+
+        action native-clear (
+            action: clear
+            affectedElements {
+                selectionType: items
+                items: P199_SELECTED_ID
+            }
+            execution {
+                sequence: 50
+                fireOnInit: false
+            }
+        )
+
+        action native-confirm (
+            action: confirm
+            settings {
+                message: Are you Sure?
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode: apex_collection.delete_member('MAILCHIMP_COLLECTION', :P199_SELECTED_ID);
+                itemsToSubmit: P199_SELECTED_ID
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @contacts
+            }
+            execution {
+                sequence: 40
+                fireOnInit: false
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: jsExpression
+                jsExpression: $(this.triggeringElement).parent().data('id')
+            }
+            affectedElements {
+                selectionType: items
+                items: P199_SELECTED_ID
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+    )
+
+    process send-mail-chimp (
+        name: Send Mail Chimp
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    -- l_cursor SYS_REFCURSOR;
+                    l_values apex_json.t_values;
+                    status      VARCHAR2(100);
+                    l_resp_clob CLOB;
+                    payload    VARCHAR2(4000);
+                    CURSOR l_cursor IS
+                      SELECT c002 AS ContactEmail,
+                             c006 AS FirstName,
+                             c007 AS LastName,
+                             c008 AS Id,
+                             c009 AS Phone
+                      FROM   apex_collections
+                      WHERE  collection_name = 'MAILCHIMP_COLLECTION';
+                    r_cursor    l_cursor%ROWTYPE;
+                    c           sys.xmltype;
+                BEGIN
+                    FOR r_cursor IN l_cursor LOOP
+                        BEGIN				 
+                		payload := '<obj>';
+                        if r_cursor.firstname is not null then payload := payload || '<FNAME>' || r_cursor.firstname || '</FNAME>'; end if;
+                        if r_cursor.lastname is not null then payload := payload || '<LNAME>' || r_cursor.lastname|| '</LNAME>'; end if;
+                        if r_cursor.phone is not null then payload := payload || '<PHONE>' || r_cursor.phone || '</PHONE>'; end if;
+                        payload := payload || '</obj>';
+                            c := sys.Xmltype(payload);
+                
+                            apex_json.initialize_clob_output;
+                
+                            apex_json.open_object;
+                
+                            apex_json.WRITE('email_address', r_cursor.contactemail);
+                
+                            apex_json.WRITE('status', 'subscribed');
+                
+                            apex_json.WRITE('merge_fields', c);
+                
+                            apex_json.close_object;
+                
+                            apex_web_service.g_request_headers.DELETE();
+                
+                            apex_web_service.G_request_headers(1).name := 'Content-Type';
+                
+                            apex_web_service.G_request_headers(1).value := 'application/json';
+                
+                            apex_web_service.G_request_headers(2).name := 'Authorization';
+                
+                            apex_web_service.G_request_headers(2).value :=
+                            'Bearer 96977c29dc23ab7af30100c3b63d6153-us2';
+                
+                            l_resp_clob := apex_web_service.Make_rest_request(p_url =>
+                            'https://us2.api.mailchimp.com/3.0/lists/fac143ea5f/members',
+                            p_http_method => 'POST', p_body => apex_json.get_clob_output)
+                            ;
+                
+                            apex_json.free_output;
+                
+                            apex_json.Parse(p_values => l_values, p_source => l_resp_clob);
+                
+                            status := apex_json.Get_varchar2(p_values => l_values,
+                                      p_path => 'status');
+                
+                            IF status = 'subscribed' THEN
+                              UPDATE eba_sales_customer_contacts
+                              SET    is_sync = 'Y'
+                              WHERE  id = r_cursor.id;
+                			  else
+                			   UPDATE eba_sales_customer_contacts
+                              SET    ERROR_Mail = l_resp_clob
+                              WHERE  id = r_cursor.id;
+                            END IF;
+                			
+                            EXCEPTION
+                            WHEN OTHERS THEN
+                            Raise_application_error(-20001, SQLERRM);
+                        END;
+                    END LOOP;
+                	commit;
+                END; 
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 200380854505525921
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 10
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 198
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        name: Go To Page 199
+        execution {
+            sequence: 1
+        }
+        behavior {
+            target: {
+                page: 199
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @finish
+        }
+    )
+
+)
+

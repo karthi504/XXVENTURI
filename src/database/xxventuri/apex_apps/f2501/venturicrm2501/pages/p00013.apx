@@ -1,0 +1,463 @@
+page 13 (
+    name: Fiscal Quarter Details
+    title: Fiscal Quarter Details
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region fiscal-quarter-details (
+        name: Fiscal Quarter Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    pageItem P13_FIRST_DAY (
+        type: datePickerJquery
+        label {
+            label: First Day
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @fiscal-quarter-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            formatMask: &APP_DATE_FORMAT.
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FIRST_DAY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P13_FISCAL_YEAR (
+        type: textField
+        label {
+            label: Fiscal Year
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 60
+            region: @fiscal-quarter-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 4
+        }
+        validation {
+            valueRequired: true
+            maxLength: 2
+        }
+        advanced {
+            postText: &nbsp;(YY)
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: FISCAL_YEAR
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P13_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @fiscal-quarter-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P13_LAST_DAY (
+        type: datePickerJquery
+        label {
+            label: Last Day
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @fiscal-quarter-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            formatMask: &APP_DATE_FORMAT.
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LAST_DAY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P13_PERIOD_NAME (
+        type: textField
+        label {
+            label: Period Name
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @fiscal-quarter-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 8
+            valuePlaceholder: Q3FY17
+        }
+        validation {
+            valueRequired: true
+            maxLength: 8
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERIOD_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            htmlDomId: CANCEL
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Fiscal Quarter
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        advanced {
+            htmlDomId: CREATE
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P13_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--danger
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        advanced {
+            htmlDomId: DELETE
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        advanced {
+            htmlDomId: SAVE
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P13_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation end-after-the-beginning (
+        name: End after the beginning
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBodyReturningBoolean
+            plsqlFunctionBody: return to_date(:P13_FIRST_DAY,:APP_DATE_FORMAT) < to_date(:P13_LAST_DAY,:APP_DATE_FORMAT);
+        }
+        error {
+            errorMessage: First and last dates must be in proper chronological order.
+            displayLocation: inlineInNotification
+        }
+    )
+
+    validation fiscal-year-is-numeric (
+        name: Fiscal Year is Numeric
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: itemIsNumeric
+            item: P13_FISCAL_YEAR
+        }
+        error {
+            errorMessage: #LABEL# must be a numeric value.
+        }
+    )
+
+    validation quarter-is-valid (
+        name: Quarter is Valid
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: itemMatchesRegexp
+            item: P13_QUARTER
+            regexp: ^(Q|q)\d$
+        }
+        error {
+            errorMessage: #LABEL# must be Q1, Q2, Q3, or Q4.
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 722947219053616683
+        }
+    )
+
+    process fetch-row-from-eba-sales-sales-periods (
+        name: Fetch Row from eba_sales_SALES_PERIODS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_SALES_PERIODS
+            pkColumn: ID
+            pkItem: P13_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 4690851223992330186
+        }
+    )
+
+    process process-row-of-eba-sales-sales-periods (
+        name: Process Row of eba_sales_SALES_PERIODS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_SALES_PERIODS
+            pkColumn: ID
+            pkItem: P13_ID
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_SALES_PERIODS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690851443706330188
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 30
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690851619458330190
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

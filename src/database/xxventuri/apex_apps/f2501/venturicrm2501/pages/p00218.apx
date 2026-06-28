@@ -1,0 +1,3476 @@
+page 218 (
+    name: Trial Result
+    title: Trial Result
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function change_toollife(rownum)
+            {
+                var total_life = 0;
+                var v_no_cutting_edges = $v('P218_RECOM_NO_OF_CUTTING_EDGES');
+            	var v_avg_life_edge;
+                var per_improved;
+                var cost_component;
+                var cost_saving_percentage;
+                $('[id^=pr02_]').each(function() {    // add hours
+                    var life = $(this).val();
+                    life = parseInt(life) || 0;    // if hours not a number , replace the zero(0).
+                    total_life = total_life+parseInt(life);
+                });
+                                      
+                $x('P218_TOOL_LIFE_TOTAL').value = total_life;
+                
+             if (v_no_cutting_edges > 0)   
+             {    
+            	v_avg_life_edge = (total_life / v_no_cutting_edges).toFixed(4);	
+                $x('P218_RESULT_AVG_LIFE_EDGE').value = v_avg_life_edge;
+             }    
+                if (($x('P218_EXIST_AVG_LIFE_PER_EDGE').value > 0) && ($x('P218_NEW_TRIAL_OR_EXISTING').value == 'E'))   /* 31-Oct-18 Thamaraiselvan Added */
+                    {
+                per_improved = (((v_avg_life_edge -  $x('P218_EXIST_AVG_LIFE_PER_EDGE').value) / $x('P218_EXIST_AVG_LIFE_PER_EDGE').value) * 100);
+                        $x('P218_RESULT_PERFOR_IMPROVEMENT').value = Math.round(per_improved);
+                    }   
+                
+                /* cost_component = ($v('P218_RECOM_UNIT_PRICE') / (total_life / v_no_cutting_edges)) ; 24-Oct-18 Thamaraiselvan Commented*/ 
+                cost_component = ($v('P218_RECOM_UNIT_PRICE') * $v('P218_RECOM_NO_OF_FLUTES') / (total_life));
+                $x('P218_RESULT_COST_COMP_AMOUNT').value = cost_component.toFixed(2);
+            
+             
+            
+            
+                /*
+                if isFinite(($v('P218_RECOM_UNIT_PRICE') * $v('P218_RECOM_NO_OF_FLUTES') / (total_life))) == 'false'
+                {
+                    cost_component = 0;
+                }
+                */
+                cost_saving_percentage = ((($v('P218_EXIST_COST_PER_COMPONENT') - cost_component) / cost_component) * 100);
+               if ($x('P218_NEW_TRIAL_OR_EXISTING').value == 'E') /* 31-Oct-18 Thamaraiselvan Added */   
+                 {   
+                $x('P218_RESULT_COST_SAVE_PERCENT').value = Math.round(cost_saving_percentage) ;    
+                $x('P218_RESULT_COST_SAVING_AMOUNT').value = ((((($v('P218_NO_OF_COMP_PROD_PER_HOUR') * 8 )* 
+                                                              $v('P218_NO_OF_SHIFT_PER_DAY')) * $v('P218_NO_OF_WORK_DAYS_PER_WEEK')) * 52)
+                                                             * ($v('P218_EXIST_COST_PER_COMPONENT') - cost_component)).toFixed(2);  
+                 }
+            
+            
+                  if ($x('P218_NEW_TRIAL_OR_EXISTING').value == 'C') /* 03-Sep-25 Dinesh R Added */   
+                 {   
+                $x('P218_RESULT_COST_SAVE_PERCENT').value = Math.round(cost_saving_percentage) ;    
+                $x('P218_RESULT_COST_SAVING_AMOUNT').value = ((((($v('P218_NO_OF_COMP_PROD_PER_HOUR') * 8 )* 
+                                                              $v('P218_NO_OF_SHIFT_PER_DAY')) * $v('P218_NO_OF_WORK_DAYS_PER_WEEK')) * 52)
+                                                             * ($v('P218_EXIST_COST_PER_COMPONENT') - cost_component)).toFixed(2);  
+                 }
+            }
+            
+            function change_contact_time(rownum)
+            {
+            	var total_contact = 0;
+                var v_no_cutting_edges = $v('P218_RECOM_NO_OF_CUTTING_EDGES');
+            	
+                $('[id^=pr03_]').each(function() {    // add hours
+                    var contact = $(this).val();
+                    contact = parseInt(contact) || 0;    // if hours not a number , replace the zero(0).
+                    total_contact = total_contact+parseInt(contact);
+                });
+                                      
+                $x('P218_CONTACT_TIME_TOTAL').value = total_contact;
+            	$x('P218_RESULT_AVG_CONTACT_TIME').value = (total_contact/v_no_cutting_edges).toFixed(2);	
+            }
+            
+            function change_toollife1(rownum)
+            {
+                var total_life = 0;
+                var v_no_cutting_edges = $v('P218_RECOM1_NO_OF_CUTTING_EDGE');
+            	var v_avg_life_edge;
+                var per_improved;
+                var cost_component;
+                var cost_saving_percentage;
+                $('[id^=pr05_]').each(function() {    // add hours
+                    var life = $(this).val();
+                    life = parseInt(life) || 0;    // if hours not a number , replace the zero(0).
+                   // ALERT(life);
+                    total_life = total_life + parseInt(life);
+                });
+                                      
+                $x('P218_TOOL_LIFE_TOTAL').value = total_life;
+             if (v_no_cutting_edges > 0)
+              {
+            	v_avg_life_edge = (total_life / v_no_cutting_edges).toFixed(4);	
+                $x('P218_RESULT1_AVG_LIFE_EDGE').value = v_avg_life_edge;
+              }
+            if (($x('P218_EXIST_AVG_LIFE_PER_EDGE').value > 0) && ($x('P218_NEW_TRIAL_OR_EXISTING').value == 'E'))   /* 31-Oct-18 Thamaraiselvan Added */   
+                {
+                per_improved = (((v_avg_life_edge -  $x('P218_EXIST_AVG_LIFE_PER_EDGE').value) / $x('P218_EXIST_AVG_LIFE_PER_EDGE').value) * 100);
+                $x('P218_RESULT1_PERFOR_IMPROV').value = Math.round(per_improved);
+                }
+             /*   cost_component = ($v('P218_RECOM_UNIT_PRICE') / (total_life / v_no_cutting_edges)) ; */
+                 cost_component = ($v('P218_RECOM1_UNIT_PRICE') * $v('P218_RECOM1_NO_OF_FLUTES') / (total_life)) ;
+                $x('P218_RESULT1_COST_COMP_AMOUNT').value = cost_component.toFixed(2);
+                cost_saving_percentage = ((($v('P218_EXIST_COST_PER_COMPONENT') - cost_component) / cost_component) * 100);
+                
+            if ($x('P218_NEW_TRIAL_OR_EXISTING').value == 'E') /* 31-Oct-18 Thamaraiselvan Added */   
+                {
+                $x('P218_RESULT1_COST_SAVE_PERCENT').value = Math.round(cost_saving_percentage) ;    
+                $x('P218_RESULT1_COST_SAVE_AMOUNT').value = ((((($v('P218_NO_OF_COMP_PROD_PER_HOUR') * 8 )* 
+                                                              $v('P218_NO_OF_SHIFT_PER_DAY')) * $v('P218_NO_OF_WORK_DAYS_PER_WEEK')) * 52)
+                                                             * ($v('P218_EXIST_COST_PER_COMPONENT') - cost_component)).toFixed(2);
+                }
+            }
+            
+            function change_contact_time1(rownum)
+            {
+            	var total_contact = 0;
+                var v_no_cutting_edges = $v('P218_RECOM_NO_OF_CUTTING_EDGES');
+            	
+                $('[id^=pr06_]').each(function() {    // add hours
+                    var contact = $(this).val();
+                    contact = parseInt(contact) || 0;    // if hours not a number , replace the zero(0).
+                    total_contact = total_contact+parseInt(contact);
+                });
+                                      
+                $x('P218_CONTACT_TIME_TOTAL').value = total_contact;
+            	$x('P218_RESULT1_AVG_CONTACT_TIME').value = (total_contact/v_no_cutting_edges).toFixed(2);	
+            }
+            
+            
+            // number validation in tool life field
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                return true;
+            }
+            
+            //alert($v('P218_TRIAL_RESULT'));
+            
+            function blade_product_impr() {
+                
+                var reco_unit_price = $v('P218_RECOM_UNIT_PRICE');
+                var blade_life_cm2 = $v('P218_RESULT_BLADE_LIFE_IN_CM2');
+                var blade_cost_sq_cm = reco_unit_price / blade_life_cm2;
+                var blade_cost_cm2 = $v('P218_EXIST_BLADE_COST_CM2');
+                var cost_save_percentage;
+                var blade_comp_prod_per_hour;
+                var blade_no_of_shift_per_day;
+                var calculate;
+                var blade_cost_save_amount;
+                
+                $x('P218_RESULT_BLADE_COST_SQ_CM').value = blade_cost_sq_cm.toFixed(2);
+                cost_save_percentage = blade_cost_cm2 - blade_cost_sq_cm;
+                $x('P218_RESULT_BLD_CT_SAVE_PERCE').value = cost_save_percentage.toFixed(2);
+                blade_no_of_shift_per_day = $v('P218_NO_OF_SHIFT_PER_DAY');
+                blade_comp_prod_per_hour = $v('P218_NO_OF_COMP_PROD_PER_HOUR');
+                blade_comp_prod_per_hour = (blade_comp_prod_per_hour * 8);
+                calculate = (blade_comp_prod_per_hour * blade_no_of_shift_per_day) * 300;
+                blade_cost_save_amount = cost_save_percentage * calculate;
+                $x('P218_RESULT_BLD_CT_SAVING_AMOU').value = blade_cost_save_amount.toFixed(2);
+                
+            }
+            
+            
+            function blade_product_impr_result2() {
+                
+                var reco_unit_price = $v('P218_RECOM1_UNIT_PRICE');
+                var blade_life_cm2 = $v('P218_RESULT1_BLADE_LIFE_IN_CM2');
+                var blade_cost_sq_cm = (reco_unit_price / blade_life_cm2);
+                var blade_cost_cm2 = $v('P218_EXIST_BLADE_COST_CM2');
+                var cost_save_percentage;
+                var blade_comp_prod_per_hour;
+                var blade_no_of_shift_per_day;
+                var calculate;
+                var blade_cost_save_amount;
+                
+                $x('P218_RESULT1_BLADE_COST_SQ_CM').value = blade_cost_sq_cm.toFixed(4);
+                cost_save_percentage = blade_cost_cm2 - blade_cost_sq_cm;
+                $x('P218_RESULT1_BLD_CT_SAVE_PERCE').value = cost_save_percentage.toFixed(2);
+                blade_no_of_shift_per_day = $v('P218_NO_OF_SHIFT_PER_DAY');
+                blade_comp_prod_per_hour = $v('P218_NO_OF_COMP_PROD_PER_HOUR');
+                blade_comp_prod_per_hour = (blade_comp_prod_per_hour * 8);
+                calculate = (blade_comp_prod_per_hour * blade_no_of_shift_per_day) * 300;
+                blade_cost_save_amount = cost_save_percentage * calculate;
+                $x('P218_RESULT1_BLD_CT_SAVING_AMT').value = blade_cost_save_amount.toFixed(2);
+                
+            }
+            ```
+        executeWhenPageLoads:
+            ```javascript-browser
+                var avg_life_per_blade;
+                var unit_price;
+                var blade_cost_cm2;
+                unit_price = $v('P218_EXIST_UNIT_PRICE');
+                avg_life_per_blade = $v('P218_EXIST_AVG_LIFE_PER_BLADE');
+                blade_cost_cm2     = unit_price / avg_life_per_blade;
+               $x('P218_EXIST_BLADE_COST_CM2').value = blade_cost_cm2;     
+            
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .p-text-label{
+                text-align: right;
+                height: 2.2rem;
+            
+            }
+            
+            
+            .t-Report--rowHighlight .t-Report-report .t-Report-cell  {
+                padding: 2px;
+            }
+            
+            
+            
+            /*
+            
+                border-radius: 2px;
+                border: 1px solid #dfdfdf;
+                color: #393939;
+                font-size: 1.4rem;
+                padding: .7rem;
+            
+            
+            .t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label {
+               background-color:red;
+                color:white;
+            }
+            
+            */
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region blade-result (
+        name: Blade - Result
+        type: staticContent
+        layout {
+            sequence: 50
+            parentRegion: @recommendation
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Blades
+        }
+    )
+
+    region blade-result-2 (
+        name: Blade - Result 2
+        type: staticContent
+        layout {
+            sequence: 60
+            parentRegion: @recommendation-2
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Blades
+        }
+    )
+
+    region blade-result-3 (
+        name: "Blade Result "
+        type: staticContent
+        layout {
+            sequence: 1270
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Blades
+        }
+        comments {
+            comments:
+                ```
+                P218_PRODUCT_CLASS_NAME
+                Blades
+                ```
+        }
+    )
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: [
+                #DEFAULT#
+                t-ButtonRegion--slimPadding
+            ]
+        }
+    )
+
+    region cutting-tool-result (
+        name: Cutting Tool - Result
+        type: staticContent
+        layout {
+            sequence: 30
+            parentRegion: @recommendation
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Cutting Tools
+        }
+    )
+
+    region cutting-tool-result-2 (
+        name: Cutting Tool - Result 2
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @recommendation-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Cutting Tools
+        }
+    )
+
+    region cutting-tool-result-3 (
+        name: "Cutting Tool Result "
+        type: staticContent
+        layout {
+            sequence: 1260
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--noPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Cutting Tools
+        }
+        comments {
+            comments:
+                ```
+                P218_PRODUCT_CLASS_NAME
+                Cutting Tools
+                ```
+        }
+    )
+
+    region cutting-tool-trial-result (
+        name: Cutting Tool - Trial Result
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                  --APEX_ITEM.HIDDEN(1,EDGE_RESULT_ID) as s_no,
+                  EDGE_RESULT_ID,
+                  TRIAL_ID,
+                 -- RESULT_EDGE_NUMBER,
+                  APEX_ITEM.DISPLAY_AND_SAVE(1,RESULT_EDGE_NUMBER) as RESULT_EDGE_NUMBER,
+                   APEX_ITEM.TEXT(
+                    p_idx         => 2,
+                    p_value       => RESULT_TOOL_LIFE,
+                    p_size        =>10,
+                    p_maxlength   => 10,
+                   -- p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" onchange="change_toollife('||rownum||')" ',
+                    p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" oninput="change_toollife('||rownum||')" ', --added by dinesh R on 5-sep-2025
+                
+                    p_item_id     => 'pr02_'||rownum,
+                    p_item_label  => NULL)RESULT_TOOL_LIFE,
+                       APEX_ITEM.TEXT(
+                    p_idx         => 3,
+                    p_value       => RESULT_CONTACT_TIME_PER_EDGE,
+                    p_size        => 10,
+                    p_maxlength   => 10,
+                   -- p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" onchange="change_contact_time('||rownum||')" ',
+                    p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" oninput="change_toollife('||rownum||')" ',--added by dinesh R on 5-sep-2025
+                
+                    p_item_id     => 'pr03_'||rownum,
+                    p_item_label  => NULL)RESULT_CONTACT_TIME_PER_EDGE,
+                   STATUS
+                FROM XXEBA_TRIAL_EDGE_RESULTS WHERE  TRIAL_ID = :P218_TRIAL_ID;
+                ```
+            pageItemsToSubmit: P218_TRIAL_ID
+        }
+        layout {
+            sequence: 10
+            parentRegion: @recommendation
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Cutting Tools
+        }
+        reportLayout {
+            numberOfRows: 1500
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+
+        column EDGE_RESULT_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column RESULT_CONTACT_TIME_PER_EDGE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Contact Time / Edge
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_EDGE_NUMBER (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Edge Number
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_TOOL_LIFE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Tool Life
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column TRIAL_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+    )
+
+    region cutting-tool-trial-result-2 (
+        name: Cutting Tool - Trial Result 1
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                  --APEX_ITEM.HIDDEN(1,EDGE_RESULT_ID) as s_no,
+                  EDGE_RESULT_ID,
+                  TRIAL_ID,
+                 -- RESULT_EDGE_NUMBER,
+                  APEX_ITEM.DISPLAY_AND_SAVE(4,RESULT_EDGE_NUMBER) as RESULT_EDGE_NUMBER,
+                   APEX_ITEM.TEXT(
+                    p_idx         => 5,
+                    p_value       => RESULT1_TOOL_LIFE,
+                    p_size        =>10,
+                    p_maxlength   => 10,
+                    p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" onchange="change_toollife1('||rownum||')" ',
+                    p_item_id     => 'pr05_'||rownum,
+                    p_item_label  => NULL)RESULT_TOOL_LIFE,
+                       APEX_ITEM.TEXT(
+                    p_idx         => 6,
+                    p_value       => RESULT1_CONTACT_TIME_PER_EDGE,
+                    p_size        => 10,
+                    p_maxlength   => 10,
+                    p_attributes  => 'class="p-text-label" onkeypress="return isNumber(event)" onchange="change_contact_time1('||rownum||')" ',
+                    p_item_id     => 'pr06_'||rownum,
+                    p_item_label  => NULL)RESULT_CONTACT_TIME_PER_EDGE,
+                   STATUS
+                FROM XXEBA_TRIAL_EDGE_RESULTS WHERE  TRIAL_ID = :P218_TRIAL_ID;
+                ```
+            pageItemsToSubmit: P218_TRIAL_ID
+        }
+        layout {
+            sequence: 20
+            parentRegion: @recommendation-2
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Cutting Tools
+        }
+        reportLayout {
+            numberOfRows: 1500
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+
+        column EDGE_RESULT_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column RESULT_CONTACT_TIME_PER_EDGE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Contact Time / Edge
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_EDGE_NUMBER (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Edge Number
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESULT_TOOL_LIFE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Tool Life
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column TRIAL_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+    )
+
+    region parameters (
+        name: Parameters
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region recommendation (
+        name: Recommendation 1
+        type: staticContent
+        layout {
+            sequence: 1240
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region recommendation-2 (
+        name: Recommendation 2
+        type: staticContent
+        layout {
+            sequence: 1250
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region recommendation-3 (
+        name: Recommendation
+        type: regionDisplaySelector
+        layout {
+            sequence: 1230
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--slimPadding
+            ]
+        }
+        settings {
+            includeShowAll: false
+            rememberSelection: false
+        }
+    )
+
+    pageItem P218_CONTACT_TIME_TOTAL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_AVG_LIFE_PER_BLADE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_AVG_LIFE_PER_EDGE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_BLADE_AVG_LIFE_COM (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 240
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_BLADE_COST_CM2 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 250
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_COST_PER_COMPONENT (
+        type: textField
+        label {
+            label: Exists Cost Per Component
+            alignment: left
+        }
+        layout {
+            sequence: 130
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_CYCLE_TIME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_EXIST_UNIT_PRICE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_NEW_TRIAL_OR_EXISTING (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_NO_OF_COMP_PROD_PER_HOUR (
+        type: textField
+        label {
+            label: Comp Prod Per Hour
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_NO_OF_SHIFT_PER_DAY (
+        type: textField
+        label {
+            label: No Of Shift Per Day
+            alignment: left
+        }
+        layout {
+            sequence: 200
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_NO_OF_WORK_DAYS_PER_WEEK (
+        type: textField
+        label {
+            label: No Of Work Days Per Week
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_PRODUCT_CLASS_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_PRODUCT_CLASS_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM1_CYCLE_TIME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 170
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM1_NO_OF_CUTTING_EDGE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM1_NO_OF_FLUTES (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 270
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM1_UNIT_PRICE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM_CYCLE_TIME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 160
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM_NO_OF_CUTTING_EDGES (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM_NO_OF_FLUTES (
+        type: textField
+        label {
+            label: Recom No of Flutes
+            alignment: left
+        }
+        layout {
+            sequence: 230
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RECOM_UNIT_PRICE (
+        type: textField
+        label {
+            label: Recom Unit Price
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @parameters
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_AVG_BLD_CTC_TIME (
+        type: numberField
+        label {
+            label: Avg. Contact Time in Seconds
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_AVG_CONTACT_TIME (
+        type: numberField
+        label {
+            label: Avg. Contact Time
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_AVG_LIFE_EDGE (
+        type: numberField
+        label {
+            label: Avg. Life Edge
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_COST_SQ_CM (
+        type: numberField
+        label {
+            label: Cost / Sq cm in Rs.
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_CYC_TM_DIFF (
+        type: numberField
+        label {
+            label: Cycle Time Difference in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_LIFE_IN_CM2 (
+        type: numberField
+        label {
+            label: Blade Life in CM2
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_LIFE_IN_NOS (
+        type: numberField
+        label {
+            label: Blade Life in No's
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_PERF_IMPR (
+        type: numberField
+        label {
+            label: Performance Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLADE_PROD_IMPR (
+        type: numberField
+        label {
+            label: Productivity Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLD_CT_SAVE_PERCE (
+        type: numberField
+        label {
+            label: Cost Saving
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_BLD_CT_SAVING_AMT (
+        type: numberField
+        label {
+            label: Cost Saving / Annum in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_COST_COMP_AMOUNT (
+        type: numberField
+        label {
+            label: Cost / Component in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_COST_SAVE_AMOUNT (
+        type: numberField
+        label {
+            label: Cost Saving / Annum in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_COST_SAVE_PERCENT (
+        type: numberField
+        label {
+            label: Cost Saving
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_CTC_TIME_PER_BLD (
+        type: numberField
+        label {
+            label: Contact Time / Blade
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @blade-result-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_CYLE_TIME_DIFFER (
+        type: numberField
+        label {
+            label: Cycle Time Difference
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_MAT_REMOVAL_RATE (
+        type: numberField
+        label {
+            label: Material Removal Rate CC/Min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_PERFOR_IMPROV (
+        type: numberField
+        label {
+            label: Performance Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT1_PRODUCTI_IMPRO (
+        type: numberField
+        label {
+            label: Productivity Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-tool-result-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_AVG_BLADE_CTC_TIME (
+        type: numberField
+        label {
+            label: Avg. Contact Time in Seconds
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_AVG_CONTACT_TIME (
+        type: numberField
+        label {
+            label: Avg. Contact Time
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_AVG_LIFE_EDGE (
+        type: numberField
+        label {
+            label: Avg. Life Edge
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_COST_SQ_CM (
+        type: numberField
+        label {
+            label: Cost / Sq cm in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_CYC_TM_DIFF (
+        type: numberField
+        label {
+            label: Cycle Time Difference in Seconds
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_LIFE_IN_CM2 (
+        type: numberField
+        label {
+            label: Blade Life in CM2
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_LIFE_IN_NOS (
+        type: numberField
+        label {
+            label: Blade Life in No's
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_PERF_IMPR (
+        type: numberField
+        label {
+            label: Performance Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLADE_PROD_IMPR (
+        type: numberField
+        label {
+            label: Productivity Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLD_CT_SAVE_PERCE (
+        type: numberField
+        label {
+            label: Cost Saving
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_BLD_CT_SAVING_AMOU (
+        type: numberField
+        label {
+            label: Cost Saving / Annum in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_COST_COMP_AMOUNT (
+        type: numberField
+        label {
+            label: Cost / Component in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 60
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_COST_SAVE_PERCENT (
+        type: numberField
+        label {
+            label: Cost Saving
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_COST_SAVING_AMOUNT (
+        type: numberField
+        label {
+            label: Cost Saving / Annum in Rs.
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_CTC_TIME_PER_BLADE (
+        type: numberField
+        label {
+            label: Contact Time / Blade
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @blade-result
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_CYLE_TIME_DIFFEREN (
+        type: numberField
+        label {
+            label: Cycle Time Difference
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_MAT_REMOVAL_RATE (
+        type: numberField
+        label {
+            label: Material Removal Rate CC/Min
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_PERFOR_IMPROVEMENT (
+        type: numberField
+        label {
+            label: Performance Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_RESULT_PRODUCTIVITY_IMPRO (
+        type: numberField
+        label {
+            label: Productivity Improvement
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @cutting-tool-result
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_TOOL_LIFE_TOTAL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_TRIAL_BLADE_RESULT (
+        type: radioGroup
+        label {
+            label: Result
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Pass;P,Fail;F
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 110
+            region: @blade-result-3
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_TRIAL_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @parameters
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P218_TRIAL_RESULT (
+        type: radioGroup
+        label {
+            label: Result
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Pass;P,Fail;F
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @cutting-tool-result-3
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 30
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--danger
+            ]
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_result VARCHAR2(1);
+                
+                BEGIN
+                    SELECT 'Y'
+                       INTO v_result
+                    FROM XXEBA_TRIAL_DETAILS 
+                    WHERE TRIAL_ID = :P218_TRIAL_ID 
+                      AND status = 'N';
+                
+                  IF :P218_RECOM_NO_OF_CUTTING_EDGES IS NOT NULL 
+                  and v_result ='Y'
+                  THEN return true;
+                  else return false;
+                
+                  END IF;
+                
+                    EXCEPTION
+                     WHEN OTHERS THEN
+                     RETURN FALSE;
+                
+                  end;
+                ```
+        }
+        comments {
+            comments: select 'y' from XXEBA_TRIAL_DETAILS  where TRIAL_ID = :P218_TRIAL_ID and status ='N';
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save Result
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P218_RECOM_NO_OF_CUTTING_EDGES
+        }
+    )
+
+    button save-blade (
+        buttonName: SAVE_BLADE
+        label: Save Result
+        layout {
+            sequence: 30
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: item=value
+            item: P218_PRODUCT_CLASS_NAME
+            value: Blades
+        }
+    )
+
+    dynamicAction blade-pass-fail-color (
+        name: Blade Pass / Fail Color
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P218_TRIAL_BLADE_RESULT
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P218_TRIAL_BLADE_RESULT')=='P')
+                    {
+                         $('label[for="P218_TRIAL_BLADE_RESULT_0"]').css("background-color","green");
+                         $('label[for="P218_TRIAL_BLADE_RESULT_0"]').css("color","white");
+                        
+                          $('label[for="P218_TRIAL_BLADE_RESULT_1"]').css("background-color","#dedede");
+                          $('label[for="P218_TRIAL_BLADE_RESULT_1"]').css("color","black");
+                        
+                       // $('#P218_TRIAL_BLADE_RESULT').css("background-color","red");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("background-color","red");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("color","white");
+                    
+                    }
+                    
+                    
+                    else
+                    {
+                       $('label[for="P218_TRIAL_BLADE_RESULT_1"]').css("background-color","red");
+                       $('label[for="P218_TRIAL_BLADE_RESULT_1"]').css("color","white");
+                        
+                          $('label[for="P218_TRIAL_BLADE_RESULT_0"]').css("background-color","#dedede");
+                          $('label[for="P218_TRIAL_BLADE_RESULT_0"]').css("color","black");
+                        
+                       // $('#P218_TRIAL_BLADE_RESULT').css("background-color","red");
+                       //  $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("background-color","green");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("color","white");
+                    
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction blade-productivity-improvement (
+        name: Blade Productivity Improvement
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P218_RESULT_BLADE_LIFE_IN_CM2
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    //onChange="blade_product_impr();"
+                    blade_product_impr();
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction blade-productivity-improvement-result (
+        name: Blade Productivity Improvement Result 2
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P218_RESULT1_BLADE_LIFE_IN_CM2
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    //onChange="blade_product_impr();"
+                    blade_product_impr_result2();
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction pass-fail-color (
+        name: Pass / Fail Color
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P218_TRIAL_RESULT
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P218_TRIAL_RESULT')=='P')
+                    {
+                         $('label[for="P218_TRIAL_RESULT_0"]').css("background-color","green");
+                         $('label[for="P218_TRIAL_RESULT_0"]').css("color","white");
+                        
+                          $('label[for="P218_TRIAL_RESULT_1"]').css("background-color","#dedede");
+                          $('label[for="P218_TRIAL_RESULT_1"]').css("color","black");
+                        
+                       // $('#P218_TRIAL_RESULT').css("background-color","red");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("background-color","red");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("color","white");
+                    
+                    }
+                    
+                    
+                    else
+                    {
+                       $('label[for="P218_TRIAL_RESULT_1"]').css("background-color","red");
+                       $('label[for="P218_TRIAL_RESULT_1"]').css("color","white");
+                        
+                          $('label[for="P218_TRIAL_RESULT_0"]').css("background-color","#dedede");
+                          $('label[for="P218_TRIAL_RESULT_0"]').css("color","black");
+                        
+                       // $('#P218_TRIAL_RESULT').css("background-color","red");
+                       //  $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("background-color","green");
+                        // $('.t-Form-fieldContainer--radioButtonGroup .apex-item-radio input:checked + label, .apex-button-group input:checked + label').css("color","white");
+                    
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-blade-avg-contact-time-in-seconds (
+        name: Set Blade Avg Contact Time in Seconds
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: [
+                P218_RECOM_CYCLE_TIME
+                P218_RESULT_BLADE_LIFE_IN_NOS
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    BEGIN
+                    :P218_RESULT_AVG_BLADE_CTC_TIME := (:P218_RECOM_CYCLE_TIME * :P218_RESULT_BLADE_LIFE_IN_NOS);
+                    RETURN :P218_RESULT_AVG_BLADE_CTC_TIME;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P218_RECOM_CYCLE_TIME
+                    P218_RESULT_BLADE_LIFE_IN_NOS
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P218_RESULT_AVG_BLADE_CTC_TIME
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-blade-avg-contact-time-in-seconds-2 (
+        name: Set Blade Avg Contact Time in Seconds 2
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: [
+                P218_RECOM1_CYCLE_TIME
+                P218_RESULT1_BLADE_LIFE_IN_NOS
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    BEGIN
+                    :P218_RESULT1_AVG_BLD_CTC_TIME := (:P218_RECOM1_CYCLE_TIME * :P218_RESULT1_BLADE_LIFE_IN_NOS);
+                    RETURN :P218_RESULT1_AVG_BLD_CTC_TIME;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P218_RECOM1_CYCLE_TIME
+                    P218_RESULT1_BLADE_LIFE_IN_NOS
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P218_RESULT1_AVG_BLD_CTC_TIME
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-blade-performance-improvement (
+        name: Set Blade Performance Improvement
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P218_RESULT_BLADE_LIFE_IN_NOS
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    BEGIN
+                      :P218_RESULT_BLADE_PERF_IMPR := round(((:P218_RESULT_BLADE_LIFE_IN_NOS - :P218_EXIST_BLADE_AVG_LIFE_COM) / :P218_EXIST_BLADE_AVG_LIFE_COM), 2) * 100;
+                      RETURN :P218_RESULT_BLADE_PERF_IMPR;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P218_RESULT_BLADE_LIFE_IN_NOS
+                    P218_EXIST_BLADE_AVG_LIFE_COM
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P218_RESULT_BLADE_PERF_IMPR
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-blade-performance-improvement-result (
+        name: Set Blade Performance Improvement Result 2
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P218_RESULT1_BLADE_LIFE_IN_NOS
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    BEGIN
+                      :P218_RESULT1_BLADE_PERF_IMPR := round(((:P218_RESULT1_BLADE_LIFE_IN_NOS - :P218_EXIST_BLADE_AVG_LIFE_COM) / :P218_EXIST_BLADE_AVG_LIFE_COM), 2) * 100;
+                      RETURN :P218_RESULT1_BLADE_PERF_IMPR;
+                    END;
+                    ```
+                itemsToSubmit: P218_RESULT1_BLADE_LIFE_IN_NOS
+            }
+            affectedElements {
+                selectionType: items
+                items: P218_RESULT1_BLADE_PERF_IMPR
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-performance-improvement (
+        name: Set Performance Improvement
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P218_RESULT_AVG_LIFE_EDGE
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    DECLARE
+                      V_EXIST_AVERAGE_LIFE_PER_EDGE XXEBA_TRIAL_DETAILS.EXIST_AVERAGE_LIFE_PER_EDGE%type;
+                    BEGIN
+                      SELECT EXIST_AVERAGE_LIFE_PER_EDGE
+                      INTO V_EXIST_AVERAGE_LIFE_PER_EDGE
+                      FROM XXEBA_TRIAL_DETAILS
+                      WHERE TRIAL_ID                   = :P218_TRIAL_ID;
+                     -- raise_application_error(-20001, V_EXIST_AVERAGE_LIFE_PER_EDGE);
+                     IF V_EXIST_AVERAGE_LIFE_PER_EDGE > 0 then
+                      :P218_RESULT_PERFOR_IMPROVEMENT := (:P218_RESULT_AVG_CONTACT_TIME - V_EXIST_AVERAGE_LIFE_PER_EDGE) / V_EXIST_AVERAGE_LIFE_PER_EDGE;
+                      end if;
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P218_TRIAL_ID
+                    P218_RESULT_AVG_LIFE_EDGE
+                ]
+                itemsToReturn: P218_RESULT_PERFOR_IMPROVEMENT
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 243291069811288782
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update XXEBA_TRIAL_DETAILS 
+                set status ='X'
+                where TRIAL_ID = :P218_TRIAL_ID;
+                /*where TRIAL_ID in (:P218_TRIAL_ID) 
+                and :P218_TRIAL_ID is not null
+                and status ='N';*/
+                end;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 317401260998856349
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process insert-trial-edge-results (
+        name: Insert trial Edge Results
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                
+                -- 03-Aug-18 Thamaraiselvan Modified
+                
+                  CURSOR ccount
+                  IS
+                    SELECT COUNT(D.TRIAL_ID)no_of_records
+                    FROM   XXEBA_TRIAL_EDGE_RESULTS D
+                    WHERE  d.trial_id = :P218_TRIAL_ID;
+                  rcount ccount%rowtype;
+                  
+                  CURSOR ccud
+                  IS
+                    SELECT RECOM_NO_OF_CUTTING_EDGES, 
+                           RESULT_AVG_LIFE_EDGE, 
+                           RESULT_AVG_CONTACT_TIME, 
+                           RESULT_CYLE_TIME_DIFFERENCE, 
+                           RESULT_PRODUCTIVITY_IMPROVED, 
+                           TRIAL_RESULT,
+                           EXIST_AVERAGE_LIFE_PER_EDGE,
+                           nvl(EXIST_CYCLE_TIME, 0)EXIST_CYCLE_TIME,
+                           RECOM_CYCLE_TIME,
+                           nvl(RECOM_UNIT_PRICE, 0)RECOM_UNIT_PRICE,
+                           nvl(RECOM1_UNIT_PRICE, 0)RECOM1_UNIT_PRICE,
+                           RESULT_PERFORMANCE_IMPROVEMENT,
+                           RESULT_COST_COMPONENT_AMOUNT,
+                           RESULT_COST_SAVING_AMOUNT, 
+                           RESULT_COST_SAVING_PERCENTAGE, 
+                           RESULT_MATERIAL_REMOVAL_RATE,
+                           EXIST_UNIT_PRICE,
+                           (CASE
+                            WHEN EXIST_NO_OF_CUTTING_EDGES  > 0
+                            AND EXIST_NO_OF_CUTTING_EDGES   > 0
+                            AND EXIST_AVERAGE_LIFE_PER_EDGE > 0
+                            THEN ROUND((EXIST_UNIT_PRICE / (EXIST_NO_OF_CUTTING_EDGES * EXIST_NO_OF_FLUTES * EXIST_AVERAGE_LIFE_PER_EDGE)), 2)
+                            END)EXIST_COST_PER_COMPONENT,
+                           --(EXIST_UNIT_PRICE / EXIST_AVERAGE_LIFE_PER_EDGE )EXIST_COST_PER_COMPONENT,       /* Thamaraiselvan Added on 06-Dec-18 */    
+                           NO_OF_COMPONENTS_PROD_PER_HOUR,
+                           NO_OF_SHIFT_PER_DAY,
+                           NO_OF_WORKING_DAYS_PER_WEEK,
+                           (( NVL(RECOM_DEPTH_OF_CUT, 0) * NVL(RECOM_WIDTH_OF_CUT, 0) * NVL(RECOM_FEED_PER_TOOTH, 0)) / 1000) MATERIAL_REMOVAL_RATE,
+                           (( NVL(RECOM1_DEPTH_OF_CUT, 0) * NVL(RECOM1_WIDTH_OF_CUT, 0) * NVL(RECOM1_FEED_PER_TOOTH, 0)) / 1000) RESULT1_MATERIAL_REMOVAL_RATE,
+                           PRODUCT_CLASS_ID,
+                           (select product_class_name from xxeba_product_class where id = PRODUCT_CLASS_ID)product_class_name,
+                           EXIST_BLADE_AVG_LIFE_NO_OF_COM,
+                           EXIST_BLADE_COST_CM2,
+                           EXIST_AVERAGE_LIFE_PER_BLADE,
+                           RESULT_CONTACT_TIME_PER_BLADE,
+                           RESULT_BLADE_LIFE_IN_NOS,
+                           RESULT_BLADE_COSTPER_SQ_CM,
+                           RESULT_BLADE_LIFE_IN_CM2,
+                           RECOM1_NO_OF_CUTTING_EDGES,
+                           RECOM1_CYCLE_TIME,
+                           RESULT1_AVG_LIFE_EDGE,
+                           RESULT1_PERFORM_IMPROVEMENT,
+                           RESULT1_AVG_CONTACT_TIME,
+                           RESULT1_CYLE_TIME_DIFFERENCE,
+                           RESULT1_PRODUCTIVITY_IMPROVED,
+                           RESULT1_COST_COMPONENT_AMOUNT,
+                           RESULT1_COST_SAVING_PERCENTAGE,
+                           RESULT1_COST_SAVING_AMOUNT,
+                           RESULT1_CONTACT_TIME_PER_BLADE,
+                           RESULT1_BLADE_LIFE_IN_NOS,
+                           RESULT1_BLADE_LIFE_IN_CM2,
+                           RESULT1_BLADE_COSTPER_SQ_CM,
+                           NEW_TRIAL_OR_EXISTING,
+                           RECOM_NO_OF_FLUTES,
+                           RECOM1_NO_OF_FLUTES
+                    FROM   XXEBA_TRIAL_DETAILS
+                    WHERE  trim(trial_id) = trim(:P218_TRIAL_ID);
+                  rcud ccud%rowtype;
+                  
+                  v_edge NUMBER := 1;
+                  
+                BEGIN
+                
+                  OPEN ccount;
+                  FETCH ccount INTO rcount;
+                  CLOSE ccount;
+                  
+                  OPEN ccud;
+                  FETCH ccud INTO rcud;
+                  CLOSE ccud;
+                  
+                :P218_PRODUCT_CLASS_ID              := rcud.PRODUCT_CLASS_ID;
+                :P218_PRODUCT_CLASS_NAME            := rcud.product_class_name;
+                :P218_RECOM_NO_OF_CUTTING_EDGES     := rcud.RECOM_NO_OF_CUTTING_EDGES;
+                :P218_RECOM1_NO_OF_CUTTING_EDGE     := rcud.RECOM1_NO_OF_CUTTING_EDGES;
+                :P218_RESULT_AVG_LIFE_EDGE          := rcud.RESULT_AVG_LIFE_EDGE;
+                :P218_RESULT1_AVG_LIFE_EDGE          := rcud.RESULT1_AVG_LIFE_EDGE;
+                :P218_RESULT_AVG_CONTACT_TIME       := rcud.RESULT_AVG_CONTACT_TIME;
+                :P218_RESULT_CYLE_TIME_DIFFEREN     := rcud.RESULT_CYLE_TIME_DIFFERENCE;
+                :P218_TRIAL_RESULT					:= rcud.TRIAL_RESULT;
+                :P218_RESULT_COST_COMP_AMOUNT       := rcud.RESULT_COST_COMPONENT_AMOUNT;
+                :P218_RESULT_PERFOR_IMPROVEMENT     := rcud.RESULT_PERFORMANCE_IMPROVEMENT;
+                :P218_RESULT_COST_SAVE_PERCENT      := rcud.RESULT_COST_SAVING_PERCENTAGE;
+                :P218_EXIST_AVG_LIFE_PER_EDGE       := rcud.EXIST_AVERAGE_LIFE_PER_EDGE;
+                :P218_EXIST_CYCLE_TIME              := rcud.EXIST_CYCLE_TIME;
+                :P218_RECOM_CYCLE_TIME              := rcud.RECOM_CYCLE_TIME;
+                :P218_RECOM1_CYCLE_TIME             := rcud.RECOM1_CYCLE_TIME;
+                :P218_EXIST_UNIT_PRICE              := rcud.EXIST_UNIT_PRICE;
+                :P218_RECOM_UNIT_PRICE              := rcud.RECOM_UNIT_PRICE;
+                :P218_RECOM1_UNIT_PRICE              := rcud.RECOM1_UNIT_PRICE;
+                :P218_EXIST_AVG_LIFE_PER_BLADE      := rcud.EXIST_AVERAGE_LIFE_PER_BLADE;
+                --:P218_EXIST_BLADE_COST_CM2          := rcud.EXIST_BLADE_COST_CM2;
+                :P218_RESULT_CYLE_TIME_DIFFEREN     := (rcud.EXIST_CYCLE_TIME - rcud.RECOM_CYCLE_TIME);
+                :P218_RESULT1_CYLE_TIME_DIFFER      := (rcud.EXIST_CYCLE_TIME - rcud.RECOM1_CYCLE_TIME);
+                :P218_RECOM_NO_OF_FLUTES            :=  rcud.RECOM_NO_OF_FLUTES;
+                :P218_RECOM1_NO_OF_FLUTES           :=  rcud.RECOM1_NO_OF_FLUTES;
+                
+                IF rcud.NEW_TRIAL_OR_EXISTING = 'E' then
+                    :P218_RESULT_PRODUCTIVITY_IMPRO     := round(((rcud.EXIST_CYCLE_TIME - rcud.RECOM_CYCLE_TIME) / :P218_RECOM_CYCLE_TIME) * 100);--ROUND(((rcud.EXIST_CYCLE_TIME - rcud.RECOM_CYCLE_TIME) / :P218_RECOM_CYCLE_TIME) * 100); 
+                    :P218_RESULT1_PRODUCTI_IMPRO        := round(((rcud.EXIST_CYCLE_TIME - rcud.RECOM1_CYCLE_TIME) / :P218_RECOM1_CYCLE_TIME) * 100);--ROUND(((rcud.EXIST_CYCLE_TIME - rcud.RECOM_CYCLE_TIME) / :P218_RECOM_CYCLE_TIME) * 100); 
+                END IF;
+                
+                :P218_EXIST_COST_PER_COMPONENT      := rcud.EXIST_COST_PER_COMPONENT;
+                :P218_NO_OF_COMP_PROD_PER_HOUR      := rcud.NO_OF_COMPONENTS_PROD_PER_HOUR;
+                :P218_NO_OF_SHIFT_PER_DAY           := rcud.NO_OF_SHIFT_PER_DAY;
+                :P218_NO_OF_WORK_DAYS_PER_WEEK      := rcud.NO_OF_WORKING_DAYS_PER_WEEK;
+                :P218_RESULT_MAT_REMOVAL_RATE       := rcud.MATERIAL_REMOVAL_RATE;
+                :P218_RESULT1_MAT_REMOVAL_RATE      := rcud.RESULT1_MATERIAL_REMOVAL_RATE;
+                :P218_RESULT_COST_SAVING_AMOUNT     := rcud.RESULT_COST_SAVING_AMOUNT;
+                :P218_EXIST_BLADE_AVG_LIFE_COM      := rcud.EXIST_BLADE_AVG_LIFE_NO_OF_COM;
+                :P218_RESULT1_PERFOR_IMPROV     := rcud.RESULT1_PERFORM_IMPROVEMENT;
+                :P218_RESULT1_AVG_CONTACT_TIME  := rcud.RESULT1_AVG_CONTACT_TIME;
+                :P218_RESULT1_CYLE_TIME_DIFFER  := rcud.RESULT1_CYLE_TIME_DIFFERENCE;
+                :P218_RESULT1_PRODUCTI_IMPRO    := rcud.RESULT1_PRODUCTIVITY_IMPROVED;
+                :P218_RESULT1_COST_COMP_AMOUNT  := rcud.RESULT1_COST_COMPONENT_AMOUNT;
+                :P218_RESULT1_COST_SAVE_PERCENT := rcud.RESULT1_COST_SAVING_PERCENTAGE;
+                :P218_RESULT1_COST_SAVE_AMOUNT  := rcud.RESULT1_COST_SAVING_AMOUNT;
+                :P218_NEW_TRIAL_OR_EXISTING     := rcud.NEW_TRIAL_OR_EXISTING;
+                --:P218_RESULT1_MAT_REMOVAL_RATE  := rcud.RESULT1_MATERIAL_REMOVAL_RATE;
+                
+                if rcud.product_class_name = 'Blades' THEN
+                :P218_RESULT_CTC_TIME_PER_BLADE := rcud.RESULT_CONTACT_TIME_PER_BLADE;
+                :P218_RESULT_BLADE_LIFE_IN_NOS  := rcud.RESULT_BLADE_LIFE_IN_NOS;
+                :P218_RESULT_BLADE_PERF_IMPR    := rcud.RESULT_PERFORMANCE_IMPROVEMENT;
+                :P218_RESULT_BLADE_LIFE_IN_CM2  := rcud.RESULT_BLADE_LIFE_IN_CM2;
+                :P218_RESULT_AVG_BLADE_CTC_TIME := rcud.RESULT_AVG_CONTACT_TIME;
+                :P218_RESULT_BLADE_CYC_TM_DIFF      := (rcud.EXIST_CYCLE_TIME - rcud.RECOM_CYCLE_TIME);
+                :P218_RESULT_BLADE_PROD_IMPR        := round((:P218_RESULT_BLADE_CYC_TM_DIFF / rcud.RECOM_CYCLE_TIME) * 100);
+                --:P218_RESULT_BLADE_PROD_IMPR    := rcud.RESULT_PRODUCTIVITY_IMPROVED;
+                :P218_RESULT_BLADE_COST_SQ_CM   := rcud.RESULT_BLADE_COSTPER_SQ_CM;
+                :P218_RESULT_BLD_CT_SAVE_PERCE  := rcud.RESULT_COST_SAVING_PERCENTAGE;
+                :P218_RESULT_BLD_CT_SAVING_AMOU := rcud.RESULT_COST_SAVING_AMOUNT;
+                :P218_TRIAL_BLADE_RESULT        := rcud.TRIAL_RESULT;
+                end if;
+                
+                if rcud.product_class_name = 'Blades' THEN
+                :P218_RESULT1_CTC_TIME_PER_BLD     := rcud.RESULT1_CONTACT_TIME_PER_BLADE;
+                :P218_RESULT1_BLADE_LIFE_IN_NOS    := rcud.RESULT1_BLADE_LIFE_IN_NOS;
+                :P218_RESULT1_BLADE_PERF_IMPR      := rcud.RESULT1_PERFORM_IMPROVEMENT;
+                :P218_RESULT1_BLADE_LIFE_IN_CM2    := rcud.RESULT1_BLADE_LIFE_IN_CM2;
+                :P218_RESULT1_AVG_BLD_CTC_TIME     := rcud.RESULT1_AVG_CONTACT_TIME;
+                :P218_RESULT1_BLADE_CYC_TM_DIFF    := (rcud.EXIST_CYCLE_TIME - rcud.RECOM1_CYCLE_TIME);
+                :P218_RESULT1_BLADE_PROD_IMPR      := round((:P218_RESULT1_BLADE_CYC_TM_DIFF / rcud.RECOM1_CYCLE_TIME) * 100);
+                --:P218_RESULT_BLADE_PROD_IMPR    := rcud.RESULT_PRODUCTIVITY_IMPROVED;
+                :P218_RESULT1_BLADE_COST_SQ_CM     := rcud.RESULT1_BLADE_COSTPER_SQ_CM;
+                :P218_RESULT1_BLD_CT_SAVE_PERCE    := rcud.RESULT1_COST_SAVING_PERCENTAGE;
+                :P218_RESULT1_BLD_CT_SAVING_AMT    := rcud.RESULT1_COST_SAVING_AMOUNT;
+                :P218_TRIAL_BLADE_RESULT           := rcud.TRIAL_RESULT;
+                end if;
+                
+                  IF rcount.no_of_records = 0 and rcud.product_class_name != 'Blades' THEN
+                    FOR i IN 1..rcud.RECOM_NO_OF_CUTTING_EDGES
+                    LOOP
+                      INSERT
+                      INTO XXEBA_TRIAL_EDGE_RESULTS
+                        (
+                          TRIAL_ID,
+                          RESULT_EDGE_NUMBER,
+                          RESULT_TOOL_LIFE,
+                          RESULT_CONTACT_TIME_PER_EDGE
+                        )
+                        VALUES
+                        (
+                          :P218_TRIAL_ID,
+                          v_edge,
+                          NULL,
+                          NULL
+                        );
+                      v_edge := v_edge + 1;
+                    END LOOP;
+                  END IF;
+                EXCEPTION WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20001, sqlerrm);
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 243288598858288757
+        }
+    )
+
+    process new (
+        name: New
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                update XXEBA_TRIAL_DETAILS 
+                set status ='X'
+                where TRIAL_ID = :P218_TRIAL_ID;
+                /*where TRIAL_ID in (:P218_TRIAL_ID) 
+                and :P218_TRIAL_ID is not null
+                and status ='N';*/
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        advanced {
+            executionMappingIdentifier: 317401392814856350
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process update-edge-results (
+        name: Update Edge Results
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  V_COUNT            NUMBER;
+                  V_SUM_OF_TOOL_LIFE NUMBER;
+                BEGIN
+                IF :P218_PRODUCT_CLASS_NAME <> 'Blades' 
+                  THEN
+                      V_COUNT:= apex_application.g_f02.COUNT;
+                      FOR i IN 1 .. apex_application.g_f02.COUNT
+                      LOOP
+                        UPDATE XXEBA_TRIAL_EDGE_RESULTS
+                        SET RESULT_TOOL_LIFE           = apex_application.g_f02(i),
+                          RESULT_CONTACT_TIME_PER_EDGE = apex_application.g_f03(i)
+                        WHERE RESULT_EDGE_NUMBER       = apex_application.g_f01(i)
+                        AND TRIAL_ID                   = :P218_TRIAL_ID;
+                      END LOOP;
+                      
+                      SELECT SUM(RESULT_TOOL_LIFE)
+                      INTO V_SUM_OF_TOOL_LIFE
+                      FROM XXEBA_TRIAL_EDGE_RESULTS
+                      WHERE TRIAL_ID = :P218_TRIAL_ID;
+                      
+                         FOR j IN 1 .. apex_application.g_f05.COUNT
+                      LOOP
+                        UPDATE XXEBA_TRIAL_EDGE_RESULTS
+                        SET RESULT1_TOOL_LIFE           = apex_application.g_f05(j),
+                          RESULT1_CONTACT_TIME_PER_EDGE = apex_application.g_f06(j)
+                        WHERE RESULT_EDGE_NUMBER       = apex_application.g_f04(j)
+                        AND TRIAL_ID                   = :P218_TRIAL_ID;
+                      END LOOP;
+                        
+                   
+                        
+                      UPDATE XXEBA_TRIAL_DETAILS
+                      SET RESULT_TOOL_LIFE             = :P218_TOOL_LIFE_TOTAL,
+                        RESULT_AVG_LIFE_EDGE           = :P218_RESULT_AVG_LIFE_EDGE,
+                        RESULT_AVG_CONTACT_TIME        = :P218_RESULT_AVG_CONTACT_TIME,
+                        RESULT_CYLE_TIME_DIFFERENCE    = :P218_RESULT_CYLE_TIME_DIFFEREN,
+                        RESULT_PRODUCTIVITY_IMPROVED   = :P218_RESULT_PRODUCTIVITY_IMPRO,
+                        RESULT_PERFORMANCE_IMPROVEMENT = :P218_RESULT_PERFOR_IMPROVEMENT,
+                        TRIAL_RESULT                   = :P218_TRIAL_RESULT,
+                        RESULT_COST_SAVING_AMOUNT      = :P218_RESULT_COST_SAVING_AMOUNT,
+                        RESULT_COST_SAVING_PERCENTAGE  = :P218_RESULT_COST_SAVE_PERCENT,
+                        RESULT_MATERIAL_REMOVAL_RATE   = :P218_RESULT_MAT_REMOVAL_RATE,
+                        RESULT_COST_COMPONENT_AMOUNT   = :P218_RESULT_COST_COMP_AMOUNT
+                      WHERE TRIAL_ID                   = :P218_TRIAL_ID;
+                      
+                       UPDATE XXEBA_TRIAL_DETAILS
+                      SET RESULT1_TOOL_LIFE             = :P218_TOOL_LIFE_TOTAL,
+                        RESULT1_AVG_LIFE_EDGE           = :P218_RESULT1_AVG_LIFE_EDGE,
+                        RESULT1_AVG_CONTACT_TIME        = :P218_RESULT1_AVG_CONTACT_TIME,
+                        RESULT1_CYLE_TIME_DIFFERENCE    = :P218_RESULT1_CYLE_TIME_DIFFER,
+                        RESULT1_PRODUCTIVITY_IMPROVED   = :P218_RESULT1_PRODUCTI_IMPRO,
+                        RESULT1_PERFORM_IMPROVEMENT     = :P218_RESULT1_PERFOR_IMPROV,
+                        RESULT1_COST_SAVING_AMOUNT      = :P218_RESULT1_COST_SAVE_AMOUNT,
+                        RESULT1_COST_SAVING_PERCENTAGE  = :P218_RESULT1_COST_SAVE_PERCENT,
+                        RESULT1_MATERIAL_REMOVAL_RATE   = :P218_RESULT1_MAT_REMOVAL_RATE,
+                        RESULT1_COST_COMPONENT_AMOUNT   = :P218_RESULT1_COST_COMP_AMOUNT
+                      WHERE TRIAL_ID                   = :P218_TRIAL_ID;
+                 --     :P218_TRIAL_ID                  := :P218_TRIAL_ID;
+                END IF;  
+                
+                IF :P218_PRODUCT_CLASS_NAME = 'Blades' 
+                  THEN   
+                    UPDATE XXEBA_TRIAL_DETAILS
+                    SET 
+                    RESULT_CONTACT_TIME_PER_BLADE  = :P218_RESULT_CTC_TIME_PER_BLADE,
+                    RESULT_BLADE_LIFE_IN_NOS	   = :P218_RESULT_BLADE_LIFE_IN_NOS,
+                    RESULT_PERFORMANCE_IMPROVEMENT = :P218_RESULT_BLADE_PERF_IMPR,
+                    RESULT_AVG_CONTACT_TIME        = :P218_RESULT_AVG_BLADE_CTC_TIME,
+                    RESULT_CYLE_TIME_DIFFERENCE    = :P218_RESULT_BLADE_CYC_TM_DIFF,
+                    RESULT_PRODUCTIVITY_IMPROVED   = :P218_RESULT_BLADE_PROD_IMPR,
+                    RESULT_BLADE_COSTPER_SQ_CM     = :P218_RESULT_BLADE_COST_SQ_CM,
+                    RESULT_COST_SAVING_PERCENTAGE  = :P218_RESULT_BLD_CT_SAVE_PERCE,
+                    RESULT_COST_SAVING_AMOUNT	   = :P218_RESULT_BLD_CT_SAVING_AMOU,
+                    RESULT_BLADE_LIFE_IN_CM2       = :P218_RESULT_BLADE_LIFE_IN_CM2,
+                    TRIAL_RESULT                   = :P218_TRIAL_BLADE_RESULT
+                  WHERE TRIAL_ID                   = :P218_TRIAL_ID;
+                  
+                      UPDATE XXEBA_TRIAL_DETAILS
+                    SET 
+                    RESULT1_CONTACT_TIME_PER_BLADE    = :P218_RESULT1_CTC_TIME_PER_BLD,
+                    RESULT1_BLADE_LIFE_IN_NOS	      = :P218_RESULT1_BLADE_LIFE_IN_NOS,
+                    RESULT1_PERFORM_IMPROVEMENT       = :P218_RESULT1_BLADE_PERF_IMPR,
+                    RESULT1_AVG_CONTACT_TIME          = :P218_RESULT1_AVG_BLD_CTC_TIME,
+                    RESULT1_CYLE_TIME_DIFFERENCE      = :P218_RESULT1_BLADE_CYC_TM_DIFF,
+                    RESULT1_PRODUCTIVITY_IMPROVED     = :P218_RESULT1_BLADE_PROD_IMPR,
+                    RESULT1_BLADE_COSTPER_SQ_CM       = :P218_RESULT1_BLADE_COST_SQ_CM,
+                    RESULT1_COST_SAVING_PERCENTAGE    = :P218_RESULT1_BLD_CT_SAVE_PERCE,
+                    RESULT1_COST_SAVING_AMOUNT	      = :P218_RESULT1_BLD_CT_SAVING_AMT,
+                    RESULT1_BLADE_LIFE_IN_CM2         = :P218_RESULT1_BLADE_LIFE_IN_CM2,
+                    TRIAL_RESULT                      = :P218_TRIAL_BLADE_RESULT
+                  WHERE TRIAL_ID                      = :P218_TRIAL_ID;
+                  
+                  
+                END IF;  
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Successfully results saved
+        }
+        advanced {
+            executionMappingIdentifier: 243289724642288768
+        }
+    )
+
+    process update-indirect-saving (
+        name: Update Indirect Saving
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  CURSOR ctri
+                  IS
+                    SELECT NO_OF_SHIFT_PER_DAY,
+                      NO_OF_COMPONENTS_PROD_PER_HOUR,
+                      EXIST_NO_OF_CUTTING_EDGES,
+                      EXIST_AVERAGE_LIFE_PER_EDGE,
+                      EXIST_UNIT_PRICE,
+                      RECOM_UNIT_PRICE,
+                      IDS_MACHINE_HOUR_PER_RATE,
+                      EXIST_CYCLE_TIME,
+                      RECOM_CYCLE_TIME,
+                      RESULT_AVG_LIFE_EDGE,
+                      IDS_TOOL_CHANGING_TIME,
+                      IDS_SAVE_ON_INVENT_CARRY_COST,
+                      IDS_SAVING_ON_MACHINE_HR_ANNUM,
+                      NEW_TRIAL_OR_EXISTING
+                    FROM XXEBA_TRIAL_DETAILS
+                    WHERE trial_id = :P218_TRIAL_ID ;
+                  rtri ctri%rowtype;
+                  
+                  CURSOR cresult
+                  IS
+                    SELECT SUM(NVL(RESULT_TOOL_LIFE, 0))RESULT_TOOL_LIFE
+                    FROM XXEBA_TRIAL_EDGE_RESULTS
+                    WHERE trial_id = :P218_TRIAL_ID;
+                  rresult cresult %rowtype;
+                  
+                  CURSOR cres
+                  IS
+                    SELECT RESULT_CYLE_TIME_DIFFERENCE
+                    FROM XXEBA_TRIAL_DETAILS
+                    WHERE trial_id = :P218_TRIAL_ID;
+                  rres cres%rowtype;
+                  
+                  v_monthly_consuption             NUMBER;
+                  v_INVENTCARRYCOST_EXIST          NUMBER;
+                  v_monthly_calculated             NUMBER;
+                  v_tool_life                      NUMBER;
+                  v_carry_cost_propose             NUMBER;
+                  v_save_on_invent_carry_cost      NUMBER;
+                  v_saving_on_machine_hr_annum     NUMBER;
+                  V_DS_EXIST_TOTAL_TOOL_IND_TIME   NUMBER;
+                  V_DS_RECOMMEND_TOOL_INDEX_TIME   NUMBER;
+                  V_DS_DIFF_EXIST_IND_TIME_RECOM   NUMBER;
+                  V_DS_SAVING_ON_MAC_HR_ANNUM1     NUMBER;
+                  V_DS_COMPONENTS_PRODUCED         NUMBER;
+                  V_DS_EXIST_TOOL_CHANGE_TIME      NUMBER;
+                  V_DS_RECOM_TOOL_CHANGE_TIME      NUMBER;
+                  V_DS_DIFF_EXIST_TL_RECOM_TOOL    NUMBER;
+                  V_DS_SAVE_ON_MACHINE_HR_ANNUM2   NUMBER;
+                  V_TOTAL_SAVING                   NUMBER;
+                  
+                BEGIN
+                
+                  OPEN ctri;
+                  FETCH ctri INTO rtri;
+                  CLOSE ctri;
+                  
+                  OPEN cresult;
+                  FETCH cresult INTO rresult;
+                  CLOSE cresult;
+                  
+                  OPEN cres;
+                  FETCH cres INTO rres;
+                  CLOSE cres;
+                  
+                  v_monthly_consuption := ( ( (rtri.NO_OF_SHIFT_PER_DAY * 8) * rtri.NO_OF_COMPONENTS_PROD_PER_HOUR) * 25) / (rtri.EXIST_NO_OF_CUTTING_EDGES * rtri.EXIST_AVERAGE_LIFE_PER_EDGE);
+                  -- IDS_MONTHLY_CONSUMPTION_EXIST  := v_monthly_consuption;
+                  --  IDS_INVENT_CARRYCOST_EXIST     := v_inventcarrycost_exist;
+                  v_inventcarrycost_exist := ((v_monthly_consuption * 2 ) * rtri.EXIST_UNIT_PRICE);
+                  v_tool_life             := rresult.RESULT_TOOL_LIFE;
+                  v_monthly_calculated    := ( ( (rtri.NO_OF_SHIFT_PER_DAY * 8) * rtri.NO_OF_COMPONENTS_PROD_PER_HOUR) * 25) / v_tool_life;
+                  --raise_application_error(-20001, rtri.NO_OF_SHIFT_PER_DAY||'-'||rtri.NO_OF_COMPONENTS_PROD_PER_HOUR||'- '||v_tool_life);
+                  -- IDS_MONTHLY_CONSUMPTION_CALC   := v_monthly_calculated;
+                  v_carry_cost_propose := (v_monthly_calculated * 2) * rtri.RECOM_UNIT_PRICE ;
+                  -- IDS_INVENT_CARRY_COST_PROPOSE  := v_carry_cost_propose;
+                  v_save_on_invent_carry_cost := ( (v_monthly_consuption * rtri.EXIST_UNIT_PRICE) - (v_monthly_calculated * rtri.RECOM_UNIT_PRICE) ) * 24/100;
+                  --IDS_SAVE_ON_INVENT_CARRY_COST  := v_save_on_invent_carry_cost;
+                  v_saving_on_machine_hr_annum := ((((rres.RESULT_CYLE_TIME_DIFFERENCE * rtri.NO_OF_COMPONENTS_PROD_PER_HOUR ) / 3600) * rtri.IDS_MACHINE_HOUR_PER_RATE) * (rtri.NO_OF_SHIFT_PER_DAY * 8) ) * 300;
+                  -- IDS_SAVING_ON_MACHINE_HR_ANNUM := v_saving_on_machine_hr_annum;
+                
+                IF rtri.NEW_TRIAL_OR_EXISTING = 'N' then
+                  v_monthly_consuption         := NULL;
+                  v_inventcarrycost_exist      := NULL;
+                  v_inventcarrycost_exist      := NULL;
+                  v_saving_on_machine_hr_annum := NULL;
+                END IF;
+                
+                  UPDATE XXEBA_TRIAL_DETAILS
+                  SET IDS_MONTHLY_CONSUMPTION_EXIST = ROUND(v_monthly_consuption),
+                    IDS_INVENT_CARRYCOST_EXIST      = ROUND(v_inventcarrycost_exist),
+                    IDS_MONTHLY_CONSUMPTION_CALC    = ROUND(v_monthly_calculated),
+                    IDS_INVENT_CARRY_COST_PROPOSE   = ROUND(v_carry_cost_propose),
+                    IDS_SAVE_ON_INVENT_CARRY_COST   = ROUND(v_save_on_invent_carry_cost),
+                    IDS_SAVING_ON_MACHINE_HR_ANNUM  = ROUND(v_saving_on_machine_hr_annum)
+                  WHERE trial_id                    = :P218_TRIAL_ID;
+                  
+                  V_DS_EXIST_TOTAL_TOOL_IND_TIME := ((((rtri.NO_OF_SHIFT_PER_DAY       * 8)* 3600) / rtri.EXIST_CYCLE_TIME)/ rtri.EXIST_AVERAGE_LIFE_PER_EDGE ) * 300;
+                  V_DS_RECOMMEND_TOOL_INDEX_TIME   := ((((rtri.NO_OF_SHIFT_PER_DAY       * 8)* 3600) / rtri.RECOM_CYCLE_TIME) / rtri.RESULT_AVG_LIFE_EDGE) * 300;
+                  V_DS_DIFF_EXIST_IND_TIME_RECOM := V_DS_EXIST_TOTAL_TOOL_IND_TIME   - V_DS_RECOMMEND_TOOL_INDEX_TIME;
+                --  raise_application_error(-20001, V_DS_RECOMMEND_TOOL_INDEX_TIME ||'- '||rtri.IDS_MACHINE_HOUR_PER_RATE);
+                  V_DS_SAVING_ON_MAC_HR_ANNUM1 := (V_DS_DIFF_EXIST_IND_TIME_RECOM    / 3600) * rtri.IDS_MACHINE_HOUR_PER_RATE;
+                  V_DS_COMPONENTS_PRODUCED         := V_DS_DIFF_EXIST_IND_TIME_RECOM   / rtri.RECOM_CYCLE_TIME;
+                  --raise_application_error(-20001, rtri.NO_OF_COMPONENTS_PROD_PER_HOUR ||'- '||rtri.EXIST_NO_OF_CUTTING_EDGES ||'- '||rtri.EXIST_CYCLE_TIME ||'- '||rtri.IDS_TOOL_CHANGING_TIME);
+                  V_DS_EXIST_TOOL_CHANGE_TIME      := ((7200 * rtri.NO_OF_COMPONENTS_PROD_PER_HOUR) / (rtri.EXIST_NO_OF_CUTTING_EDGES * rtri.EXIST_AVERAGE_LIFE_PER_EDGE)) * rtri.IDS_TOOL_CHANGING_TIME;
+                  V_DS_RECOM_TOOL_CHANGE_TIME      := ((7200 * rtri.NO_OF_COMPONENTS_PROD_PER_HOUR) / rresult.RESULT_TOOL_LIFE ) * rtri.IDS_TOOL_CHANGING_TIME;
+                  V_DS_DIFF_EXIST_TL_RECOM_TOOL  := V_DS_EXIST_TOOL_CHANGE_TIME        - V_DS_RECOM_TOOL_CHANGE_TIME;
+                  V_DS_SAVE_ON_MACHINE_HR_ANNUM2 := (V_DS_DIFF_EXIST_TL_RECOM_TOOL   / 3600) * rtri.IDS_MACHINE_HOUR_PER_RATE;
+                  V_TOTAL_SAVING                   := rtri.IDS_SAVE_ON_INVENT_CARRY_COST + rtri.IDS_SAVING_ON_MACHINE_HR_ANNUM + V_DS_SAVING_ON_MAC_HR_ANNUM1 + V_DS_SAVE_ON_MACHINE_HR_ANNUM2;
+                
+                IF rtri.NEW_TRIAL_OR_EXISTING = 'N' then
+                
+                 V_DS_EXIST_TOTAL_TOOL_IND_TIME := NULL;
+                 V_DS_DIFF_EXIST_IND_TIME_RECOM := NULL;
+                 V_DS_SAVING_ON_MAC_HR_ANNUM1   := NULL;
+                 V_DS_COMPONENTS_PRODUCED       := NULL;
+                 V_DS_EXIST_TOOL_CHANGE_TIME    := NULL;
+                 V_DS_DIFF_EXIST_TL_RECOM_TOOL  := NULL;
+                 V_DS_SAVE_ON_MACHINE_HR_ANNUM2 := NULL;
+                 V_TOTAL_SAVING                 := NULL;
+                 
+                END IF;
+                
+                  UPDATE XXEBA_TRIAL_DETAILS
+                  SET DS_EXIST_TOTAL_TOOL_INDEX_TIME = ROUND(V_DS_EXIST_TOTAL_TOOL_IND_TIME),
+                    DS_RECOMMEND_TOOL_INDEX_TIME     = ROUND(V_DS_RECOMMEND_TOOL_INDEX_TIME),
+                    DS_DIFF_EXIST_INDEX_TIME_RECOM   = ROUND(V_DS_DIFF_EXIST_IND_TIME_RECOM),
+                    DS_SAVING_ON_MACHINE_HR_ANNUM1   = ROUND(V_DS_SAVING_ON_MAC_HR_ANNUM1),
+                    DS_COMPONENTS_PRODUCED           = ROUND(V_DS_COMPONENTS_PRODUCED),
+                    DS_EXIST_TOOL_CHANGE_TIME        = ROUND(V_DS_EXIST_TOOL_CHANGE_TIME),
+                    DS_RECOM_TOOL_CHANGE_TIME        = ROUND(V_DS_RECOM_TOOL_CHANGE_TIME),
+                    DS_DIFF_EXIST_TOOL_RECOM_TOOL    = ROUND(V_DS_DIFF_EXIST_TL_RECOM_TOOL),
+                    DS_SAVING_ON_MACHINE_HR_ANNUM2   = ROUND(V_DS_SAVE_ON_MACHINE_HR_ANNUM2),
+                    TOTAL_SAVING                     = ROUND(V_TOTAL_SAVING)
+                  WHERE trial_id                     = :P218_TRIAL_ID;
+                  
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 307881744250932746
+        }
+    )
+
+)
+

@@ -1,0 +1,33 @@
+reportLayout SALES_REPORT_897790464409733110 (
+    name: Sales_report
+    type: xslGeneric
+    templates {
+        pageFile: SALES-REPORT-897790464409733110.xsl
+        columnHeading:
+            ```
+                                       <fo:table-cell xsl:use-attribute-sets="cell header-color border">
+                                           <fo:block xsl:use-attribute-sets="text #TEXT_ALIGN#">
+                                               <fo:inline xsl:use-attribute-sets="header-font">#COLUMN_HEADING#</fo:inline>
+                                           </fo:block>
+                                       </fo:table-cell>
+            
+            ```
+        column:
+            ```
+                                          <fo:table-cell xsl:use-attribute-sets="cell border">
+                                              <fo:block xsl:use-attribute-sets="text #TEXT_ALIGN#">
+                                                  <fo:inline xsl:use-attribute-sets="body-font">
+                                                      <xsl:value-of select=".//#COLUMN_HEADER_NAME#"/>
+                                                  </fo:inline>
+                                              </fo:block>
+                                          </fo:table-cell>
+            
+            ```
+        columnWidth:
+            ```
+                                 <fo:table-column column-width="#COLUMN_WIDTH#pt"/>
+            
+            ```
+    }
+)
+

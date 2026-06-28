@@ -1,0 +1,290 @@
+page 530 (
+    name: Trials Conducted
+    title: Trials Conducted
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region trials-conducted (
+        name: Trials Conducted
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region trials-conducted-2 (
+        name: Trials Conducted
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    d.CUSTOMER_ID,
+                    (select  REP_FIRST_NAME  ||' '||REP_LAST_NAME  from EBA_SALES_SALESREPS
+                where id = d.SALESREP_ID_01 ) SALESREP_ID_01,
+                    d.DEAL_NAME,
+                    t.component_name,
+                    t.part_number,
+                    t.material_type,
+                    (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_PROCESS_TYPE' and LIST_ID = t.PROCESS_TYPE)PROCESS_TYPE,
+                    (select LIST_VALUE from XXEBA_LIST_VALUES where LIST_CODE = 'TRIAL_INPUT_CONDITION' and LIST_ID = t.INPUT_CONDITION)INPUT_CONDITION,
+                    decode(t.TRIAL_RESULT, 'F', 'Fail', 'P', 'Pass')TRIAL_RESULT
+                
+                FROM
+                    xxeba_trial_details   t,
+                    eba_sales_deals       d
+                WHERE
+                    t.deal_id = d.id
+                    AND to_char(t.created_date, 'YYYY') = to_char(sysdate, 'YYYY')
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 688749557431889294
+        }
+
+        column COMPONENT_NAME (
+            type: plainText
+            heading {
+                heading: Component Name
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Customer Name
+            }
+            lov {
+                lov: @customers
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column DEAL_NAME (
+            type: plainText
+            heading {
+                heading: Deal Name
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column INPUT_CONDITION (
+            type: plainText
+            heading {
+                heading: Input Condition
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column MATERIAL_TYPE (
+            type: plainText
+            heading {
+                heading: Material Type
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PART_NUMBER (
+            type: plainText
+            heading {
+                heading: Part Number
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column PROCESS_TYPE (
+            type: plainText
+            heading {
+                heading: Process Type
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column SALESREP_ID_01 (
+            type: plainText
+            heading {
+                heading: "Sales Rep "
+            }
+            layout {
+                sequence: 19
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column TRIAL_RESULT (
+            type: plainText
+            heading {
+                heading: Trial Result
+                alignment: center
+            }
+            layout {
+                sequence: 9
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 6887536 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn COMPONENT_NAME (
+                sequence: 3
+            )
+
+            displayColumn CUSTOMER_ID (
+                sequence: 1
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 2
+            )
+
+            displayColumn INPUT_CONDITION (
+                sequence: 7
+            )
+
+            displayColumn MATERIAL_TYPE (
+                sequence: 5
+            )
+
+            displayColumn PART_NUMBER (
+                sequence: 4
+            )
+
+            displayColumn PROCESS_TYPE (
+                sequence: 6
+            )
+
+            displayColumn TRIAL_RESULT (
+                sequence: 8
+            )
+
+        )
+
+    )
+
+)
+

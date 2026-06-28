@@ -1,0 +1,134 @@
+app VENTURICRM2501 (
+    name: VENTURICRM
+    version: "  "
+    logo {
+        type: custom
+        customHtml:
+            ```
+            <img src="#APP_IMAGES#Fouraai_Logo.png" style = "margin-right: 25px; margin-top:23px;">
+            <img src="#APP_IMAGES#new-size.png" style = "margin-top:23px;">
+            ```
+    }
+    navigation {
+        homeUrl: {
+            page: 100
+        }
+    }
+    navigationMenu {
+        listTemplate: @top-navigation-menu
+        templateOptions: [
+            #DEFAULT#
+            js-tabLike
+            js-showSubMenuIcons
+        ]
+        listPosition: top
+        list: @application-menu
+    }
+    navigationBar {
+        list: @navigation-bar
+        listTemplate: @navigation-bar
+    }
+    userInterface {
+        currentTheme: @universal-theme-2
+        globalPage: 0
+    }
+    appFormatMasks {
+        date: DD-Mon-YYYY
+        dateTime: DD-Mon-YYYY HH:MI PM
+        timestamp: DD-Mon-RRRR HH:MI PM
+    }
+    javaScript {
+        fileUrls: #APP_IMAGES#xxfs_common_js.js
+        includeLegacyJavascript: 18
+        includeJqueryMigrate: true
+    }
+    css {
+        fileUrls: [
+            #IMAGE_PREFIX#pkgapp_ui/css/5.0#MIN#.css
+            #APP_IMAGES#notification.css
+            #APP_FILES#4I_REDWOOD_COMMON.CSS
+        ]
+    }
+    authentication {
+        scheme: @custom-authentication
+        publicUser: APEX_PUBLIC_USER
+    }
+    authorization {
+        sourceForRoleOrGroupSchemes: authenticationScheme
+    }
+    security {
+        embedInFrames: allowSameOrigin
+        referrerPolicy: strictOriginWhenCrossOrigin
+        runtimeApiUsage: modifyThisApp
+    }
+    sessionStateProtection {
+        allowUrlsCreatedAfter: 2015-01-02T07:17:03
+        bookmarkHashFunction: sha1
+        checksumSalt: 5BCC77279D9609B433F5B565C984041B033408BC7963CB6DFCCAF42FF445EF74
+        acceptPre202UrlChecksums: false
+    }
+    sessionManagement {
+        sessionStateCommits: immediate
+        maxSessionLength: 28800
+    }
+    globalization {
+        primaryLanguage: en-us
+        documentDirection: leftToRight
+        autoCsvEncoding: false
+    }
+    progressiveWebApp {
+        installable: true
+        display: fullscreen
+    }
+    rowSearch {
+        tokenize: false
+    }
+    reportPrinting {
+        type: useInstanceSettings
+    }
+    runtime {
+        allowFeedback: true
+        compatibilityMode: 21.2
+        accessibleReadOnlyItems: false
+    }
+    advanced {
+        passEcid: false
+        modernizeApp: true
+        faviconHtml: <link rel="shortcut icon" href="#APP_IMAGES#favicon.png"><link rel="icon" sizes="16x16" href="#APP_IMAGES#favicon.png"><link rel="icon" sizes="32x32" href="##APP_IMAGES#favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="#APP_IMAGES#favicon.png">
+    }
+    comments {
+        comments:
+            ```
+            0.9.25 -> 0.9.26: Fixed code in eba_sales_acl_api.apex_error_handling() procedure to allow the correct error message to be displayed when a page item's "Restricted characters" security setting has been violated.
+            0.9.26 -> 0.9.27: Implemented redesigned administrative ACL controls
+            0.9.27 -> 0.9.28: Added Usage Metrics region plugin to pages 80 (Opportunity), 94 (Account) and 133 (Lead)
+            0.9.28 -> 1.1.26: Updated version level to match APEX metadata
+            ```
+    }
+
+    substitution APP_DATE_FORMAT (
+        value {
+            staticValue: DD-Mon-YYYY
+        }
+    )
+
+    substitution GETTING_STARTED_URL (
+        value {
+            staticValue: http://4iapps.com/Fouraai/
+        }
+    )
+
+    substitution APP_NAME (
+        value {
+            staticValue: FOURA'AI CRM
+        }
+    )
+
+    substitution APP_DATE_TIME_FMT (
+        value {
+            staticValue: DD-Mon-YYYY HH:MI PM
+        }
+    )
+
+)
+

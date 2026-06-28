@@ -1,0 +1,845 @@
+page 172 (
+    name: Product Details
+    title: Product Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region product-details (
+        name: Product Details
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P172_ANNUAL_PUR_POTENTIAL_AMT (
+        type: textField
+        label {
+            label: Annual Purchase Potential (Rs.)
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @product-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: 999999999
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ANNUAL_PUR_POTENTIAL_AMT
+            used: always
+        }
+    )
+
+    pageItem P172_BRAND_ID (
+        type: selectList
+        label {
+            label: Brand Name
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select B.BRAND_NAME as d,B.BRAND_ID as r from XXEBA_SALES_PRODUCT_BRANDS B,EBA_SALES_PRODUCTS  P
+                where B.BRAND_ID =P.BRAND_ID and P.ID= :P172_PRODUCT_ID
+                order by 1
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        cascadingLov {
+            parentItems: P172_PRODUCT_ID
+            itemsToSubmit: P172_PRODUCT_ID
+        }
+        layout {
+            sequence: 60
+            region: @product-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw220
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: BRAND_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_CREATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_CREATION_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 160
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATION_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_HSN_CODE (
+        type: textField
+        label {
+            label: HSN Code
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @product-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 42
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HSN_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_MONTHLY_VOLUME (
+        type: numberField
+        label {
+            label: Monthly Volume
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @product-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 20
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MONTHLY_VOLUME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_ORDER_FREQUENCY (
+        type: textField
+        label {
+            label: Order Frequency
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @product-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 36
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ORDER_FREQUENCY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_PART_NUMBER (
+        type: textField
+        label {
+            label: Customer Part#
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @product-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PART_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_PRODDUCT_GROUP_ID (
+        type: selectList
+        label {
+            label: Product Group
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select g.product_family as d,
+                      g. id as r
+                  from eba_sales_product_families g,EBA_SALES_PRODUCTS p
+                where g.id=p.PRODUCT_FAMILY_ID and  p.id=:P172_PRODUCT_ID
+                 order by 1
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        cascadingLov {
+            parentItems: P172_PRODUCT_ID
+            itemsToSubmit: P172_PRODUCT_ID
+        }
+        layout {
+            sequence: 50
+            region: @product-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw210
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_GROUP_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_PRODUCT_ID (
+        type: plugin/select2
+        label {
+            label: Product
+            alignment: left
+        }
+        settings {
+            width: 100%
+            lazyLoading: attributeValue
+            lazyAppendRowCount: 15
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select p.PRODUCT_NAME||' ['||p.CATALOGUE_NO||']'  display_value, p.ID return_value 
+                from eba_sales_PRODUCTS p, eba_sales_verifications  v
+                where p.ID =v.PRODUCT_ID and p.STATUS='Y'
+                order by 1
+                
+                
+                ```
+        }
+        layout {
+            sequence: 40
+            region: @product-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @product-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 36
+            height: 3
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REMARKS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_UNIT_OF_MEASURES (
+        type: selectList
+        label {
+            label: Unit Of Measures
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @product-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UNIT_OF_MEASURES
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_UPDATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 170
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P172_UPDATE_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 180
+            region: @product-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATE_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P172_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P172_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P172_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p172-creation-date-must-be-timestamp (
+        name: P172_CREATION_DATE must be timestamp
+        execution {
+            sequence: 120
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P172_CREATION_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P172_CREATION_DATE
+        }
+    )
+
+    validation p172-update-date-must-be-timestamp (
+        name: P172_UPDATE_DATE must be timestamp
+        execution {
+            sequence: 140
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P172_UPDATE_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P172_UPDATE_DATE
+        }
+    )
+
+    validation product-duplicate-create (
+        name: product_duplicate_create
+        execution {
+            sequence: 150
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  lv_acc_count NUMBER;
+                BEGIN
+                  SELECT COUNT(*) 
+                  INTO lv_acc_count
+                  FROM XXEBA_SALES_ACC_PRODUCTS
+                  WHERE Customer_ID = :P172_CUSTOMER_ID
+                  AND product_id    = :P172_PRODUCT_ID;
+                  IF lv_acc_count   > 0 THEN
+                    RETURN 'Sorry! This Product already exists.';
+                  END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation product-duplicate-update (
+        name: product_duplicate_update
+        execution {
+            sequence: 160
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  lv_acc_count NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO lv_acc_count
+                  FROM XXEBA_SALES_ACC_PRODUCTS
+                  WHERE Customer_ID = :P172_CUSTOMER_ID
+                  AND product_id    = :P172_PRODUCT_ID
+                  AND ID!=:P172_ID;
+                  IF lv_acc_count   > 0 THEN
+                    RETURN 'Sorry! This Product already exists.';
+                  END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 70935196988183562
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-acc-products (
+        name: Fetch Row from XXEBA_SALES_ACC_PRODUCTS
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_ACC_PRODUCTS
+            pkColumn: ID
+            pkItem: P172_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 70934037792183561
+        }
+    )
+
+    process process-row-of-xxeba-sales-acc-products (
+        name: Process Row of XXEBA_SALES_ACC_PRODUCTS
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_ACC_PRODUCTS
+            pkColumn: ID
+            pkItem: P172_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 70934395187183561
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 70934783376183561
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    branch (
+        name: goto 94
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 94
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

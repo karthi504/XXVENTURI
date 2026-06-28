@@ -1,0 +1,1217 @@
+customAttribute attribute_01 (
+    apexlangName: validationOnSubmit
+    attribute: 1
+    name: Validation on Submit
+    scope: app
+    type: yesNo
+    appearance {
+        sequence: 10
+    }
+    default {
+        value: true
+    }
+)
+
+customAttribute attribute_01 (
+    apexlangName: datePickerType
+    attribute: 1
+    name: Date Picker Type
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 10
+    }
+    default {
+        value: 1
+    }
+    help {
+        helpText: Date Picker Type Selection.
+    }
+
+    entry dateRangePicker (
+        sequence: 20
+        display: Date Range Picker
+        return: 2
+        help {
+            helpText:
+                ```
+                <p>
+                Starting and ending date will be stored within separate APEX items. Attribute <b>Date to item</b> must be specified. Given APEX item will store ending date.
+                </p>
+                <b>Date to item</b> will get its ending range value from  Date Picker item
+                ```
+        }
+    )
+
+    entry dateTimeSplit (
+        sequence: 110
+        display: Date Time Split
+        return: 11
+        help {
+            helpText:
+                ```
+                Date and Time will be will be stored within separate APEX items. The Date will be stored in the Date Picker Item and  Attribute <b>Date to item</b> item will store Time.
+                <p><b>Date to item</b> will get its time value from Date Picker item</p>
+                <p>Date Time Separator will be used to separate date and Time. if not provided space will be used as the default separator.</p>
+                ```
+        }
+    )
+
+    entry monthsRangePicker (
+        sequence: 50
+        display: Months Range Picker
+        return: 5
+        help {
+            helpText:
+                ```
+                Months are displayed to be selected. 
+                <p>
+                Starting and ending months will be stored within separate APEX items. Attribute <b>Date to item</b> must be specified. Given APEX item will store ending month.
+                </p>
+                <p>Month Range Picker works well with the following settings:
+                	<ul>
+                	<li>Options => Auto close unchecked</li>
+                	<li>Format Mask is set to <code><b>MM-YYYY</b></code></li>
+                	</ul>
+                </p>
+                ```
+        }
+    )
+
+    entry multipleDatesPicker (
+        sequence: 30
+        display: Multiple Dates Picker
+        return: 3
+        help {
+            helpText:
+                ```
+                <p>Multiple Dates can be selected and stored in the Date Picker Item.</p>
+                <p>Multiple Dates Separator will be used to separate date. If not provided comma will be used as separator.</p>
+                <p>Multiple Dates works well with the following settings:
+                	<ul><li>Toggle Selected checked</li>
+                	<li>Auto Close unchecked</li>
+                </ul></p>
+                ```
+        }
+    )
+
+    entry multipleMonthsPicker (
+        sequence: 60
+        display: Multiple Months Picker
+        return: 6
+        help {
+            helpText:
+                ```
+                Months are displayed to be selected.
+                <p>Multiple months  can be selected and stored in the Date Picker Item.</p>
+                <p>Multiple Date Separator will be used to separate months. If not provided comma will be used as a separator.</p>
+                <p>Multiple Months Picker works well with the following settings:
+                <ul>	
+                		<li>Toggle Selected checked </li>
+                		<li>Auto close unchecked.</li>
+                		<li>Format Mask is set to <code><b>MM-YYYY</b></code></li>
+                		</ul>
+                </p>
+                ```
+        }
+    )
+
+    entry multipleYearsPicker (
+        sequence: 90
+        display: Multiple Years Picker
+        return: 9
+        help {
+            helpText:
+                ```
+                Years are displayed to be selected. 
+                <p>Multiple year can be selected and stored in the Date Picker Item.</p>
+                <p>Multiple Date Separator will be used to separate years. if not provided comma will be used as a separator.</p>
+                <p>Multiple Years Picker works well with the following settings:
+                	<ul>
+                			<li>Toggle Selected checked</li>
+                			<li>Options => Auto close Checked</li>
+                			<li>Format Mask is set to <code><b>YYYY</b></code></li>
+                	</ul>
+                </p>
+                ```
+        }
+    )
+
+    entry singleDatePicker (
+        sequence: 10
+        display: Single Date Picker
+        return: 1
+        help {
+            helpText: Date Picker with only one date to select.
+        }
+    )
+
+    entry singleMonthPicker (
+        sequence: 40
+        display: Single Month Picker
+        return: 4
+        help {
+            helpText:
+                ```
+                <p>Months are displayed to be selected. Only a Single Month can be selected in this Picker.</p>
+                <p>Month Picker works well with the following settings:
+                	<ul>
+                	<li>Options => Auto close Checked</li>
+                	<li>Format Mask is set to <code><b>MM-YYYY</b></code></li>
+                	</ul>
+                </p>
+                ```
+        }
+    )
+
+    entry singleYearPicker (
+        sequence: 70
+        display: Single Year Picker
+        return: 7
+        help {
+            helpText:
+                ```
+                Years are displayed to be selected. Only a single year can be selected in this Picker.
+                <p>Year Picker works well with the following settings:
+                	<ul>
+                			<li>Options => Auto close Checked</li>
+                			<li>Format Mask is set to <code><b>YYYY</b></code></li>
+                			</ul>
+                </p>
+                ```
+        }
+    )
+
+    entry timePickerOnly (
+        sequence: 100
+        display: Time Picker Only
+        return: 10
+        help {
+            helpText: Only Time Picker is displayed.
+        }
+    )
+
+    entry yearRangePicker (
+        sequence: 80
+        display: Year Range Picker
+        return: 8
+        help {
+            helpText:
+                ```
+                Years are displayed to be selected. 
+                <p>
+                Starting and ending years will be stored within separate APEX items. Attribute <b>Date to item</b> must be specified. Given APEX item will store ending year.
+                </p>
+                
+                
+                <p>Year Range Picker works well with the following settings:
+                	<ul>
+                			<li>Options => Auto close Checked</li>
+                			<li>Format Mask is set to <code><b>YYYY</b></code></li>
+                	</ul>
+                </p>
+                ```
+        }
+    )
+
+)
+
+customAttribute attribute_02 (
+    apexlangName: validationDisplayPosition
+    attribute: 2
+    name: Validation Display Position
+    scope: app
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 20
+    }
+    default {
+        value: FN
+    }
+    dependingOn {
+        attribute: @attribute_01/app
+        conditionType: =
+        value: Y
+    }
+
+    entry inlineInNotification (
+        sequence: 30
+        display: Inline in Notification
+        return: N
+    )
+
+    entry inlineWithField (
+        sequence: 20
+        display: Inline with Field
+        return: F
+    )
+
+    entry inlineWithFieldAndInNotification (
+        sequence: 10
+        display: Inline with Field and in Notification
+        return: FN
+    )
+
+    entry onErrorPage (
+        sequence: 40
+        display: On Error Page
+        return: E
+    )
+
+)
+
+customAttribute attribute_02 (
+    apexlangName: toDateTimeItem
+    attribute: 2
+    name: To Date(Time) Item
+    type: pageItem
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 20
+    }
+    dependingOn {
+        attribute: @attribute_01/component
+        conditionType: inList
+        list: [
+            2
+            5
+            8
+            11
+        ]
+    }
+)
+
+customAttribute attribute_03 (
+    apexlangName: language
+    attribute: 3
+    name: Language
+    scope: app
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 8
+    }
+    default {
+        value: en
+    }
+
+    entry chinese (
+        sequence: 10
+        display: Chinese
+        return: zh
+    )
+
+    entry czech (
+        sequence: 20
+        display: Czech
+        return: cs
+    )
+
+    entry danish (
+        sequence: 30
+        display: Danish
+        return: da
+    )
+
+    entry deutschGerman (
+        sequence: 40
+        display: Deutsch(German)
+        return: de
+    )
+
+    entry dutch (
+        sequence: 50
+        display: Dutch
+        return: nl
+    )
+
+    entry english (
+        sequence: 60
+        display: English
+        return: en
+    )
+
+    entry finnish (
+        sequence: 70
+        display: Finnish
+        return: fi
+    )
+
+    entry french (
+        sequence: 80
+        display: French
+        return: fr
+    )
+
+    entry hungarian (
+        sequence: 90
+        display: Hungarian
+        return: hu
+    )
+
+    entry polish (
+        sequence: 100
+        display: Polish
+        return: pl
+    )
+
+    entry portuguese (
+        sequence: 110
+        display: Portuguese
+        return: pt
+    )
+
+    entry portugueseBrazil (
+        sequence: 120
+        display: Portuguese (Brazil)
+        return: pt-BR
+    )
+
+    entry romanian (
+        sequence: 130
+        display: Romanian
+        return: ro
+    )
+
+    entry russian (
+        sequence: 140
+        display: Russian
+        return: ru
+    )
+
+    entry slovak (
+        sequence: 150
+        display: Slovak
+        return: sk
+    )
+
+    entry spanish (
+        sequence: 160
+        display: Spanish
+        return: es
+    )
+
+)
+
+customAttribute attribute_03 (
+    apexlangName: firstDayOfWeek
+    attribute: 3
+    name: First Day of Week
+    type: selectList
+    appearance {
+        sequence: 38
+    }
+    default {
+        value: 0
+    }
+    help {
+        helpText:
+            ```
+            Determine which day the week will be started from. 
+            <p>By default Sunday is considered as first day of the week.</p>
+            ```
+    }
+
+    entry friday (
+        sequence: 60
+        display: Friday
+        return: 5
+    )
+
+    entry monday (
+        sequence: 20
+        display: Monday
+        return: 1
+    )
+
+    entry saturday (
+        sequence: 70
+        display: Saturday
+        return: 6
+    )
+
+    entry sunday (
+        sequence: 10
+        display: Sunday
+        return: 0
+    )
+
+    entry thursday (
+        sequence: 50
+        display: Thursday
+        return: 4
+    )
+
+    entry tuesday (
+        sequence: 30
+        display: Tuesday
+        return: 2
+    )
+
+    entry wednesday (
+        sequence: 40
+        display: Wednesday
+        return: 3
+    )
+
+)
+
+customAttribute attribute_04 (
+    apexlangName: navigationIcons
+    attribute: 4
+    name: Navigation Icons
+    scope: app
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 40
+    }
+    default {
+        value: def
+    }
+    help {
+        helpText: <span class="fa fa-chevron-circle-left fa-2x"></span>
+    }
+
+    entry angle (
+        sequence: 12
+        display: Angle
+        return: fa-angle
+    )
+
+    entry angleDouble (
+        sequence: 14
+        display: Angle Double
+        return: fa-angle-double
+    )
+
+    entry arrow (
+        sequence: 20
+        display: Arrow
+        return: fa-arrow
+    )
+
+    entry arrowCircle (
+        sequence: 30
+        display: Arrow Circle
+        return: fa-arrow-circle
+    )
+
+    entry arrowCircleO (
+        sequence: 40
+        display: Arrow Circle O
+        return: fa-arrow-circle-o
+    )
+
+    entry caret (
+        sequence: 42
+        display: Caret
+        return: fa-caret
+    )
+
+    entry caretSquareO (
+        sequence: 44
+        display: Caret  Square O
+        return: fa-caret-square-o
+    )
+
+    entry chevron (
+        sequence: 50
+        display: Chevron
+        return: fa-chevron
+    )
+
+    entry chevronCircle (
+        sequence: 60
+        display: Chevron Circle
+        return: fa-chevron-circle
+    )
+
+    entry dedentIndent (
+        sequence: 70
+        display: Dedent/Indent
+        return: dent
+    )
+
+    entry default (
+        sequence: 10
+        display: Default
+        return: def
+    )
+
+    entry handO (
+        sequence: 80
+        display: Hand O
+        return: fa-hand-o
+    )
+
+    entry longArrow (
+        sequence: 110
+        display: Long Arrow
+        return: fa-long-arrow
+    )
+
+    entry toggle (
+        sequence: 140
+        display: Toggle
+        return: fa-toggle
+    )
+
+)
+
+customAttribute attribute_04 (
+    apexlangName: weekends
+    attribute: 4
+    name: Weekends
+    type: checkboxes
+    appearance {
+        sequence: 40
+    }
+    default {
+        value: 6:0
+    }
+    help {
+        helpText:
+            ```
+            List of day's which will be considered as weekends. Class -weekend- will be added to relevant cells. 
+            <p>By default its Saturday and Sunday.</p>
+            ```
+    }
+
+    entry friday (
+        sequence: 70
+        display: Friday
+        return: 5
+    )
+
+    entry monday (
+        sequence: 30
+        display: Monday
+        return: 1
+    )
+
+    entry saturday (
+        sequence: 10
+        display: Saturday
+        return: 6
+    )
+
+    entry sunday (
+        sequence: 20
+        display: Sunday
+        return: 0
+    )
+
+    entry thursday (
+        sequence: 60
+        display: Thursday
+        return: 4
+    )
+
+    entry tuesday (
+        sequence: 40
+        display: Tuesday
+        return: 2
+    )
+
+    entry wednesday (
+        sequence: 50
+        display: Wednesday
+        return: 3
+    )
+
+)
+
+customAttribute attribute_05 (
+    apexlangName: navigationIconSize
+    attribute: 5
+    name: Navigation Icon Size
+    scope: app
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 50
+    }
+    default {
+        value: fa-2x
+    }
+    dependingOn {
+        attribute: @attribute_04/app
+        conditionType: notInList
+        list: def
+    }
+
+    entry 1x (
+        sequence: 10
+        display: 1x
+        return: fa-1x
+    )
+
+    entry 2x (
+        sequence: 20
+        display: 2x
+        return: fa-2x
+    )
+
+    entry 3x (
+        sequence: 30
+        display: 3x
+        return: fa-3x
+    )
+
+    entry 4x (
+        sequence: 40
+        display: 4x
+        return: fa-4x
+    )
+
+)
+
+customAttribute attribute_05 (
+    apexlangName: minimumDate
+    attribute: 5
+    name: Minimum Date
+    appearance {
+        sequence: 50
+    }
+    help {
+        helpText:
+            ```
+            The minimum date for date picker. All dates, running before it can't be selected.
+            <p>
+            	Minimum and Maximum date usually works well with the following settings:
+            	<ul>
+            		 <li>Disable Navigation When Out Of Range Option. So the user also can't navigate to dates with Minimum and Maximum dates set.</li>
+            	</ul>
+            </p>
+            <p>The date value can be an absolute value in <code>"DD/MM/YYYY"</code> or <code>"DD/MM/RRRR"</code>date format mask or can be dynamic base on an item substituition value. </p>
+            ```
+    }
+    examples {
+        examples:
+            ```
+            <ul>
+            	<li>02/19/2017 </li>
+            	<li>Item Based . To set the minimum date to the start of the month, P1_MIN_DATE hidden Item is created and its value is set by the following <b>After Header PL/SQL Expression computation</b>:
+            		 <code>to_char(trunc(sysdate, 'MM'), 'MM/DD/YYYY')</code></li>
+            </ul>
+            *Remember to use the date 'MM/DD/YYYY' OR 'MM/DD/RRRR' format Mask 
+            In the Minimum Date attribute refer the Item as :
+            <code>&P1_MIN_DATE.</code>
+            ```
+    }
+)
+
+customAttribute attribute_06 (
+    apexlangName: maximumDate
+    attribute: 6
+    name: Maximum Date
+    appearance {
+        sequence: 60
+    }
+    help {
+        helpText:
+            ```
+            The maximum date for date picker. All dates, running after it can't be selected.
+            <p>
+            	Minimum and Maximum date usually works well with the following settings:
+            	<ul>
+            		 <li>Disable Navigation When Out Of Range Option. So the user also can't navigate to dates with Minimum and Maximum dates set.</li>
+            	</ul>
+            </p>
+            <p>The date value can be an absolute value in <code>"DD/MM/YYYY"</code> or <code>"DD/MM/RRRR"</code>date format mask or can be dynamic base on an item substituition value. </p>
+            ```
+    }
+    examples {
+        examples:
+            ```
+            <ul>
+            	<li>02/19/2017 </li>
+            	<li>Item Based . To set the maximum date to the end of the month, P1_MAX_DATE hidden Item is created and its value is set by the following <b>After Header PL/SQL Expression computation</b>:
+            		 <code>to_char(last_day(sysdate), 'MM/DD/YYYY')</code></li>
+            </ul>
+            *Remember to use the date 'MM/DD/YYYY' OR 'MM/DD/RRRR' format Mask 
+            In the Maximum Date attribute refer the Item as :
+            <code>&P1_MAX_DATE.</code>
+            ```
+    }
+)
+
+customAttribute attribute_07 (
+    apexlangName: hoursMinutesMinMax
+    attribute: 7
+    name: Hours:Minutes Min Max
+    validation {
+        required: true
+        maxLength: 15
+    }
+    appearance {
+        sequence: 31
+    }
+    builder {
+        unit: Comma Separated
+    }
+    default {
+        value: 00:00,23:59
+    }
+    dependingOn {
+        attribute: @attribute_11/component
+        conditionType: =
+        value: Y
+    }
+    help {
+        helpText:
+            ```
+            Minimum and Maximum hours value, must be between 00 and 23. You will not be able to choose value higher than this. 
+            <p>Minimum and Maximum Minutes value, must be between 00 and 59. You will not be able to choose value higher than this. </p>
+            
+            <p>
+            	The expression is a comma separated value between set of Minimum(Hour:Minute) and set of Maximum(Hour:Minute) as 
+            	 <code>Hour:Minute,Hour:Minute</code>
+            </p>
+            *<b>Do not leave any part.</b>
+            ```
+    }
+    examples {
+        examples:
+            ```
+            <ul>
+            	<li>Time from start of the day to 9:30 am then enter as following: 00:00,9:30 </li>
+            	<li>Restricting Time From 10:30 am to 6:45 pm is as following: 10:30,18:45</li>
+            </ul>
+            ```
+    }
+)
+
+customAttribute attribute_08 (
+    apexlangName: show
+    attribute: 8
+    name: Show
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 80
+    }
+    default {
+        value: clickicon
+    }
+    help {
+        helpText: Select when the date picker pop-up calendar displays.
+    }
+
+    entry inline (
+        sequence: 60
+        display: Inline
+        return: inline
+        help {
+            helpText: The date time picker will be always visible, inline with the item.
+        }
+    )
+
+    entry onFocus (
+        sequence: 40
+        display: On focus
+        return: focus
+        help {
+            helpText: The date time picker pop-up displays as soon as the item receives focus.
+        }
+    )
+
+    entry onIconClick (
+        sequence: 20
+        display: On icon click
+        return: icon
+        help {
+            helpText: The date time picker pop-up displays when the icon is clicked.
+        }
+    )
+
+    entry onItemAndIconClick (
+        sequence: 30
+        display: On item and icon click
+        return: clickicon
+        help {
+            helpText: The date time picker pop-up displays when the item or icon is clicked.
+        }
+    )
+
+    entry onItemClick (
+        sequence: 10
+        display: On item click
+        return: click
+        help {
+            helpText: The date time picker pop-up displays when the item  is clicked.
+        }
+    )
+
+    entry onMouseEnter (
+        sequence: 50
+        display: On mouse enter
+        return: mouseenter
+        help {
+            helpText: The date time picker pop-up displays when mouse hovers over the item.
+        }
+    )
+
+)
+
+customAttribute attribute_09 (
+    apexlangName: multipleDatesSeparator
+    attribute: 9
+    name: Multiple Dates Separator
+    appearance {
+        sequence: 22
+    }
+    default {
+        value: ,
+    }
+    dependingOn {
+        attribute: @attribute_01/component
+        conditionType: inList
+        list: [
+            3
+            6
+            9
+        ]
+    }
+    help {
+        helpText:
+            ```
+            Multiple Dates separator is used when concatenating dates to string in the following Date Picker types:
+            <ul>
+            	<li>Multiple Dates Picker</li>
+            	<li>Multiple Months Picker</li>
+            	<li>Multiple Years Picker</li>
+            </ul>
+            ```
+    }
+)
+
+customAttribute attribute_10 (
+    apexlangName: dateTimeSeparator
+    attribute: 10
+    name: Date Time Separator
+    validation {
+        maxLength: 3
+    }
+    appearance {
+        sequence: 29
+    }
+    dependingOn {
+        attribute: @attribute_11/component
+        conditionType: =
+        value: Y
+    }
+    examples {
+        examples: Separator between date and time
+    }
+)
+
+customAttribute attribute_11 (
+    apexlangName: timePicker
+    attribute: 11
+    name: Time Picker
+    type: yesNo
+    appearance {
+        sequence: 28
+    }
+    help {
+        helpText: When Yes is selected , time picker widget will be added to Date Picker.
+    }
+)
+
+customAttribute attribute_12 (
+    apexlangName: position
+    attribute: 12
+    name: Position
+    type: selectList
+    appearance {
+        sequence: 120
+    }
+    default {
+        value: Bottom Left
+    }
+    help {
+        helpText:
+            ```
+            Position of date picker relative to text input. 
+            <p>
+             <ul>
+             	
+             	 <li>First value is name of main axis, and </li>
+             	 <li>second value is whether the Date Picker is rendered as 
+             	   <ul>
+             	   	 	    <li>Left(Leftwards)</li>
+             	   	 	    <li>Right(Rightwards)</li>
+             	   	 	    <li>Up(Upwards)</li>
+             	   	 	    <li>Bottom(Downwards)</li>
+             	   	</ul>
+             	 </li>
+             </ul>
+            </p>
+            ```
+    }
+    examples {
+        examples: Right Top will set date picker's position from right side upwards of text input.
+    }
+
+    entry bottomLeft (
+        sequence: 10
+        display: Bottom Left
+        return: Bottom Left
+    )
+
+    entry bottomRight (
+        sequence: 20
+        display: Bottom Right
+        return: Bottom Right
+    )
+
+    entry leftBottom (
+        sequence: 80
+        display: Left Bottom
+        return: Left Top
+    )
+
+    entry leftTop (
+        sequence: 70
+        display: Left Top
+        return: Left Bottom
+    )
+
+    entry rightBottom (
+        sequence: 30
+        display: Right Bottom
+        return: Right Top
+    )
+
+    entry rightTop (
+        sequence: 40
+        display: Right Top
+        return: Right Bottom
+    )
+
+    entry topLeft (
+        sequence: 50
+        display: Top Left
+        return: Top Left
+    )
+
+    entry topRight (
+        sequence: 60
+        display: Top Right
+        return: Top Right
+    )
+
+)
+
+customAttribute attribute_13 (
+    apexlangName: datepickerTitle
+    attribute: 13
+    name: DatePicker Title
+    type: html
+    appearance {
+        sequence: 130
+    }
+    help {
+        helpText:
+            ```
+            Content of datepicker's title depending on current view. 
+            <p>There are three views in the Date Picker </p>
+            <ul>
+            	<li>Days view i.e when selecting days, </li>
+            	<li>Months view i.e when selecting months and </li>
+            	<li>Years view i.e when selecting years. </li>
+            </ul>
+            
+            *Missing fields will be taken from default values. 
+            
+            <p>This setting can contain simple text, HTML with Styling and relevant, specific format mask. check out examples</p> 
+            <b>*Never Hard Break i.e keyboard return in code.</b>
+            ```
+    }
+    examples {
+        examples:
+            ```
+            For days view: 
+            <pre>"days":"<span style='color:red;background-color:yellow;font-size:2em'>Check In:MM, yyyy</span>" </pre>
+            
+            For months view: 
+            
+            <pre>"months":"<span style='color:red;background-color:yellow;font-size:2em'>Year:yyyy</span>" </pre>
+            
+            For years view: 
+            
+            <pre>"years":"<span style='color:red;background-color:yellow;font-size:2em'>Decade:yyyy1 - yyyy2</span>" </pre>
+            
+            All can be combined with comma as following
+            <pre>"days":"<span style='color:red;background-color:yellow;font-size:2em'>Check In:MM, yyyy</span>","months":"<span style='color:white;background-color:green;font-size:2em'>Year:yyyy</span>","years":"<span style='color:yellow;background-color:green;font-size:2em'>Decade:yyyy1 - yyyy2</span>"</pre>
+            ```
+    }
+)
+
+customAttribute attribute_14 (
+    apexlangName: options
+    attribute: 14
+    name: Options:
+    type: checkboxes
+    appearance {
+        sequence: 140
+    }
+    default {
+        value: 3:4:5:6:7:8:9:10:11
+    }
+
+    entry autoClose (
+        sequence: 20
+        display: Auto Close
+        return: 2
+        help {
+            helpText: If checked, date picker will close after date selection.
+        }
+    )
+
+    entry clearButton (
+        sequence: 50
+        display: Clear Button
+        return: 5
+        help {
+            helpText: If checked, "Clear" button  will be visible.
+        }
+    )
+
+    entry disableNavigationWhenOutOfRange (
+        sequence: 120
+        display: Disable Navigation When Out Of Range
+        return: 12
+        help {
+            helpText: If checked, for dates less than minimum possible or more then maximum possible, navigation buttons ('forward', 'back') will be deactivated.
+        }
+    )
+
+    entry keyboardNavigation (
+        sequence: 30
+        display: Keyboard Navigation
+        return: 3
+        help {
+            helpText:
+                ```
+                If checked, then one can navigate through calendar by keyboard.
+                <p>
+                	Hot keys:</p>
+                <pre>
+                    <code>Ctrl + → | ↑</code>- move one month forwards
+                    <code>Ctrl + ← | ↓</code>- move one month backwards
+                    <code>Shift + → | ↑</code>- move one year forwards
+                    <code>Shift + ← | ↓</code>- move one year backwards
+                    <code>Alt + → | ↑</code>- move 10 years forwards
+                    <code>Alt + ← | ↓</code>- move 10 years backwards
+                    <code>Ctrl + Shift + ↑</code>- move to next view
+                    <code>Esc</code>- hides date picker
+                </pre>
+                ```
+        }
+    )
+
+    entry notEditiable (
+        sequence: 130
+        display: Not Editiable
+        return: 13
+        help {
+            helpText: If checked, will make the Date Item(s) Read Only.
+        }
+    )
+
+    entry selectDaysFromOtherMonthsDaysView (
+        sequence: 70
+        display: "Select Days from Other Months[Days' View]"
+        return: 7
+        help {
+            helpText: If checked, the user can select days form other months.
+        }
+    )
+
+    entry selectOtherYearsYearsView (
+        sequence: 100
+        display: "Select Other Years[Years' View]	"
+        return: 10
+        help {
+            helpText: If checked, user can select years from other decades
+        }
+    )
+
+    entry showDaysFromOtherMonthsDaysView (
+        sequence: 60
+        display: "Show Days from Other Months[Days' View]"
+        return: 6
+        help {
+            helpText: If checked, days from other months will be visible.
+        }
+    )
+
+    entry showOtherYearsYearsView (
+        sequence: 90
+        display: "Show other Years[Years' View]"
+        return: 9
+        help {
+            helpText: If checked, years from other decades will be visible.
+        }
+    )
+
+    entry todayButton (
+        sequence: 40
+        display: Today Button
+        return: 4
+        help {
+            helpText: If checked,  "Today"  button will be visible.
+        }
+    )
+
+    entry toggleSelected (
+        sequence: 10
+        display: Toggle Selected
+        return: 1
+        help {
+            helpText:
+                ```
+                If checked, then clicking on selected cell will remove it from selection and its value from the item.
+                <p> Do not use with Range Type Date Pickers.As the user wouldn't be able to select same date as From and To date. If the user wants to clear the date use the Clear Button.</p>
+                ```
+        }
+    )
+
+    entry transitionToSelectedMonthDaysView (
+        sequence: 80
+        display: "Transition to Selected Month[Days' View]"
+        return: 8
+        help {
+            helpText: If checked, selecting days from other month, will move to that month.
+        }
+    )
+
+    entry transitionToSelectedYearYearsView (
+        sequence: 110
+        display: "Transition to Selected Year[Years' View]"
+        return: 11
+        help {
+            helpText: If checked, selecting year from other decade, will move to that decade.
+        }
+    )
+
+)
+

@@ -1,0 +1,54 @@
+.t-Header-branding {
+    background-color: #555555;
+  }
+
+//.t-Region-header {
+ //   background-color: //#555555;
+    //color: white;
+//}
+
+.tbody {
+font-size: 11px;
+color: black;
+font-family: 'Inter';
+}
+
+.a-IRR-controlsLabel {
+font-size: 11px;
+color: black;
+font-family: 'Inter';
+}
+
+.a-IRR-reportSummary {
+font-size: 11px;
+color: black;
+font-family: 'Inter';
+}
+
+.a-IRR-header {
+    font-size: 14px;
+    font-weight: bold;
+color: black;
+font-family: 'Inter';
+}
+
+.a-Menu-statusCol{
+display:none !important;
+}
+
+.a-Menu-label, .a-Menu-label:hover{
+padding: 5px 0px !important;
+font-size:13px !important;
+font-family: 'Inter';
+}
+.a-Menu-labelContainer{
+margin-left: calc(var(--a-menu-icon-spacing-x, 2px) * 2);
+margin-right: 0px !important;
+}
+
+.a-Menu-inner{
+min-height:0px !important;
+}
+.u-warning-text {
+    color: #ffff00;
+}

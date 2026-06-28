@@ -1,0 +1,44 @@
+classicReportTemplate xx-carousel-row (
+    name: XX Carousel Row
+    templateClass: custom1
+    type: namedColumn
+    reportTemplate {
+        top: " "
+        bottom: " "
+    }
+    rowTemplate1 {
+        template:
+            ```html
+            <div id="SR_#ID#">
+                <div id="content-#ID#">
+                    <!-- Start custom content-->
+                    <table>
+                        <tr>
+                            <td>#IMAGE# </td>
+                            <td>
+                                <h5><font color="#368ae4">
+            #EMPLOYEENAME#</font> <br>#DEPARTMENT#
+            <br><font color="orange">#STAR#</font><br>
+            </h5>
+                                <span> #WORK# #YEARS# #CONTENT#
+            <h6>
+            #GREETING#
+            </h6><br>
+            <h6>
+            #QUOTE#
+            </h6>
+            </span>
+                            </td>
+                        </tr>
+                    </table>
+            
+                    <!-- End custom content -->
+                </div>
+            </div>
+            ```
+    }
+    advanced {
+        identifier: XX_CAROUSEL_DYNAMIC_REPORT
+    }
+)
+

@@ -1,0 +1,274 @@
+page 188 (
+    name: Product Stock
+    title: Product Stock
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region product-stock (
+        name: Product Stock
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                S.PRODUCT_CODE as PRODUCT_ID,
+                P.PRODUCT_NAME,
+                P.PRODUCT_CODE AS ORDERING_CODE,
+                P.PRODUCT_BRAND,
+                S.QTY_IN_STOCK,
+                S.UPDATED_DATE,
+                S.STATUS,
+                S.STOCK_IN_UOM,
+                S.BATCH_DATE
+                from XXEBA_TALLY_STOCK_T S,
+                     CRM_PRODUCTS_V P
+                where S.PRODUCT_CODE = P.PRODUCT_ID
+                 and S.BATCH_SEQUENCE = (select max(BATCH_SEQUENCE) from XXEBA_TALLY_STOCK_T)
+                --   and S.QTY_IN_STOCK != 0
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 480543386190070319
+        }
+
+        column BATCH_DATE (
+            type: plainText
+            heading {
+                heading: Batch Date
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column ORDERING_CODE (
+            type: plainText
+            heading {
+                heading: Ordering Code
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PRODUCT_BRAND (
+            type: plainText
+            heading {
+                heading: Brand
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column PRODUCT_ID (
+            type: plainText
+            heading {
+                heading: Product ID
+                alignment: center
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column PRODUCT_NAME (
+            type: plainText
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column QTY_IN_STOCK (
+            type: plainText
+            heading {
+                heading: Qty in Stock
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column STOCK_IN_UOM (
+            type: plainText
+            heading {
+                heading: UoM
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column UPDATED_DATE (
+            type: plainText
+            heading {
+                heading: Sync Date & Time
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 4805474 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ORDERING_CODE (
+                sequence: 2
+            )
+
+            displayColumn PRODUCT_BRAND (
+                sequence: 3
+            )
+
+            displayColumn PRODUCT_NAME (
+                sequence: 1
+            )
+
+            displayColumn QTY_IN_STOCK (
+                sequence: 4
+            )
+
+            displayColumn STOCK_IN_UOM (
+                sequence: 5
+            )
+
+            displayColumn UPDATED_DATE (
+                sequence: 6
+            )
+
+            sort (
+                column: PRODUCT_NAME
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: ORDERING_CODE
+                sort {
+                    sequence: 2
+                }
+            )
+
+        )
+
+    )
+
+)
+

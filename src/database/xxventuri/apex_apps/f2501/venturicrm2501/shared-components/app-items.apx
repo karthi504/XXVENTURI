@@ -1,0 +1,118 @@
+appItem AMT_HDR (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem APPLICATION_TITLE (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem APPOINTMENT (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem APP_NOTIFICATION (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem APP_PHOTO (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem APP_USERNAME (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem BREADCRUMB_DISPLAY (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem COMPETITION (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem CONTACTS (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem CUSTOMERS (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem DEALS (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem LAST_PAGE (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem LAST_VIEW (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem LEADS (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem OPPORTUNITY_ID (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+
+appItem PRODUCTS (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem REP_TITLE (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem TERRITORIES (
+    security {
+        escapeSpecialChars: false
+    }
+)
+
+appItem USER_ID (
+    security {
+        sessionStateProtection: unrestricted
+        escapeSpecialChars: false
+    }
+)
+

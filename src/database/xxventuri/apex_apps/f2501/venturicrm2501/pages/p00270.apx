@@ -1,0 +1,215 @@
+page 270 (
+    name: Update Theme
+    title: Update Theme
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region update-theme (
+        name: Update Theme
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P270_APPLY_THEME (
+        type: selectList
+        label {
+            label: Apply Theme
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    s.name             d,
+                    s.theme_style_id   r
+                FROM
+                    apex_application_theme_styles   s,
+                    apex_application_themes         t
+                WHERE
+                    s.application_id = t.application_id
+                    AND s.theme_number = t.theme_number
+                    AND s.application_id = :app_id
+                    AND t.ui_type_name = 'DESKTOP'
+                    AND t.is_current = 'Yes'
+                ORDER BY
+                    1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @update-theme
+            slot: regionBody
+            alignment: left
+            columnSpan: 8
+            labelColumnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button apply-theme (
+        buttonName: APPLY_THEME
+        label: Apply Theme
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process apply-theme (
+        name: Apply Theme
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                    for c1 in (SELECT
+                                    theme_number
+                                FROM
+                                    apex_application_themes
+                                WHERE
+                                    application_id = :app_id
+                                    AND ui_type_name = 'DESKTOP'
+                                    AND is_current = 'Yes'
+                               )
+                    loop        
+                     apex_theme.set_user_style (
+                                                 p_application_id => :APP_ID,
+                                                 p_user           => :APP_USER,
+                                                 p_theme_number   => 42,
+                                                 p_id             => :P270_APPLY_THEME
+                                              ); 
+                    end loop;
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Theme has been updated successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 188708036644923562
+        }
+        serverSideCondition {
+            whenButtonPressed: @apply-theme
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 100
+                action: resetPagination
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @apply-theme
+        }
+    )
+
+)
+

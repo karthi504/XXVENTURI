@@ -1,0 +1,1026 @@
+page 192 (
+    name: Product Details
+    alias: PRODUCT-DETAILS
+    title: Product Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 600
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT 
+                    ROWNUM row_num,
+                    APEX_ITEM.HIDDEN(1,seq_id,NULL,'pr01_'||seq_id) seq_id,
+                    APEX_ITEM.HIDDEN(2,n001,NULL,'pr02_'||seq_id) ORDER_PRODUCTS_ID,
+                    APEX_ITEM.HIDDEN(3,n002,NULL,'pr03_'||seq_id) ORDER_ID,
+                    (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                		THEN APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="color:red;border:none;background-color:snow;" disabled  ','pr04_'||seq_id) 
+                        ELSE
+                        APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="border:none;background-color:snow;" disabled ','pr04_'||seq_id) 
+                        END) PRODUCT_NAME,
+                    --APEX_ITEM.TEXT(4,c001,50,50,'class="p-text-label" disabled ','pr04_'||seq_id) PRODUCT_NAME,
+                     (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                		THEN APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" style="color:red" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')" ','pr05_'||seq_id) 
+                        ELSE
+                        APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')" ','pr05_'||seq_id)
+                        END) PRODUCT_PRICE,
+                     (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                		THEN APEX_ITEM.TEXT(6,c002,10,50,'class="p-text-label" style="color:red" disabled ','pr06_'||seq_id)
+                        ELSE
+                         APEX_ITEM.TEXT(6,c002,10,50,'class="p-text-label" disabled ','pr06_'||seq_id) 
+                        END) CURRENCY_TYPE,
+                    APEX_ITEM.HIDDEN(7,n004,NULL,'pr07_'||seq_id) BRAND_ID,
+                    --APEX_ITEM.DATE_POPUP2(8,TO_DATE(c004, 'DD/MM/YYYY'),'DD-Mon-YYYY',10,12,' class="p-date-label" onchange="change_Delivery('||seq_id||')"','pr08_'||seq_id) Delivery_date,
+                     (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                		THEN APEX_ITEM.DATE_POPUP2(8,TO_DATE(c004, 'DD/MM/YYYY'),'DD-Mon-YYYY',10,12,' class="p-date-label" style="color:red" onchange="change_Delivery('||seq_id||')"','pr08_'||seq_id) 
+                        ELSE
+                        APEX_ITEM.DATE_POPUP2(8,TO_DATE(c004, 'DD/MM/YYYY'),'DD-Mon-YYYY',10,12,' class="p-date-label" onchange="change_Delivery('||seq_id||')"','pr08_'||seq_id)
+                        END) Delivery_date,
+                    --APEX_ITEM.TEXT(9,c003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')" ','pr09_'||seq_id) Quantity,
+                     (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                    THEN APEX_ITEM.TEXT(9,c003,10,50,'class="p-number-label" style="color:red" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')" ','pr09_'||seq_id) 
+                        ELSE
+                    APEX_ITEM.TEXT(9,c003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')" ','pr09_'||seq_id) 
+                        END) Quantity,
+                       APEX_ITEM.HIDDEN(10,n005,NULL,'pr10_'||seq_id) PRODUCTS_ID,
+                    '<span class="delete_order" onclick="delete_order('||seq_id||')"><i class="fa fa-trash" aria-hidden="true"></i><span>' delete_order,
+                   /* (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                    THEN APEX_ITEM.TEXT(11,c006,20,50,'class="p-number-label" style="border:none;color:red" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"','pr11_'||seq_id) 
+                        ELSE
+                    APEX_ITEM.TEXT(11,c006,20,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"','pr11_'||seq_id) 
+                        END) Product_Cost,*/
+                        (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005 ) 
+                    THEN APEX_ITEM.TEXT(11,c006,20,50,'class="p-number-label" style="border:none;color:red" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"','pr11_'||seq_id) 
+                        ELSE
+                     --APEX_ITEM.HIDDEN(11,c006,NULL,'pr11_'||seq_id) 
+                   APEX_ITEM.TEXT(11,c006,20,50,'class="p-number-label" style="display:none" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')"','pr11_'||seq_id) 
+                        END) Product_Cost,
+                           (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                    THEN APEX_ITEM.TEXT(12,c007,10,50,'class=p-text-label" style="color:red;border:none;background-color:snow;" disabled ','pr12_'||seq_id) 
+                        ELSE
+                    APEX_ITEM.TEXT(12,c007,10,50,'class=p-text-label" style="border:none;background-color:snow;" disabled ','pr12_'||seq_id) 
+                        END) Product_Stock
+                   
+                FROM apex_collections
+                WHERE collection_name = 'PRODUCT_COLLECTION';
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column BRAND_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Brand Id
+            }
+            layout {
+                sequence: 80
+            }
+        )
+
+        column CURRENCY_TYPE (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Currency Type
+            }
+            layout {
+                sequence: 70
+            }
+        )
+
+        column DELETE_ORDER (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Delete Order
+            }
+            layout {
+                sequence: 120
+            }
+        )
+
+        column DELIVERY_DATE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Delivery Date
+            }
+            layout {
+                sequence: 90
+            }
+        )
+
+        column ORDER_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Order Id
+            }
+            layout {
+                sequence: 50
+            }
+        )
+
+        column ORDER_PRODUCTS_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Order Products Id
+            }
+            layout {
+                sequence: 40
+            }
+        )
+
+        column PRODUCTS_ID (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Products Id
+            }
+            layout {
+                sequence: 110
+            }
+        )
+
+        column PRODUCT_COST (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Product Cost
+            }
+            layout {
+                sequence: 130
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column PRODUCT_PRICE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Product Price
+            }
+            layout {
+                sequence: 60
+            }
+        )
+
+        column PRODUCT_STOCK (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Product Stock
+            }
+            layout {
+                sequence: 140
+            }
+        )
+
+        column QUANTITY (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Quantity
+            }
+            layout {
+                sequence: 100
+            }
+        )
+
+        column ROW_NUM (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Row Num
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+        )
+
+        column SEQ_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Seq Id
+            }
+            layout {
+                sequence: 30
+            }
+        )
+
+    )
+
+    region products (
+        name: Products
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT *
+                FROM (
+                    SELECT
+                        customer_name,
+                        order_value,
+                        product_id,
+                        product_name,
+                        ROW_NUMBER() OVER (ORDER BY order_value DESC) AS rn
+                    FROM (
+                        SELECT
+                            sc.customer_name,
+                            SUM(quantity * product_price) AS order_value,
+                            op.product_id,
+                            op.product_name
+                        FROM
+                            xxeba_sales_order so,
+                            xxeba_order_products op,
+                            eba_sales_customers sc
+                        WHERE
+                            so.order_id = op.order_id
+                            AND so.customer_id = sc.id
+                            AND so.status != 'X'
+                            AND (order_date BETWEEN TRUNC(SYSDATE, 'month') AND LAST_DAY(SYSDATE))
+                            AND (
+                                (so.sales_rep = NVL(:p100_top_5_sales_orders, :user_id)
+                                 AND NOT EXISTS (
+                                    SELECT 'Y'
+                                    FROM
+                                        eba_sales_salesreps sr,
+                                        eba_sales_salesrep_roles r
+                                    WHERE
+                                        sr.rep_role = r.id
+                                        AND UPPER(r.role_name) IN ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                                        AND UPPER(sr.user_name) = :app_user
+                                ))
+                                OR (
+                                    (so.sales_rep = NVL(:p100_top_5_sales_orders, :user_id) OR :p100_top_5_sales_orders IS NULL)
+                                    AND so.created_by IN (
+                                        SELECT UPPER(user_name)
+                                        FROM eba_sales_salesreps r
+                                        START WITH r.id = :user_id
+                                        CONNECT BY PRIOR r.id = r.rep_manager_id
+                                    )
+                                    AND EXISTS (
+                                        SELECT 'Y'
+                                        FROM
+                                            eba_sales_salesreps sr,
+                                            eba_sales_salesrep_roles r
+                                        WHERE
+                                            sr.rep_role = r.id
+                                            AND UPPER(r.role_name) = 'TEAM LEADER - SALES'
+                                            AND UPPER(sr.user_name) = :app_user
+                                    )
+                                )
+                                OR (
+                                    (so.sales_rep = NVL(:p100_top_5_sales_orders, :user_id) OR :p100_top_5_sales_orders IS NULL)
+                                    AND EXISTS (
+                                        SELECT 'Y'
+                                        FROM
+                                            eba_sales_salesreps sr,
+                                            eba_sales_salesrep_roles r
+                                        WHERE
+                                            sr.rep_role = r.id
+                                            AND UPPER(r.role_name) = 'ADMINISTRATOR'
+                                            AND UPPER(sr.user_name) = :app_user
+                                    )
+                                )
+                            )
+                        GROUP BY
+                            sc.customer_name,
+                            op.product_id,
+                            op.product_name
+                    )
+                )
+                WHERE rn <= 10
+                ORDER BY order_value DESC;
+                
+                ```
+        }
+        layout {
+            sequence: 1250
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column CUSTOMER_NAME (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 10
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ORDER_VALUE (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Order Value
+                alignment: end
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column PRODUCT_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Product Id
+                alignment: end
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column PRODUCT_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 40
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column RN (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Rn
+                alignment: end
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+    )
+
+    region products-2 (
+        name: Products
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    customer_name,
+                    product_id,
+                    product_name,
+                    product_price,
+                    quantity,
+                    Total_Price
+                FROM (
+                    SELECT
+                        sc.customer_name,
+                        product_id,
+                        op.product_name,
+                        op.product_price,
+                        op.quantity,
+                        op.quantity * op.product_price AS Total_Price,
+                        ROW_NUMBER() OVER (PARTITION BY sc.customer_name ORDER BY op.quantity * op.product_price DESC) AS rn
+                    FROM
+                        xxeba_sales_order so
+                        JOIN xxeba_order_products op ON so.order_id = op.order_id
+                        JOIN eba_sales_customers sc ON so.customer_id = sc.id
+                    WHERE
+                        so.status != 'X'
+                        AND so.order_date BETWEEN TRUNC(SYSDATE, 'month') AND LAST_DAY(SYSDATE)
+                        AND sc.customer_name = :P192_CUSTOMER_NAME
+                )
+                WHERE rn <= 10
+                ORDER BY Total_Price DESC;
+                
+                ```
+            pageItemsToSubmit: P192_CUSTOMER_NAME
+        }
+        layout {
+            sequence: 1230
+            slot: contentBody
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-Form--stretchInputs
+            ]
+        }
+        advanced {
+            htmlDomId: order_product
+        }
+        comments {
+            comments:
+                ```
+                SELECT 
+                    ROWNUM row_num,
+                    APEX_ITEM.HIDDEN(1,seq_id,NULL,'pr01_'||seq_id) seq_id,
+                    APEX_ITEM.HIDDEN(2,n001,NULL,'pr02_'||seq_id) ORDER_PRODUCTS_ID,
+                    APEX_ITEM.HIDDEN(3,n002,NULL,'pr03_'||seq_id) ORDER_ID,
+                    (CASE WHEN n003 < (SELECT NVL(P.PRODUCT_COST+(P.PRODUCT_COST*(PF.MARGIN_PERCENTAGE/100)),0) Minimum_Price
+                        FROM EBA_SALES_PRODUCT_FAMILIES PF, EBA_SALES_PRODUCTS P
+                        WHERE P.PRODUCT_FAMILY_ID = PF.ID
+                        AND P.ID =n005) 
+                		THEN APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="color:red;border:none;background-color:snow;" disabled  ','pr04_'||seq_id) 
+                        ELSE
+                        APEX_ITEM.TEXT(4,c001,50,50,'class=p-text-label" style="border:none;background-color:snow;" disabled ','pr04_'||seq_id) 
+                        END) PRODUCT_NAME,
+                    --APEX_ITEM.TEXT(4,c001,50,50,'class="p-text-label" disabled ','pr04_'||seq_id) PRODUCT_NAME,
+                    APEX_ITEM.TEXT(5,n003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_price('||seq_id||')" ','pr05_'||seq_id) PRODUCT_PRICE,
+                    APEX_ITEM.TEXT(6,c002,5,50,'class="p-text-label" disabled ','pr06_'||seq_id) CURRENCY_TYPE,
+                    APEX_ITEM.HIDDEN(7,n004,NULL,'pr07_'||seq_id) BRAND_ID,
+                    APEX_ITEM.DATE_POPUP2(8,TO_DATE(c004, 'DD/MM/YYYY'),'DD-Mon-YYYY',10,12,' class="p-date-label" onchange="change_Delivery('||seq_id||')"','pr08_'||seq_id) Delivery_date,
+                    APEX_ITEM.TEXT(9,c003,10,50,'class="p-number-label" onkeypress="return isNumber(event)" onchange="change_Quantity('||seq_id||')" ','pr09_'||seq_id) Quantity,
+                    APEX_ITEM.HIDDEN(10,n005,NULL,'pr10_'||seq_id) PRODUCTS_ID,
+                    '<span class="delete_order" onclick="delete_order('||seq_id||')"><i class="fa fa-trash" aria-hidden="true"></i><span>' delete_order
+                FROM apex_collections
+                WHERE collection_name = 'PRODUCT_COLLECTION'
+                ```
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        searchBar {
+            includeSearchBar: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 83090630478471724
+        }
+
+        column CUSTOMER_NAME (
+            type: hidden
+            heading {
+                heading: Customer Name
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column PRODUCT_ID (
+            type: hidden
+            heading {
+                heading: Product Id
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column PRODUCT_NAME (
+            type: plainText
+            heading {
+                heading: Product Name
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column PRODUCT_PRICE (
+            type: plainText
+            heading {
+                heading: Product Price
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: 99G99G99G99G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column QUANTITY (
+            type: plainText
+            heading {
+                heading: Quantity
+                alignment: end
+            }
+            layout {
+                sequence: 40
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column TOTAL_PRICE (
+            type: plainText
+            heading {
+                heading: Total Price
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 99G99G99G99G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        savedReport 3264636 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 1
+            )
+
+            displayColumn PRODUCT_ID (
+                sequence: 6
+            )
+
+            displayColumn PRODUCT_NAME (
+                sequence: 2
+            )
+
+            displayColumn PRODUCT_PRICE (
+                sequence: 3
+            )
+
+            displayColumn QUANTITY (
+                sequence: 4
+            )
+
+            displayColumn TOTAL_PRICE (
+                sequence: 5
+            )
+
+            aggregate (
+                column: TOTAL_PRICE
+            )
+
+        )
+
+    )
+
+    pageItem P192_BRAND_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_CURRENCY_TYPE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_CUSTOMER_NAME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 1260
+            slot: contentBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: SELECT PRODUCT_price FROM EBA_SALES_PRODUCTS WHERE PRODUCT_NAME =:P192_PRODUCT_NAME
+        }
+    )
+
+    pageItem P192_DELETED_IDS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_DELIVERY_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_NEW_1 (
+        type: hidden
+        layout {
+            sequence: 1270
+            slot: contentBody
+        }
+    )
+
+    pageItem P192_ORDER_ID_HID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_ORDER_PRODUCTS_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_PRODUCT_COST (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_PRODUCT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_PRODUCT_NAME (
+        type: hidden
+        layout {
+            sequence: 1230
+            slot: contentBody
+        }
+    )
+
+    pageItem P192_PRODUCT_NAME_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_PRODUCT_PRICE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_QUANTITY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_SEQ_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P192_STOCK (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @products-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button add (
+        buttonName: ADD
+        label: Add
+        layout {
+            sequence: 90
+            region: @products-2
+            slot: EDIT
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+                t-Button--simple
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 108
+                items: {
+                    P108_SOURCE_PAGE: 103
+                    P108_ACCOUNT_ID: &P192_CUSTOMER_ID.
+                    P108_DEAL_ID: &P192_OPP_ID.
+                    P108_ORDER_ID: &P192_ORDER_ID.
+                }
+                clearCache: 108
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: item=value
+            item: P192_REPEAT_ORDER_FLAG
+            value: R
+        }
+    )
+
+    dynamicAction price (
+        name: Price
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P192_PRODUCT_NAME
+        }
+
+        action price (
+            name: PRICE
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: SELECT PRODUCT_price FROM EBA_SALES_PRODUCTS WHERE PRODUCT_NAME =:P192_PRODUCT_NAME
+                itemsToSubmit: P192_PRODUCT_NAME
+            }
+            affectedElements {
+                selectionType: items
+                items: P192_NEW
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+)
+

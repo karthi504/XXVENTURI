@@ -1,0 +1,777 @@
+page 1005 (
+    name: Test Page
+    title: Test Page
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region new (
+        name: New
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                SO.ORDER_ID, 
+                SO.ORDER_NUMBER,
+                SO.DEAL_ID,
+                SD.DEAL_NAME,
+                SO.CUSTOMER_ID,
+                SC.CUSTOMER_NAME,
+                SO.TERRITORY_ID,
+                SO.SALES_REP,
+                SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME REP_NAME,
+                SO.ORDER_DATE,
+                SO.PO_NUMBER,
+                SO.PO_DATE,
+                SO.REFERENCE,
+                (select CUSTOMER_LOCATION_NAME from  EBA_SALES_CUSTOMER_LOCATIONS  where ID=SO.BILLING_LOCATION) CUSTOMER_BILLING_LOCATION,
+                SO.BILLING_LOCATION,
+                CL.CUSTOMER_LOCATION_NAME BILLING,
+                SO.DELIVERY_LOCATION,
+                CL2.CUSTOMER_LOCATION_NAME DELIVERY,
+                SO.ORDER_FREQUENCY,
+                SO.NEXT_ORDER_DATE,
+                SO.STATUS,
+                --SO.CREATED
+                 to_char(SO.CREATED at time zone 'Asia/Calcutta', 'DD-Mon-YYYY HH:MI PM') as CREATED,
+                 order_value,
+                DELIVERY_DATE,
+                (
+                  CASE
+                    WHEN EXPORT_FLAG IN ('Y', 'P')
+                    THEN 'Imported'
+                    ELSE 'New'
+                  END ) new_imported_flag   /* Thamaraiselvan Added on 18-Oct-18 */
+                from XXEBA_SALES_ORDER SO,
+                	EBA_SALES_DEALS SD,
+                	EBA_SALES_CUSTOMERS SC,
+                	EBA_SALES_SALESREPS SR,
+                	EBA_SALES_CUSTOMER_LOCATIONS CL,
+                	EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                    (select
+                    ORDER_ID,
+                    sum(order_value) order_value,
+                    min(DELIVERY_DATE) DELIVERY_DATE  from
+                    (
+                    select
+                    ORDER_ID,
+                    QUANTITY,
+                    PRODUCT_PRICE,
+                    (QUANTITY * PRODUCT_PRICE)order_value,
+                    DELIVERY_DATE
+                    from
+                    XXEBA_ORDER_PRODUCTS
+                    )
+                    group by ORDER_ID)value
+                    
+                where SO.DEAL_ID = SD.ID  
+                 -- and SO.CUSTOMER_ID = SC.ID(+)
+                     and SO.CUSTOMER_ID = SC.ID
+                 -- and SO.SALES_REP = SR.ID(+)
+                  and SO.SALES_REP = SR.ID
+                  and SO.DELIVERY_LOCATION = CL.ID(+)
+                  and SO.BILLING_LOCATION = CL2.ID (+)
+                  and SO.ORDER_ID = value.ORDER_ID(+)
+                  --and  SO.ORDER_ID in (258025938247708660953807395260991478068,257600572274182157933873410108072901762)
+                 
+                 and  :USER_ID in(
+                (SELECT CASE WHEN(SELECT ROUND(((SELECT sum(PRODUCT_PRICE) FROM XXEBA_ORDER_PRODUCTS WHERE ORDER_ID =SO.ORDER_ID)/(SELECT  sum(PRODUCT_PRICE) FROM EBA_SALES_PRODUCTS WHERE ID IN(SELECT  PRODUCT_ID FROM XXEBA_ORDER_PRODUCTS WHERE ORDER_ID =SO.ORDER_ID)) * 100),2) FROM DUAL) >= 10 THEN
+                (SELECT  REP_MANAGER_ID FROM EBA_SALES_SALESREPS WHERE ID in(SELECT  SALES_REP FROM XXEBA_SALES_ORDER WHERE ORDER_ID =SO.ORDER_ID))
+                ELSE
+                (SELECT  ID FROM EBA_SALES_SALESREPS WHERE ID =258025938247708660953807395260991478068)
+                END FROM DUAL))
+                  
+                 and SO.STATUS IN ('N')
+                order by  SO.ORDER_ID;
+                  
+                
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 750581602034043202
+        }
+
+        column BILLING (
+            type: plainText
+            heading {
+                heading: Billing
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column BILLING_LOCATION (
+            type: plainText
+            heading {
+                heading: Billing Location
+                alignment: center
+            }
+            layout {
+                sequence: 150
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+                alignment: center
+            }
+            layout {
+                sequence: 220
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column CUSTOMER_BILLING_LOCATION (
+            type: plainText
+            heading {
+                heading: Customer Billing Location
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainText
+            heading {
+                heading: Customer Id
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer Name
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column DEAL_ID (
+            type: plainText
+            heading {
+                heading: Deal Id
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column DEAL_NAME (
+            type: plainText
+            heading {
+                heading: Deal Name
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column DELIVERY (
+            type: plainText
+            heading {
+                heading: Delivery
+                alignment: center
+            }
+            layout {
+                sequence: 180
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column DELIVERY_DATE (
+            type: plainText
+            heading {
+                heading: Delivery Date
+                alignment: center
+            }
+            layout {
+                sequence: 240
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column DELIVERY_LOCATION (
+            type: plainText
+            heading {
+                heading: Delivery Location
+                alignment: center
+            }
+            layout {
+                sequence: 170
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column NEW_IMPORTED_FLAG (
+            type: plainText
+            heading {
+                heading: New Imported Flag
+                alignment: center
+            }
+            layout {
+                sequence: 250
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column NEXT_ORDER_DATE (
+            type: plainText
+            heading {
+                heading: Next Order Date
+                alignment: center
+            }
+            layout {
+                sequence: 200
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column ORDER_DATE (
+            type: plainText
+            heading {
+                heading: Order Date
+                alignment: center
+            }
+            layout {
+                sequence: 100
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column ORDER_FREQUENCY (
+            type: plainText
+            heading {
+                heading: Order Frequency
+                alignment: center
+            }
+            layout {
+                sequence: 190
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column ORDER_ID (
+            type: plainText
+            heading {
+                heading: Order Id
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column ORDER_NUMBER (
+            type: plainText
+            heading {
+                heading: Order Number
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column ORDER_VALUE (
+            type: plainText
+            heading {
+                heading: Order Value
+                alignment: center
+            }
+            layout {
+                sequence: 230
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column PO_DATE (
+            type: plainText
+            heading {
+                heading: Po Date
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column PO_NUMBER (
+            type: plainText
+            heading {
+                heading: Po Number
+                alignment: center
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column REFERENCE (
+            type: plainText
+            heading {
+                heading: Reference
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column REP_NAME (
+            type: plainText
+            heading {
+                heading: Rep Name
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column SALES_REP (
+            type: plainText
+            heading {
+                heading: Sales Rep
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+                alignment: center
+            }
+            layout {
+                sequence: 210
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column TERRITORY_ID (
+            type: plainText
+            heading {
+                heading: Territory Id
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 7505947 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn BILLING (
+                sequence: 16
+            )
+
+            displayColumn BILLING_LOCATION (
+                sequence: 15
+            )
+
+            displayColumn CREATED (
+                sequence: 22
+            )
+
+            displayColumn CUSTOMER_BILLING_LOCATION (
+                sequence: 14
+            )
+
+            displayColumn CUSTOMER_ID (
+                sequence: 5
+            )
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 6
+            )
+
+            displayColumn DEAL_ID (
+                sequence: 3
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 4
+            )
+
+            displayColumn DELIVERY (
+                sequence: 18
+            )
+
+            displayColumn DELIVERY_DATE (
+                sequence: 24
+            )
+
+            displayColumn DELIVERY_LOCATION (
+                sequence: 17
+            )
+
+            displayColumn NEW_IMPORTED_FLAG (
+                sequence: 25
+            )
+
+            displayColumn NEXT_ORDER_DATE (
+                sequence: 20
+            )
+
+            displayColumn ORDER_DATE (
+                sequence: 10
+            )
+
+            displayColumn ORDER_FREQUENCY (
+                sequence: 19
+            )
+
+            displayColumn ORDER_ID (
+                sequence: 1
+            )
+
+            displayColumn ORDER_NUMBER (
+                sequence: 2
+            )
+
+            displayColumn ORDER_VALUE (
+                sequence: 23
+            )
+
+            displayColumn PO_DATE (
+                sequence: 12
+            )
+
+            displayColumn PO_NUMBER (
+                sequence: 11
+            )
+
+            displayColumn REFERENCE (
+                sequence: 13
+            )
+
+            displayColumn REP_NAME (
+                sequence: 9
+            )
+
+            displayColumn SALES_REP (
+                sequence: 8
+            )
+
+            displayColumn STATUS (
+                sequence: 21
+            )
+
+            displayColumn TERRITORY_ID (
+                sequence: 7
+            )
+
+        )
+
+    )
+
+    pageItem P1005_MAIL_SUBJECT (
+        type: selectList
+        label {
+            label: Mail Subject
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Quotation for Special Tools;Quotation for Special Tools,Quotation for Lubricants;Quotation for Lubricants,Others;Others
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 10
+            region: @new
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P1005_OTHERS (
+        type: textField
+        label {
+            label: Others
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @new
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction show-hide-others (
+        name: Show/hide/Others
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P1005_MAIL_SUBJECT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P1005_MAIL_SUBJECT
+            value: Others
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P1005_OTHERS
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P1005_OTHERS
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+)
+

@@ -1,0 +1,1003 @@
+page 230 (
+    name: "Repeat Orders "
+    title: "Repeat Orders "
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region repeat-order (
+        name: Repeat Order
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region repeat-orders (
+        name: Repeat Orders
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noUI
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                SO.ORDER_ID,
+                SO.ORDER_NUMBER,
+                SO.DEAL_ID,
+                SD.DEAL_NAME,
+                SO.CUSTOMER_ID,
+                SC.CUSTOMER_NAME,
+                SO.TERRITORY_ID,
+                SO.SALES_REP,
+                SR.REP_FIRST_NAME||' '||SR.REP_LAST_NAME REP_NAME,
+                SO.ORDER_DATE,
+                SO.PO_NUMBER,
+                SO.PO_DATE,
+                SO.REFERENCE,
+                SO.BILLING_LOCATION,
+                CL.CUSTOMER_LOCATION_NAME BILLING,
+                SO.DELIVERY_LOCATION,
+                CL2.CUSTOMER_LOCATION_NAME DELIVERY,
+                SO.ORDER_FREQUENCY,
+                SO.NEXT_ORDER_DATE,
+                SO.STATUS,
+                REPEAT_STATUS,
+                 to_char(SO.CREATED at time zone 'Asia/Calcutta', 'DD-Mon-YYYY HH:MI PM') as CREATED,
+                 order_value,
+                 (select min(ORDER_NUMBER) from  XXEBA_SALES_ORDER where DEAL_ID=SO.DEAL_ID) as p_order_number
+                 from XXEBA_SALES_ORDER SO,
+                 xxeba_order_products PR,
+                    EBA_SALES_DEALS SD,
+                    EBA_SALES_CUSTOMERS SC,
+                    EBA_SALES_SALESREPS SR,
+                    EBA_SALES_CUSTOMER_LOCATIONS CL,
+                    EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                    (select
+                    ORDER_ID,
+                    sum(order_value) order_value
+                    from
+                    (
+                    select
+                    ORDER_ID,
+                    QUANTITY,
+                    PRODUCT_PRICE,
+                    (QUANTITY * PRODUCT_PRICE)order_value
+                    from
+                    XXEBA_ORDER_PRODUCTS
+                    )
+                    group by ORDER_ID)value
+                where SO.DEAL_ID = SD.ID
+                AND PR.ORDER_ID = SO.ORDER_ID
+                     and SO.CUSTOMER_ID = SC.ID
+                  and SO.SALES_REP = SR.ID
+                  --and trunc(SO.NEXT_ORDER_DATE) >= trunc(sysdate)
+                  and SO.DELIVERY_LOCATION = CL.ID(+)
+                  and SO.BILLING_LOCATION = CL2.ID (+)
+                  and SO.ORDER_ID = value.ORDER_ID(+)
+                  AND (upper(SC.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID)
+                     or
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    or
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Sales Co-Ordinator'))
+                    and SO.STATUS = 'Y' and SO.ORDER_REPEAT='Y'
+                     AND (REPEAT_STATUS = 'Y'
+                OR REPEAT_STATUS IS NULL)
+                order by  SO.ORDER_ID
+                ```
+        }
+        layout {
+            sequence: 30
+            parentRegion: @repeat-orders
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 234
+                items: {
+                    P234_ORDER_ID: #ORDER_ID#
+                }
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+            conditionType: never
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 686344470534594374
+        }
+
+        column BILLING (
+            type: plainText
+            heading {
+                heading: Billing Location
+            }
+            layout {
+                sequence: 171
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column BILLING_LOCATION (
+            type: hidden
+            heading {
+                heading: Billing Location
+            }
+            layout {
+                sequence: 91
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created On
+                alignment: center
+            }
+            layout {
+                sequence: 201
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+            columnFormatting {
+                htmlExpression: <span style="white-space:nowrap;">#CREATED#</span>
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: hidden
+            heading {
+                heading: Customer ID
+            }
+            layout {
+                sequence: 31
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 151
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column DEAL_ID (
+            type: hidden
+            heading {
+                heading: Deal ID
+            }
+            layout {
+                sequence: 21
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DEAL_NAME (
+            type: plainText
+            heading {
+                heading: Opportunity
+            }
+            layout {
+                sequence: 141
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column DELIVERY (
+            type: plainText
+            heading {
+                heading: Delivery Location
+            }
+            layout {
+                sequence: 181
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column DELIVERY_LOCATION (
+            type: hidden
+            heading {
+                heading: Delivery Location
+            }
+            layout {
+                sequence: 101
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column NEXT_ORDER_DATE (
+            type: plainText
+            heading {
+                heading: Repeat Order Due Date
+                alignment: center
+            }
+            layout {
+                sequence: 121
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                htmlDomId: IRCSS120
+                endUserAlias: L
+            }
+        )
+
+        column ORDER_DATE (
+            type: plainText
+            heading {
+                heading: Order Date
+                alignment: center
+            }
+            layout {
+                sequence: 191
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                htmlDomId: IRCSS120
+                endUserAlias: T
+            }
+        )
+
+        column ORDER_FREQUENCY (
+            type: hidden
+            heading {
+                heading: Order Frequency
+            }
+            layout {
+                sequence: 111
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: K
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ORDER_ID (
+            type: hidden
+            heading {
+                heading: Order ID
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ORDER_NUMBER (
+            type: link
+            heading {
+                heading: Order Number
+                alignment: center
+            }
+            layout {
+                sequence: 11
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 234
+                    items: {
+                        P234_ORDER_ID: #ORDER_ID#
+                    }
+                    clearCache: 234
+                    action: resetPagination
+                }
+                linkText: #ORDER_NUMBER#
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column ORDER_VALUE (
+            type: plainText
+            heading {
+                heading: Order Value
+                alignment: center
+            }
+            layout {
+                sequence: 211
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column PO_DATE (
+            type: plainText
+            heading {
+                heading: PO Date
+                alignment: center
+            }
+            layout {
+                sequence: 71
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                htmlDomId: IRCSS120
+                endUserAlias: G
+            }
+        )
+
+        column PO_NUMBER (
+            type: plainText
+            heading {
+                heading: PO Number
+            }
+            layout {
+                sequence: 61
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column P_ORDER_NUMBER (
+            type: hidden
+            heading {
+                heading: Parent Number
+            }
+            layout {
+                sequence: 221
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column REFERENCE (
+            type: plainText
+            heading {
+                heading: Quote Ref.
+            }
+            layout {
+                sequence: 81
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column REPEAT_STATUS (
+            type: plainText
+            heading {
+                heading: Repeat Status
+            }
+            layout {
+                sequence: 231
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column REP_NAME (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 161
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column SALES_REP (
+            type: hidden
+            heading {
+                heading: Sales Rep ID
+            }
+            layout {
+                sequence: 51
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: E
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column STATUS (
+            type: hidden
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 131
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column TERRITORY_ID (
+            type: hidden
+            heading {
+                heading: Territory ID
+            }
+            layout {
+                sequence: 41
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 3192639 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 3
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 6
+            )
+
+            displayColumn NEXT_ORDER_DATE (
+                sequence: 1
+            )
+
+            displayColumn ORDER_DATE (
+                sequence: 5
+            )
+
+            displayColumn ORDER_NUMBER (
+                sequence: 4
+            )
+
+            displayColumn ORDER_VALUE (
+                sequence: 9
+            )
+
+            displayColumn PO_DATE (
+                sequence: 8
+            )
+
+            displayColumn PO_NUMBER (
+                sequence: 7
+            )
+
+            displayColumn REP_NAME (
+                sequence: 2
+            )
+
+            sort (
+                column: NEXT_ORDER_DATE
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: CUSTOMER_NAME
+                sort {
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: ORDER_NUMBER
+                sort {
+                    sequence: 3
+                }
+            )
+
+            sort (
+                column: REP_NAME
+                sort {
+                    sequence: 4
+                }
+            )
+
+        )
+
+    )
+
+    pageItem P230_CONTACT_NUMBER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P230_ORDER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P230_ORDER_NUMBER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P230_PO_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P230_PO_NUMBER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P230_SALES_COUNT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @report
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction null-validation (
+        name: Null Validation
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @/export
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if($v('P230_FROM_DATE') == "" || $v('P230_FROM_DATE') == null){
+                        $('#P230_FROM_DATE_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    else if($v('P230_TO_DATE') == "" || $v('P230_TO_DATE') == null){
+                        $('#P230_FROM_DATE_error_placeholder').html('');
+                        $('#P230_TO_DATE_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    else{
+                        apex.submit( 'EXPORT');
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction send-sms (
+        name: Send SMS
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: request=Value
+            value: CREATE_ORDER
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var mob_no = $v('P230_CONTACT_NUMBER');
+                    var message = "Dear Customer, We thank you for your Order dated "+$v('P230_PO_DATE')+". Order confirmation No. "+$v('P230_ORDER_NUMBER')+". We will deliver your material soon. Team Venturi";
+                    $.ajax({ type: 'GET', url: 'http://totalsmsindia.in/httpapi/httpapi?token=0c02420dacfff109e3696d15e6e2e96e&sender=VTteam&number='+mob_no+'&route=2&type=1&sms='+message, dataType: "html", success: function(data, textStatus, jqXHR) 
+                    { alert("success"); } }); 
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select SO.PO_NUMBER, SO.PO_DATE, SC.MOBILE_NUMBER,SO.ORDER_NUMBER 
+                        from XXEBA_SALES_ORDER SO, EBA_SALES_CUSTOMERS SC 
+                          where SO.ORDER_ID = :P230_ORDER_ID and SO.CUSTOMER_ID = SC.ID
+                    ```
+                itemsToSubmit: P230_ORDER_ID
+                escapeSpecialChars: false
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P230_PO_NUMBER
+                    P230_PO_DATE
+                    P230_CONTACT_NUMBER
+                    P230_ORDER_NUMBER
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-to-date-limit (
+        name: Set To Date Limit
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P230_FROM_DATE
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $("#P230_TO_DATE").datepicker( "option","minDate",$v('P230_FROM_DATE'));
+                    $("#P230_TO_DATE").next().addClass('ui-datepicker-trigger a-Button a-Button--calendar');
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process update-flag (
+        name: Update Flag
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                /* Note : Sales Order Default Value is N once exported it will change to P onceagain download means it will change into Y */
+                
+                Begin
+                for rec in (select SO.ORDER_ID ID  from
+                XXEBA_ORDER_PRODUCTS OP,
+                XXEBA_SALES_ORDER SO,
+                EBA_SALES_TERRITORIES T,
+                EBA_SALES_CUSTOMERS C,
+                EBA_SALES_SALESREPS R,
+                EBA_SALES_CUSTOMER_LOCATIONS L,
+                XXEBA_SALES_CITIES_T CT,
+                EBA_SALES_STATES ST,
+                EBA_SALES_COUNTRIES CN,
+                EBA_SALES_PRODUCTS SP
+                where 
+                OP.ORDER_ID = SO.ORDER_ID
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and SO.CUSTOMER_ID = C.ID
+                and SO.SALES_REP = R.ID
+                and SO.DELIVERY_LOCATION = L.ID(+)
+                and L.CITY_ID = CT.CITY_ID(+)
+                and L.STATE_ID = ST.ID(+)
+                and L.COUNTRY_ID = CN.ID(+)
+                and OP.PRODUCT_ID = SP.ID
+                and SO.STATUS = 'Y' and SO.EXPORT_FLAG='N'
+                and trunc(SO.ORDER_DATE) between :P230_FROM_DATE  and  :P230_TO_DATE )
+                loop
+                update XXEBA_SALES_ORDER SET EXPORT_FLAG ='P'  where ORDER_ID =rec.ID and NVL(EXPORT_FLAG,'N') !='Y'    ;
+                END LOOP;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 320678208929091964
+        }
+    )
+
+    process update-flag-into-y (
+        name: Update flag into Y
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                /* Note : Sales Order Default Value is N once exported it will change to P onceagain download means it will change into Y */
+                Begin
+                update XXEBA_SALES_ORDER SET EXPORT_FLAG ='Y'  where EXPORT_FLAG='P';
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 320677925502091964
+        }
+    )
+
+    branch (
+        name: Go To Page 183
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 183
+                items: {
+                    IRGTE_DATE: &P230_FROM_DATE.
+                    IRLTE_DATE: &P230_TO_DATE.
+                }
+                clearCache: [
+                    183
+                    CIR
+                ]
+                action: resetPagination
+                request: CSV
+            }
+        }
+    )
+
+)
+

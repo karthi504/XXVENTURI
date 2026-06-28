@@ -1,0 +1,381 @@
+page 222 (
+    name: Trial Details
+    title: Trial Details
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region trial-details (
+        name: Trial Details
+        type: list
+        source {
+            list: @wizard-progress-list
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @wizard-container
+            templateOptions: [
+                #DEFAULT#
+                t-Wizard--hideStepsXSmall
+            ]
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+            templateOptions: [
+                #DEFAULT#
+                t-WizardSteps--displayLabels
+            ]
+        }
+    )
+
+    region trial-details-2 (
+        name: Trial Details
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @trial-details
+            slot: wizardSubRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P222_ACCOUNT_NAME (
+        type: displayOnly
+        label {
+            label: Account Name
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 60
+            region: @trial-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: item
+            item: P222_PRODUCT_CLASS
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P222_DEAL_ID (
+        type: plugin/select2
+        label {
+            label: Opportunities
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT
+                    deal.deal_name   d,
+                    deal.id          r
+                FROM
+                    eba_sales_deals deal,
+                    (
+                        SELECT
+                           id salesrep_id_01
+                        FROM
+                            eba_sales_salesreps r
+                        START WITH
+                            r.id = :user_id
+                        CONNECT BY
+                            PRIOR r.id = r.rep_manager_id
+                    ) rep
+                WHERE
+                    deal.SALESREP_ID_01 = rep.salesrep_id_01
+                    AND deal_name IS NOT NULL
+                    AND source_type = 'D'
+                ORDER BY
+                    1;
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 50
+            region: @trial-details-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: item
+            item: P222_DEAL_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                SELECT 
+                  DEAL_NAME d,
+                  id r
+                FROM eba_sales_deals
+                WHERE DEAL_NAME IS NOT NULL 
+                      and SOURCE_TYPE ='D'
+                ORDER BY 1
+                ```
+        }
+    )
+
+    pageItem P222_NEW_EXIST_DEV (
+        type: radioGroup
+        label {
+            label: Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d,r from (SELECT 1 as seq,'Existing Setup' as d,'E' as r from dual
+                union
+                SELECT 2 as seq,'New Development' as d,'N' as r from dual
+                union
+                SELECT 3 as seq,'Competition Replacement' as d,'C' as r from dual) order by seq
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @trial-details-2
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--large
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P222_PRODUCT_CLASS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @trial-details-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P222_PRODUCT_CLASS_ID (
+        type: selectList
+        label {
+            label: Product Class
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select product_class_name d,  id r from xxeba_product_class where status = 'Y' order by 1
+            displayExtraValues: false
+            nullDisplayValue: -Select-
+        }
+        layout {
+            sequence: 70
+            region: @trial-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 2
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: item
+            item: P222_PRODUCT_CLASS_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @trial-details
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 217
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @trial-details
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-account-name (
+        name: Set Account Name
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P222_DEAL_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT 
+                      c.customer_name
+                    FROM eba_sales_deals d,
+                      eba_sales_customers c
+                    WHERE c.id = d.customer_id AND c.status='A'
+                    AND  d.ID  = :P222_DEAL_ID;
+                    ```
+                itemsToSubmit: P222_DEAL_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P222_ACCOUNT_NAME
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-product-class (
+        name: Set Product Class
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P222_PRODUCT_CLASS_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select product_class_name from xxeba_product_class where id = :P222_PRODUCT_CLASS_ID
+                itemsToSubmit: P222_PRODUCT_CLASS_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P222_PRODUCT_CLASS
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    branch (
+        execution {
+            sequence: 20
+        }
+        behavior {
+            target: {
+                page: 223
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

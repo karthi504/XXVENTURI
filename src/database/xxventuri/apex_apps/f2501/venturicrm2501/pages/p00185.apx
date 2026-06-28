@@ -1,0 +1,2218 @@
+page 185 (
+    name: schedule Appointments Details
+    title: schedule Appointments Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+        executeWhenPageLoads:
+            ```javascript-browser
+            $('#weekly_box .days').click(function (){
+                if ( $(this).hasClass("week_selected") ){
+                    $('#P136_SCHEDULES_LIST').val($('#P136_SCHEDULES_LIST').val().replace($(this).attr('id')+',', ""));
+                    $(this).removeClass('week_selected');
+                }
+                else{
+                    $('#P136_SCHEDULES_LIST').val($('#P136_SCHEDULES_LIST').val()+$(this).attr('id')+',');
+                   $(this).addClass('week_selected');
+                } 
+            });
+            
+            $('#monthly_box .date').click(function (){
+                if ( $(this).hasClass("date_selected") ){
+                    $('#P136_SCHEDULES_LIST').val($('#P136_SCHEDULES_LIST').val().replace($(this).attr('id')+',', ""));
+                    $(this).removeClass('date_selected');
+                }
+                else{
+                    $('#P136_SCHEDULES_LIST').val($('#P136_SCHEDULES_LIST').val()+$(this).attr('id')+',');
+                   $(this).addClass('date_selected');
+                } 
+            });
+            
+            $('#date_button').click(function (){
+                $('#mothly_schedue_value span').text($('#P136_SCHEDULES_LIST').val());
+                $('#mothly_schedue_value').show();
+                $('#monthly_box').hide();
+            });
+            
+            
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .calender-hot-button{
+                    background-color: #0572CE !important;
+                    color: #fff !important;
+            }
+            
+            .days {
+                float: left;
+                margin: 6px;
+                width: 26px;
+                text-align: center;
+                border: 1px solid;
+                border-radius: 250px;
+                cursor: pointer;
+            }
+            
+            #weekly_box{
+                margin-top: -6px;
+                margin-left: 20px;
+            }
+            
+            .week_selected{
+                background: #0585e0;
+                color: #fff;
+                font-weight: bold;
+            }
+            
+            .date {
+                width: 26px;
+                text-align: center;
+                cursor: pointer;
+                border: 1px outset;
+            }
+            
+            #monthly_box{
+                float: left;
+                margin-left: 20px;
+            }
+            
+            #monthly_box table{
+                border:1px solid #c7c7c7;
+            }
+            
+            .date:hover {
+                border: 1px dotted;
+            }
+                
+            .date_selected{
+                background: #0585e0;
+                color: #fff;
+                font-weight: bold;
+            }    
+                
+            #date_button{
+                padding: 0 12px;
+                background: #0572ce;
+                border: 1px solid #0464b4;
+                color: #fff;
+                cursor: pointer;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-appointment (
+        name: Form on XXEBA_SALES_APPOINTMENT
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P185_ACCOUNT (
+        type: hidden
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_AM_PM (
+        type: selectList
+        label {
+            label: Am pm
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:AM;AM,PM;PM
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 180
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+            columnAttributes: style="width:10%"
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_DATE (
+        type: datePickerJquery
+        label {
+            label: Appointment Date
+            alignment: left
+        }
+        settings {
+            minDate: +0d
+        }
+        layout {
+            sequence: 160
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 10
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_DATE_VAL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPOINTMENT_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPT_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_PURPOSE (
+        type: textField
+        label {
+            label: Details
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 85
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPOINTMENT_PURPOSE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_SOURCE (
+        type: hidden
+        layout {
+            sequence: 360
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPOINTMENT_SOURCE
+            used: always
+        }
+        default {
+            type: static
+            staticValue: D
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_APPOINTMENT_STATUS (
+        type: radioGroup
+        label {
+            label: Appointment Status
+            alignment: left
+        }
+        settings {
+            noOfCols: 4
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                
+                
+                SELECT display_value d, return_value r FROM (
+                SELECT 1 seq, 'Prepone' display_value, 'Preponed' return_value FROM DUAL
+                UNION
+                SELECT 2 seq, 'Postpone' display_value, 'Postponed' return_value FROM DUAL
+                UNION
+                SELECT 3 seq, 'Cancel' display_value, 'Cancelled' return_value FROM DUAL
+                UNION
+                SELECT 4 seq, 'Visited' display_value, 'Visited' return_value FROM DUAL
+                )
+                ORDER BY seq
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 240
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPOINTMENT_STATUS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P185_APPOINTMENT_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: STATIC2:Prepone,Postpone,Cancel,Visited
+        }
+    )
+
+    pageItem P185_APPOINTMENT_TYPE (
+        type: selectList
+        label {
+            label: Fixed Through
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select LEAD_SOURCE as d,LEAD_SOURCE as r from EBA_SALES_LEAD_SOURCES order by LEAD_SOURCE
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 190
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: APPOINTMENT_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 270
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 73
+            height: 3
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMMENTS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_CONTACT_ADDRESS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 300
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_CONTACT_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_CONTACT_LOCATION_ID (
+        type: selectList
+        label {
+            label: Location
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select CUSTOMER_LOCATION_NAME AS d,ID as r from EBA_SALES_CUSTOMER_LOCATIONS where CUSTOMER_ID =:P185_CUSTOMER_ID
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        cascadingLov {
+            parentItems: P185_CUSTOMER_ID
+            itemsToSubmit: P185_CUSTOMER_ID
+        }
+        layout {
+            sequence: 140
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_LOCATION_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_CONTACT_PERSON_ID (
+        type: selectList
+        label {
+            label: Contact Person
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select CONTACT_NAME As d,id AS  r from EBA_SALES_CUSTOMER_CONTACTS where CUSTOMER_ID =:P185_CUSTOMER_ID and STATUS='Y';
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        cascadingLov {
+            parentItems: P185_CUSTOMER_ID
+            itemsToSubmit: P185_CUSTOMER_ID
+        }
+        layout {
+            sequence: 130
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CONTACT_PERSON_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_CUSTOMER_ID (
+        type: plugin/select2
+        label {
+            label: Account
+            alignment: left
+        }
+        settings {
+            width: 93.5%
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.customer_name display_value,c.id return_value  from eba_sales_customers c where c.status='A' and 
+                (upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    )                 
+                order by 1
+                ```
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                select c.customer_name display_value,c.id return_value  from eba_sales_customers c,eba_sales_verifications v
+                where c.id=v.CUST_ID and c.status='Y'
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                     or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                    )                 
+                order by 1
+                ```
+        }
+    )
+
+    pageItem P185_LEAD_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_MEETING_TYPE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 340
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_NEGOTIATION_ID (
+        type: selectList
+        label {
+            label: Purpose
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIST_VALUE AS D,LIST_ID AS R  from XXEBA_LIST_VALUES
+                where  LIST_CODE='ORDER_NEGOTIATION'
+                order by DISPLAY_SEQUENCE;
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: NEGOTIATION_ID
+            used: always
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P185_APPOINTMENT_ID is not null
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_NEXT_APPOINTMENT (
+        type: radioGroup
+        label {
+            label: Next Appointment
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:None;N,Once;O,Repeat;R
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 200
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: static
+            staticValue: N
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_NEXT_DATE (
+        type: datePickerJquery
+        label {
+            label: Next Date
+            alignment: left
+        }
+        layout {
+            sequence: 220
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY HH12:MI AM
+            width: 20
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_NEXT_SCHEDULE (
+        type: selectList
+        label {
+            label: Next Schedule
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Daily;D,Weekly;W,Monthly;M
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 230
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            postText:
+                ```html
+                <div id="weekly_box">
+                    <div class="days" id='SUN'>S</div>
+                    <div class="days" id='MON'>M</div>
+                    <div class="days" id='TUE'>T</div>
+                    <div class="days" id='WED'>W</div>
+                    <div class="days" id='THU'>T</div>
+                    <div class="days" id='FRI'>F</div>
+                    <div class="days" id='SAT'>S</div>
+                </div>
+                <div id="monthly_box">
+                    <table>
+                       <tr><td class="date" id='1'>1</td> <td class="date" id='2'>2</td> <td class="date" id='3'>3</td><td class="date" id='4'>4</td><td class="date" id='5'>5</td><td class="date" id='6'>6</td><td class="date" id='7'>7</td></tr>
+                <tr><td class="date" id='8'>8</td> <td class="date" id='9'>9</td><td class="date" id='10'>10</td><td class="date" id='11'>11</td><td class="date" id='12'>12</td><td class="date" id='13'>13</td> <td class="date" id='14'>14</td></tr>
+                <tr><td class="date" id='15'>15</td><td class="date" id='16'>16</td><td class="date" id='17'>17</td><td class="date" id='18'>18</td><td class="date" id='19'>19</td><td class="date" id='20'>20</td><td class="date" id='21'>21</td></tr>
+                <tr><td class="date" id='22'>22</td><td class="date" id='23'>23</td><td class="date" id='24'>24</td><td class="date" id='25'>25</td> <td class="date" id='26'>26</td> <td class="date" id='27'>27</td><td class="date" id='28'>28</td></tr>
+                        <tr><td class="date" id='29'>29</td><td class="date" id='30'>30</td><td class="date" id='31'>31</td> <td colspan="4" style="text-align: right;"><input type='button' value="OK" id="date_button"></td> </tr>
+                    </table> 
+                </div>
+                
+                <div id='mothly_schedue_value' style="display:none"> Dates <span></span></div>
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_OPPORTUNITY_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_PASS_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 350
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_REASON (
+        type: textarea
+        label {
+            label: Reason
+            alignment: left
+        }
+        layout {
+            sequence: 280
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 73
+            height: 3
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS_COMMENTS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P185_APPOINTMENT_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SALES_REP (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SALESREP_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SALES_REP_NAME (
+        type: displayOnly
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS
+                where  STATUS='Y' and  (upper(ID) in (SELECT upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        default {
+            type: static
+            staticValue: &USER_ID.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SCHEDULES_LIST (
+        type: textField
+        label {
+            label: Schedule List
+            alignment: left
+        }
+        layout {
+            sequence: 290
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            columnAttributes: [
+                style="display:
+                none;"
+            ]
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SCHEDULE_CHANGE_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 330
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SCHEDULE_REFERENCE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 320
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SCHEDULE_UPTO (
+        type: datePickerJquery
+        label {
+            label: Schedule Till
+            alignment: left
+        }
+        layout {
+            sequence: 210
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 15
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_SOURCE_PAGE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 310
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_TIME (
+        type: selectList
+        label {
+            label: Time
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues:
+                ```
+                STATIC2:
+                01:00;01:00,
+                01:30;01:30,
+                02:00;02:00,
+                02:30;02:30,
+                03:00;03:00,
+                03:30;03:30,
+                04:00;04:00,
+                04:30;04:30,
+                05:00;05:00,
+                05:30;05:30,
+                06:00;06:00,
+                06:30;06:30,
+                07:00;07:00,
+                07:30;07:30,
+                08:00;08:00,
+                08:30;08:30,
+                09:00;09:00,
+                09:30;09:30,
+                10:00;10:00,
+                10:30;10:30,
+                11:00;11:00,
+                11:30;11:30,
+                12:00;12:00,
+                12:30;12:30
+                ```
+        }
+        layout {
+            sequence: 170
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 1
+            labelColumnSpan: 0
+            columnAttributes: style="width:13%"
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        default {
+            type: static
+            staticValue: 09:00
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_VISITED_ON (
+        type: datePickerJquery
+        label {
+            label: On
+            alignment: left
+        }
+        layout {
+            sequence: 250
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 9
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VISITED_ON
+            used: always
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P185_APPOINTMENT_ID is not null and :P185_APPOINTMENT_STATUS NOT IN ('Preponed','Postponed','Cancelled','Scheduled')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P185_VISITED_ON_1 (
+        type: datePickerJquery
+        label {
+            label: On
+            alignment: left
+        }
+        layout {
+            sequence: 260
+            region: @form-on-xxeba-sales-appointment
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 9
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P185_APPOINTMENT_ID is not null and :P185_APPOINTMENT_STATUS NOT IN ('Visited')
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button cancel-future (
+        buttonName: Cancel_Future
+        label: "Cancel Future Appointments "
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--warning
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P185_MEETING_TYPE = 'S' AND  trunc(sysdate) <= to_date(SUBSTR(:P185_APPOINTMENT_DATE,1,11)))
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Schedule Appointment
+        layout {
+            sequence: 50
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P185_APPOINTMENT_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P185_APPOINTMENT_ID
+        }
+    )
+
+    dynamicAction calender-button-change (
+        name: Calender Button Change
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: jQuerySelector
+            jquerySelector: .ui-datepicker-trigger
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    //alert($('.ui-datepicker-close').text());
+                    $('.ui-datepicker-close').text('Select');
+                    $('.ui-datepicker-close').addClass('calender-hot-button');
+                    
+                    $('.ui-state-default').click(function() {
+                    //    alert();
+                    $('.ui-datepicker-close').text('Select');
+                    $('.ui-datepicker-close').addClass('calender-hot-button');
+                    });
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-id (
+        name: change Id
+        execution {
+            sequence: 110
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: item=value
+            item: P185_MEETING_TYPE
+            value: S
+        }
+        serverSideCondition {
+            type: item=value
+            item: P185_MEETING_TYPE
+            value: S
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('input').css( 'pointer-events', 'all' );
+                    $('select').css( 'pointer-events', 'all' );
+                    $('button.ui-datepicker-trigger').css( 'pointer-events', 'all' );
+                    $('#P185_APPOINTMENT_STATUS').css( 'pointer-events', 'all' );
+                    $('textarea').css( 'pointer-events', 'all' );
+                    $('#P185_NEXT_APPOINTMENT').css( 'pointer-events', 'none' );
+                    ```
+            }
+            execution {
+                sequence: 40
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: jsExpression
+                jsExpression: $v('P185_APPOINTMENT_ID')
+            }
+            affectedElements {
+                selectionType: items
+                items: P185_SCHEDULE_REFERENCE
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-set-value-2 (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: to_date(:P185_APPOINTMENT_DATE)
+            }
+            affectedElements {
+                selectionType: items
+                items: P185_SCHEDULE_CHANGE_DATE
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-set-value-3 (
+            action: setValue
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_APPOINTMENT_ID
+                    P185_APPOINTMENT_STATUS
+                ]
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    dynamicAction end-date-validation (
+        name: End date Validation
+        execution {
+            sequence: 120
+        }
+        when {
+            selectionType: items
+            items: P185_APPOINTMENT_DATE
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $("#P185_SCHEDULE_UPTO").datepicker( "option","minDate",$v('P185_APPOINTMENT_DATE'));
+                    $("#P185_SCHEDULE_UPTO").next().addClass('ui-datepicker-trigger a-Button a-Button--calendar'); 
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-account (
+        name: Hide Account
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P185_CUSTOMER_ID
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: "$('span[aria-labelledby=\"select2-P185_CUSTOMER_ID-container\"]').css( 'pointer-events', 'none' );"
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-both-date (
+        name: Hide Both Date
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P185_NEXT_APPOINTMENT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: N
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_NEXT_DATE
+                    P185_NEXT_SCHEDULE
+                    P185_SCHEDULE_UPTO
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction hide-next-repeat-appointment (
+        name: Hide Next/Repeat Appointment
+        execution {
+            sequence: 90
+        }
+        when {
+            event: ready
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_NEXT_DATE
+                    P185_NEXT_SCHEDULE
+                    P185_NEXT_APPOINTMENT
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 140
+        }
+        when {
+            selectionType: items
+            items: P185_APPOINTMENT_DATE_VAL
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P185_APPOINTMENT_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select SUBSTR(:P185_APPOINTMENT_DATE_VAL,1,INSTR(:P185_APPOINTMENT_DATE_VAL,' ')-1) date_val, SUBSTR(:P185_APPOINTMENT_DATE_VAL,INSTR(:P185_APPOINTMENT_DATE_VAL,' ')+1,5) time_val, SUBSTR(:P185_APPOINTMENT_DATE_VAL,INSTR(:P185_APPOINTMENT_DATE_VAL,' ', 1, 2)+1,2) pm_val  from dual;
+                    
+                    ```
+                itemsToSubmit: P185_APPOINTMENT_DATE_VAL
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_APPOINTMENT_DATE
+                    P185_TIME
+                    P185_AM_PM
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction noeditable (
+        name: noeditable
+        execution {
+            sequence: 50
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P185_APPOINTMENT_ID is NOT NULL AND :P185_APPOINTMENT_STATUS IN ('Visited','Cancelled'))
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('input').css( 'pointer-events', 'none' );
+                    $('select').css( 'pointer-events', 'none' );
+                    $('button.ui-datepicker-trigger').css( 'pointer-events', 'none' );
+                    $('#P185_APPOINTMENT_STATUS').css( 'pointer-events', 'none' );
+                    $('textarea').css( 'pointer-events', 'none' );
+                    
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-rep-name (
+        name: Set Rep Name
+        execution {
+            sequence: 150
+        }
+        when {
+            selectionType: items
+            items: P185_CUSTOMER_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select (REP_FIRST_NAME ||' '|| REP_LAST_NAME) as rep_name, s.id r
+                    from EBA_SALES_SALESREPS S,EBA_SALES_CUSTOMERS C where  
+                    S.STATUS='Y' and S.ID=C.DEFAULT_REP_ID and C.ID=:P185_CUSTOMER_ID
+                    ```
+                itemsToSubmit: P185_CUSTOMER_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_SALES_REP_NAME
+                    P185_SALES_REP
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show (
+        name: "Show "
+        execution {
+            sequence: 130
+        }
+        when {
+            selectionType: items
+            items: P185_APPOINTMENT_STATUS
+        }
+        clientSideCondition {
+            type: item=value
+            item: P185_APPOINTMENT_STATUS
+            value: Visited
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P185_VISITED_ON
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P185_VISITED_ON
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-schedule (
+        name: Show/Hide Schedule
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P185_NEXT_SCHEDULE
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var schedule = $('#P185_NEXT_SCHEDULE').val();
+                    $('#P185_SCHEDULES_LIST').val('');
+                    
+                    $('.week_selected').removeClass('week_selected');
+                    $('.date_selected').removeClass('date_selected');
+                    
+                    if(schedule == 'D'){
+                        $('#weekly_box').hide();
+                        $('#monthly_box').hide();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P185_SCHEDULES_LIST').hide();
+                    }
+                    else if(schedule == 'W'){
+                        $('#weekly_box').show();
+                         $('#monthly_box').hide();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P185_SCHEDULES_LIST').hide();
+                    }
+                    else if(schedule == 'M'){
+                        $('#weekly_box').hide();
+                         $('#monthly_box').show();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P185_SCHEDULES_LIST').hide();
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show-next-day (
+        name: show next Day
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: P185_NEXT_APPOINTMENT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: O
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_NEXT_SCHEDULE
+                    P185_SCHEDULE_UPTO
+                ]
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P185_NEXT_DATE
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction show-schedule (
+        name: show Schedule
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: P185_NEXT_APPOINTMENT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: R
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P185_NEXT_DATE
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: [
+                    P185_NEXT_SCHEDULE
+                    P185_SCHEDULE_UPTO
+                ]
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation meeting-per-validation-create (
+        name: Meeting Per validation - Create
+        execution {
+            sequence: 100
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                lv_meeting_per_day number;
+                lv_appt_count      NUMBER;
+                
+                begin
+                IF :P185_APPOINTMENT_ID is null then
+                SELECT MEETINGS_PER_DAY into lv_meeting_per_day FROM  EBA_SALES_SALESREPS WHERE STATUS='Y' AND ID = :P185_SALES_REP;
+                SELECT count(*) into lv_appt_count from XXEBA_SALES_CRM_APPOINTMENTS  
+                where  to_date(trunc(APPOINTMENT_DATE),'DD-Mon-YYYY')= to_date(:P185_APPOINTMENT_DATE,'DD-Mon-YYYY')  AND SALESREP_ID=:P185_SALES_REP;
+                       
+                    if lv_appt_count >= lv_meeting_per_day   then
+                        return 'Visit per day limit has been exceeded.';
+                    end if;
+                   return  null;
+                    --return lv_appt_count;
+                 END  IF;
+                 
+                end;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+            type: itemIsNull
+            item: P185_APPOINTMENT_ID
+        }
+    )
+
+    validation meeting-per-validation-save (
+        name: Meeting Per validation - Save
+        execution {
+            sequence: 110
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                
+                lv_meeting_per_day number;
+                lv_appt_count      NUMBER;
+                
+                begin
+                
+                 
+                IF :P185_APPOINTMENT_ID is not null then
+                SELECT MEETINGS_PER_DAY into lv_meeting_per_day FROM  EBA_SALES_SALESREPS WHERE STATUS='Y' AND ID = :P185_SALES_REP;
+                SELECT count(*) into lv_appt_count from XXEBA_SALES_CRM_APPOINTMENTS  
+                where  to_char(trunc(APPOINTMENT_DATE),'DD-Mon-YYYY')= to_char(to_date(:P185_APPOINTMENT_DATE,'DD-Mon-YYYY'),'DD-Mon-YYYY')   AND SALESREP_ID=:P185_SALES_REP ;
+                       
+                    if lv_appt_count >=lv_meeting_per_day   then
+                        return 'Visit per day limit has been exceeded.';
+                    end if;
+                    return null;
+                   -- return lv_appt_count;
+                 END  IF;
+                
+                end;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: never
+        }
+    )
+
+    validation negotiation-not-null-validations (
+        name: Negotiation Not null Validations
+        execution {
+            sequence: 90
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin
+                    if :P185_NEGOTIATION_ID is null  then
+                        return 'Please fill out this field.';
+                    end if;
+                    return null;
+                end;
+                ```
+        }
+        error {
+            displayLocation: inlineWithField
+            associatedItem: @P185_NEGOTIATION_ID
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P185_APPOINTMENT_STATUS
+            value: Visited
+        }
+    )
+
+    validation not-null-p185-next-date (
+        name: Not null P185_NEXT_DATE
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: itemIsNotNull
+            item: P185_NEXT_DATE
+        }
+        error {
+            errorMessage: Please fill out this field.
+            associatedItem: @P185_NEXT_DATE
+        }
+        serverSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: O
+        }
+    )
+
+    validation not-null-p185-visited-on (
+        name: Not Null P185_VISITED_ON
+        execution {
+            sequence: 70
+        }
+        validation {
+            type: itemIsNotNull
+            item: P185_VISITED_ON
+        }
+        error {
+            errorMessage: Please fill out this field.
+            displayLocation: inlineWithField
+            associatedItem: @P185_VISITED_ON
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    validation not-null-p185-visited-on-2 (
+        name: Not Null P185_VISITED_ON_1
+        execution {
+            sequence: 80
+        }
+        validation {
+            type: itemIsNotNull
+            item: P185_VISITED_ON_1
+        }
+        error {
+            errorMessage: Please fill out this field.
+            displayLocation: inlineWithField
+            associatedItem: @P185_VISITED_ON_1
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: item=value
+            item: P185_APPOINTMENT_STATUS
+            value: Visited
+        }
+    )
+
+    validation p185-appointment-date-must-be-timestamp (
+        name: P185_APPOINTMENT_DATE must be timestamp
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: itemIsAValidDate
+            item: P185_APPOINTMENT_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid date.
+            associatedItem: @P185_APPOINTMENT_DATE
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    computation p185-appointment-date-val (
+        itemName: P185_APPOINTMENT_DATE_VAL
+        execution {
+            sequence: 10
+            point: afterSubmit
+        }
+        computation {
+            type: expression
+            plsqlExpression: TO_TIMESTAMP (:P185_APPOINTMENT_DATE||' '||:P185_TIME||' '||:P185_AM_PM, 'DD-Mon-YYYY HH12:MI AM')
+        }
+    )
+
+    process cancel-future (
+        name: Cancel Future
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                --raise_application_error(-20010,to_date(SUBSTR(:P185_APPOINTMENT_DATE,1,11)));
+                update XXEBA_SALES_APPOINTMENT set SCHEDULE_UPTO = to_date(SUBSTR(:P185_APPOINTMENT_DATE,1,11))
+                where APPOINTMENT_ID = :P185_SCHEDULE_REFERENCE;
+                ```
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 202034139222912436
+        }
+        serverSideCondition {
+            whenButtonPressed: @cancel-future
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 100
+        }
+        advanced {
+            executionMappingIdentifier: 202032963279912436
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-appointment (
+        name: Fetch Row from XXEBA_SALES_APPOINTMENT
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_CRM_APPOINTMENTS
+            pkColumn: APPT_ID
+            pkItem: P185_APPOINTMENT_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 202031796515912432
+        }
+    )
+
+    process next-appointment (
+        name: Next Appointment
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                insert into XXEBA_SALES_APPOINTMENT (CUSTOMER_ID, APPOINTMENT_TYPE, APPOINTMENT_DATE
+                                                     , APPOINTMENT_PURPOSE, CONTACT_PERSON_ID 
+                , CONTACT_LOCATION_ID, COMMENTS, LEAD_ID, OPPORTUNITY_ID , APPOINTMENT_STATUS, CONTACT_ID
+                                                    )
+                values (:P185_CUSTOMER_ID, :P185_APPOINTMENT_TYPE, to_timestamp(:P185_NEXT_DATE, 'DD-Mon-YYYY HH12:MI AM')
+                        , :P185_APPOINTMENT_PURPOSE, :P185_CONTACT_PERSON_ID
+                       , :P185_CONTACT_LOCATION_ID, :P185_COMMENTS, :P185_LEAD_ID, :P185_OPPORTUNITY_ID , :P185_APPOINTMENT_STATUS, :P185_CONTACT_ID
+                       );
+                       
+                       
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 202033396893912436
+        }
+        serverSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: O
+        }
+    )
+
+    process process-row-of-xxeba-sales-crm-appointments (
+        name: Process Row of XXEBA_SALES_CRM_APPOINTMENTS
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_CRM_APPOINTMENTS
+            pkColumn: APPT_ID
+            pkItem: P185_APPOINTMENT_ID
+            returnKeyIntoItem: P185_APPOINTMENT_ID
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 202032156544912435
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 90
+        }
+        advanced {
+            executionMappingIdentifier: 202032581674912435
+        }
+    )
+
+    process schedule-appoinment (
+        name: Schedule Appoinment
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                IF :P185_APPOINTMENT_ID IS NOT NULL THEN
+                    insert into XXEBA_SALES_MEETING_SCHEDULE (APPOINTMENT_ID, SCHEDULE_TYPE, SCHEDULE_SEQUENCE)
+                    values(:P185_APPOINTMENT_ID, :P185_NEXT_SCHEDULE, :P185_SCHEDULES_LIST);
+                ELSE
+                    UPDATE XXEBA_SALES_MEETING_SCHEDULE 
+                            SET SCHEDULE_TYPE = :P185_NEXT_SCHEDULE, 
+                                    SCHEDULE_SEQUENCE = :P185_SCHEDULES_LIST
+                    WHERE APPOINTMENT_ID = :P185_APPOINTMENT_ID;
+                END IF;
+                
+                ```
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 202033819585912436
+        }
+        serverSideCondition {
+            type: item=value
+            item: P185_NEXT_APPOINTMENT
+            value: R
+        }
+    )
+
+    process updated-by (
+        name: "Updated By "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                begin
+                      UPDATE xxeba_sales_crm_appointments 
+                      SET    updated_by = Nvl(V('APP_USER'), USER) 
+                      WHERE  appt_id = :P185_APPOINTMENT_ID; 
+                end;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 276076832142054055
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process user-name-update (
+        name: User Name Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN 
+                    
+                      UPDATE xxeba_sales_crm_appointments 
+                      SET    CREATED_BY = Nvl(V('APP_USER'), USER), 
+                             updated_by = Nvl(V('APP_USER'), USER),
+                             SOURCE_APPLICATION ='W'
+                      WHERE  appt_id = :P185_APPOINTMENT_ID; 
+                
+                
+                   
+                END; 
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 276076798171054054
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process visited-on-update (
+        name: Visited On Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN 
+                 IF :P185_APPOINTMENT_ID is not null and :P185_APPOINTMENT_STATUS  IN ('Visited') THEN
+                     UPDATE xxeba_sales_crm_appointments SET VISITED_ON = :P185_VISITED_ON_1,NEGOTIATION_ID=:P185_NEGOTIATION_ID WHERE  appt_id = :P185_APPOINTMENT_ID; 
+                 END IF;
+                END; 
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 276076659850054053
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    branch (
+        name: Goto 94
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 181
+                clearCache: 181
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

@@ -1,0 +1,690 @@
+page 6 (
+    name: &REP_TITLE.s
+    title: &REP_TITLE.s
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            .t-Footer{
+            	display:none;
+            }
+            
+            td[headers="PHOTO"] img
+            {
+                height: 85px; 
+                width: 85px; 
+                border: 3px solid #16C4E6; 
+                border-radius: 7px;
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: Manage your team. Click the pencil icon to edit a specific team member. Click the <strong>Create</strong> button to create a new team member. Click the <strong>Reset</strong> button to reset the interactive report. Click the <strong>Actions ∨</strong> button to define the number of rows displayed per page, filter, format, download, and/or save the interactive report.
+    }
+
+    region rep-title-s (
+        name: &REP_TITLE.s
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select r.id, Null As Reset_Password,
+                  r.rep_last_name,  
+                dbms_lob.getlength(r.FILE_BLOB)  photo_blob,
+                  r.rep_first_name,
+                  r.rep_email,
+                  (
+                    select rep_first_name || ' ' || rep_last_name
+                    from eba_sales_salesreps m
+                    where m.id = r.rep_manager_id
+                  ) as manager,
+                  (rep_first_name || ' ' || rep_last_name)as Username,
+                  r.rep_office,
+                  r.rep_office_phone,
+                  r.rep_cell_phone,
+                  r.rep_pager,
+                  srr.role_name role,
+                  case
+                    when srr.is_sales_rep = 'Y'
+                    then 'Yes'
+                    else 'No'
+                  end is_sales_rep,
+                  r.created,
+                  r.created_by,
+                  r.updated,
+                  r.updated_by,
+                  r.DEPARTMENT_ID,
+                  'Brands' "Brands"
+                from eba_sales_salesreps r
+                left join eba_sales_salesrep_roles srr
+                  on srr.id = r.rep_role where r.status='Y'
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 7
+                items: {
+                    P7_ID: #ID#
+                }
+                clearCache: 7
+                action: resetPagination
+            }
+            linkIcon: <span role="img" aria-label="Edit" class="fa fa-edit" title="Edit"></span>
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 10000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: This query returns more than #MAX_ROW_COUNT# rows, please filter your data to ensure complete results.
+        }
+        actionsMenu {
+            savePublicReport: true
+        }
+        download {
+            formats: [
+                csv
+                html
+            ]
+        }
+        advanced {
+            savedReportMappingIdentifier: 3737702211060074440
+        }
+
+        column Brands (
+            type: link
+            heading {
+                heading: Brands
+                alignment: center
+            }
+            layout {
+                sequence: 122
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 193
+                    items: {
+                        P193_USER_ID: #ID#
+                        P193_USERNAME: #USERNAME#
+                    }
+                    clearCache: [
+                        Y
+                        193
+                    ]
+                }
+                linkText: #Brands#
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 42
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created by
+            }
+            layout {
+                sequence: 52
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column DEPARTMENT_ID (
+            type: plainText
+            heading {
+                heading: Department
+            }
+            layout {
+                sequence: 82
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: Edit
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column IS_SALES_REP (
+            type: plainText
+            heading {
+                heading: &REP_TITLE. Role
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column MANAGER (
+            type: plainText
+            heading {
+                heading: Manager
+            }
+            layout {
+                sequence: 32
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PHOTO_BLOB (
+            type: displayImage
+            heading {
+                heading: &nbsp
+                alignment: center
+            }
+            layout {
+                sequence: 102
+                columnAlignment: center
+            }
+            blobAttributes {
+                tableName: EBA_SALES_SALESREPS
+                blobColumn: FILE_BLOB
+                primaryKeyColumn1: ID
+                mimeTypeColumn: ATTACH_MIMETYPE
+                filenameColumn: ATTACH_FILENAME
+                lastUpdatedColumn: ATTACH_LAST_UPDATE
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                htmlDomId: PHOTO
+                endUserAlias: W
+            }
+        )
+
+        column REP_CELL_PHONE (
+            type: plainText
+            heading {
+                heading: Cell Phone
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column REP_EMAIL (
+            type: plainText
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 4
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column REP_FIRST_NAME (
+            type: plainText
+            heading {
+                heading: First Name
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column REP_LAST_NAME (
+            type: plainText
+            heading {
+                heading: Last Name
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column REP_OFFICE (
+            type: hidden
+            heading {
+                heading: Office
+            }
+            layout {
+                sequence: 6
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column REP_OFFICE_PHONE (
+            type: plainText
+            heading {
+                heading: Office Phone
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column REP_PAGER (
+            type: hidden
+            heading {
+                heading: Pager
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column RESET_PASSWORD (
+            type: link
+            heading {
+                heading: Reset Password
+                alignment: center
+            }
+            layout {
+                sequence: 92
+            }
+            link {
+                target: {
+                    page: 176
+                    items: {
+                        P176_ID: #ID#
+                    }
+                    action: resetPagination
+                }
+                linkText: Reset
+                linkAttributes: class="t-Button t-Button--simple t-Button--hot t-Button--stretch"
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column ROLE (
+            type: plainText
+            heading {
+                heading: Role
+            }
+            layout {
+                sequence: 22
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column UPDATED (
+            type: plainText
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 62
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated by
+            }
+            layout {
+                sequence: 72
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column USERNAME (
+            type: plainText
+            heading {
+                heading: Username
+            }
+            layout {
+                sequence: 112
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        savedReport 9101486 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 15
+            }
+
+            displayColumn DEPARTMENT_ID (
+                sequence: 6
+            )
+
+            displayColumn MANAGER (
+                sequence: 7
+            )
+
+            displayColumn PHOTO_BLOB (
+                sequence: 1
+            )
+
+            displayColumn REP_EMAIL (
+                sequence: 4
+            )
+
+            displayColumn REP_FIRST_NAME (
+                sequence: 2
+            )
+
+            displayColumn REP_LAST_NAME (
+                sequence: 3
+            )
+
+            displayColumn RESET_PASSWORD (
+                sequence: 8
+            )
+
+            displayColumn ROLE (
+                sequence: 5
+            )
+
+            sort (
+                column: REP_FIRST_NAME
+                sort {
+                    sequence: 1
+                }
+            )
+
+        )
+
+    )
+
+    region rep-title-s-2 (
+        name: &REP_TITLE.s
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 30
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        advanced {
+            excludeTitleFromTranslation: true
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create &REP_TITLE.
+        layout {
+            sequence: 10
+            region: @rep-title-s-2
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 7
+                clearCache: 7
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button reset-report (
+        buttonName: RESET_REPORT
+        label: Reset
+        layout {
+            sequence: 20
+            region: @rep-title-s
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-undo-alt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: &APP_PAGE_ID.
+                clearCache: [
+                    &APP_PAGE_ID.
+                    RIR
+                ]
+                action: resetPagination
+                request: RIR
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction dialog-closed (
+        name: Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('Action Processed.');
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @rep-title-s
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh (
+        name: refresh
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @rep-title-s
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @rep-title-s
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

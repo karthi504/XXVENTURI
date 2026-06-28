@@ -1,0 +1,157 @@
+page 526 (
+    name: Mail Content
+    title: Mail Content
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        width: 1000
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region mail-content (
+        name: Mail Content
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                    CURSOR crec IS
+                    SELECT
+                        replace(mail_content, '#Name#', (select contact_name from xxeba_mass_email_details_t where MASS_EMAIL_DETAIL_ID = :P526_MASS_EMAIL_DETAIL_ID)) as mail_content
+                    FROM
+                        xxeba_mass_emails_t
+                        where mass_email_id = :P526_MASS_EMAIL_ID;
+                    rrec      crec%rowtype;
+                    
+                    l_amt   INTEGER := 4000;
+                    l_pos   INTEGER := 1;
+                    l_buf   VARCHAR2(32000);
+                BEGIN
+                
+                    OPEN crec;
+                    FETCH crec INTO rrec;
+                    CLOSE crec;
+                    
+                    LOOP 
+                        BEGIN
+                            dbms_lob.read(rrec.mail_content, l_amt, l_pos, l_buf); /* Splitting the CLOB Content with buffer size */
+                            l_pos := l_pos + l_amt;
+                            l_amt := 4000;
+                            htp.p(l_buf); /* Print Content */
+                        EXCEPTION
+                            WHEN no_data_found THEN
+                                EXIT;
+                        END;
+                    END LOOP;
+                
+                END;
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P526_MASS_EMAIL_DETAIL_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @mail-content
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P526_MASS_EMAIL_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @mail-content
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: CANCEL_DIALOG
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

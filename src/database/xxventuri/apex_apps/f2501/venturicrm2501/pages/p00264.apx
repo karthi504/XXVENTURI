@@ -1,0 +1,775 @@
+page 264 (
+    name: Complaints
+    title: Complaints
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region complaints (
+        name: Complaints
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                 CASE 
+                    WHEN  cc.STATUS in ('N', 'I') THEN
+                      '<a href="'
+                     ||apex_util.prepare_url ('f?p='
+                     ||:app_id
+                     ||':194:'
+                     ||:app_session
+                     || '::NO:194:P194_COMPLAINT_ID:'
+                     || COMPLAINT_ID) ||'"><i style = "cursor: pointer; color: blue;  font-size:24px"  class="fa  fa-check-square-o"></i></a>'
+                    ELSE  null
+                    END UPDATE_STATUS,
+                 CASE 
+                    WHEN  cc.STATUS = 'C' THEN
+                      '<a href="'
+                     ||apex_util.prepare_url ('f?p='
+                     ||:app_id
+                     ||':195:'
+                     ||:app_session
+                     || '::NO:195:P195_COMPLAINT_ID:'
+                     || COMPLAINT_ID) ||'"><i style = "cursor: pointer; color: blue;  font-size:24px"  class="fa  fa-check-square-o"></i></a>'
+                    ELSE  null
+                    END VERIFY_UPDATE,
+                cc.COMPLAINT_ID, 
+                cc.COMPLAINT_NUMBER,
+                cc.ACCOUNT_ID,
+                cc.RAISED_DATE,
+                cc.RAISED_BY,
+                cc.CONTACT_NUMBER,
+                cc.RAISED_SOURCE,
+                cc.COMPLAINT_TYPE,
+                cc.COMPLAINT_PRODUCTS,
+                cc.COMPLAINT_SUBJECT,
+                cc.COMPLAINT_DESC,
+                cc.ASSIGNED_TO,
+                cc.ROOT_CAUSE,
+                cc.CORRECTIVE_ACTION,
+                cc.PREVENTIVE_ACTION,
+                cc.RESOLVED_REMARKS,
+                cc.RESOLVED_BY,
+                cc.RESOLVED_DATE,
+                cc.VERIFIED_REMARKS,
+                cc.VERIFIED_BY,
+                cc.VERIFIED_DATE,
+                decode(cc.STATUS,'N','New',
+                                 'I','In Progress',
+                                 'C','Completed',
+                                 'X','Deleted',
+                                 'V','Verified') STATUS,
+                cc.CREATED,
+                cc.CREATED_BY,
+                cc.UPDATED,
+                cc.UPDATED_BY,
+                (SELECT listagg( p.product_name
+                  ||' ['
+                  ||CATALOGUE_NO
+                  ||']' , ', ') within GROUP(
+                ORDER BY product_name)
+                FROM XXEBA_CUSTOMER_COMPLAINTS_T c,
+                  eba_sales_PRODUCTS p
+                WHERE instr(':'
+                  ||COMPLAINT_PRODUCTS
+                  ||':', ':'
+                  ||p.id
+                  ||':')         > 0
+                AND c.COMPLAINT_ID = cc.COMPLAINT_ID) as products_list
+                from XXEBA_CUSTOMER_COMPLAINTS_T cc,
+                eba_sales_salesreps sr,
+                  eba_sales_customers c
+                where sr.id              = cc.ASSIGNED_TO
+                and cc.ACCOUNT_ID          = c.id
+                and (upper(cc.ASSIGNED_TO) in
+                  (select upper(r.id)
+                  from eba_sales_salesreps r
+                    start with r.id      = :user_id
+                    connect by prior r.id= r.rep_manager_id
+                  )
+                or exists
+                  (select 'y'
+                  from eba_sales_salesreps r,
+                    eba_sales_salesrep_roles sr
+                  where r.id       = :user_id
+                  and sr.id        = r.rep_role
+                  and sr.role_name IN ('Administrator','Sales Co-Ordinator')
+                  )); 
+                
+                  
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToY
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 410028127089391995
+        }
+
+        column ACCOUNT_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Account
+            }
+            lov {
+                lov: @accounts
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column ASSIGNED_TO (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Assigned To
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 12
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#ASSIGNED_TO#</span> "
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column COMPLAINT_DESC (
+            type: plainText
+            heading {
+                heading: Complaint Desc
+            }
+            layout {
+                sequence: 11
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#COMPLAINT_DESC#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column COMPLAINT_ID (
+            type: plainText
+            heading {
+                heading: Complaint ID
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"white-space:nowrap;\">#COMPLAINT_ID#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column COMPLAINT_NUMBER (
+            type: hidden
+            heading {
+                heading: Complaint Number
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column COMPLAINT_PRODUCTS (
+            type: hidden
+            heading {
+                heading: Complaint Products
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column COMPLAINT_SUBJECT (
+            type: plainText
+            heading {
+                heading: Complaint Subject
+            }
+            layout {
+                sequence: 10
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#COMPLAINT_SUBJECT#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column COMPLAINT_TYPE (
+            type: plainText
+            heading {
+                heading: Complaint Type
+            }
+            layout {
+                sequence: 8
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#COMPLAINT_TYPE#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column CONTACT_NUMBER (
+            type: plainText
+            heading {
+                heading: Contact Number
+            }
+            layout {
+                sequence: 6
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#CONTACT_NUMBER#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column CORRECTIVE_ACTION (
+            type: plainText
+            heading {
+                heading: Corrective Action
+            }
+            layout {
+                sequence: 14
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#CORRECTIVE_ACTION#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column CREATED (
+            type: hidden
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 23
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: W
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED_BY (
+            type: hidden
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 24
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column PREVENTIVE_ACTION (
+            type: plainText
+            heading {
+                heading: Preventive Action
+            }
+            layout {
+                sequence: 15
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#PREVENTIVE_ACTION#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PRODUCTS_LIST (
+            type: plainText
+            heading {
+                heading: Products list
+                alignment: center
+            }
+            layout {
+                sequence: 56
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column RAISED_BY (
+            type: plainText
+            heading {
+                heading: Raised By
+            }
+            layout {
+                sequence: 5
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"white-space:nowrap;\">#RAISED_BY#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column RAISED_DATE (
+            type: plainText
+            heading {
+                heading: Raised Date
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"white-space:nowrap;\">#RAISED_DATE#</span> "
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column RAISED_SOURCE (
+            type: plainText
+            heading {
+                heading: Raised Source
+            }
+            layout {
+                sequence: 7
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#RAISED_SOURCE#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column RESOLVED_BY (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Resolved By
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 17
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#RESOLVED_BY#</span> "
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column RESOLVED_DATE (
+            type: plainText
+            heading {
+                heading: Resolved Date
+                alignment: center
+            }
+            layout {
+                sequence: 18
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#RESOLVED_DATE#</span> "
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column RESOLVED_REMARKS (
+            type: plainText
+            heading {
+                heading: Resolved Remarks
+            }
+            layout {
+                sequence: 16
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#RESOLVED_REMARKS#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column ROOT_CAUSE (
+            type: plainText
+            heading {
+                heading: Root Cause
+            }
+            layout {
+                sequence: 13
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#ROOT_CAUSE#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 22
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#STATUS#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column UPDATED (
+            type: hidden
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 25
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: Y
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATED_BY (
+            type: hidden
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 26
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UPDATE_STATUS (
+            type: hidden
+            heading {
+                heading: Update status
+            }
+            layout {
+                sequence: 36
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column VERIFIED_BY (
+            type: plainText
+            heading {
+                heading: Verified By
+            }
+            layout {
+                sequence: 20
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#VERIFIED_BY#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column VERIFIED_DATE (
+            type: plainText
+            heading {
+                heading: Verified Date
+                alignment: center
+            }
+            layout {
+                sequence: 21
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#VERIFIED_DATE#</span> "
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column VERIFIED_REMARKS (
+            type: plainText
+            heading {
+                heading: Verified Remarks
+            }
+            layout {
+                sequence: 19
+            }
+            columnFormatting {
+                htmlExpression: "<span style=\"whitespace:nowrap;\">#VERIFIED_REMARKS#</span> "
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column VERIFY_UPDATE (
+            type: hidden
+            heading {
+                heading: Verify update
+            }
+            layout {
+                sequence: 46
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 4100392 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn ACCOUNT_ID (
+                sequence: 2
+            )
+
+            displayColumn ASSIGNED_TO (
+                sequence: 5
+            )
+
+            displayColumn COMPLAINT_ID (
+                sequence: 1
+            )
+
+            displayColumn RAISED_BY (
+                sequence: 4
+            )
+
+            displayColumn RAISED_DATE (
+                sequence: 3
+            )
+
+            displayColumn STATUS (
+                sequence: 6
+            )
+
+        )
+
+    )
+
+    region complaints-2 (
+        name: Complaints
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 30
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+)
+

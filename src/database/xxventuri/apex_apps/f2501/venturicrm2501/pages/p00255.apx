@@ -1,0 +1,435 @@
+page 255 (
+    name: Holidays Details
+    title: Holidays Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        height: 400
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-holidays-t (
+        name: Form on XXEBA_SALES_HOLIDAYS_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P255_HOLIDAYS_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HOLIDAYS_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P255_HOLIDAY_DATE (
+        type: datePickerJquery
+        label {
+            label: Holiday Date
+            alignment: left
+        }
+        settings {
+            minDate: +0d
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 6
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HOLIDAY_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P255_HOLIDAY_NAME (
+        type: textField
+        label {
+            label: Holiday Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 63
+        }
+        validation {
+            valueRequired: true
+            maxLength: 250
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HOLIDAY_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P255_HOLIDAY_TYPE (
+        type: selectList
+        label {
+            label: Holiday Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIST_VALUE as display_value, LIST_ID as return_value from XXEBA_LIST_VALUES
+                where LIST_CODE = 'HOLIDAY_TYPE' 
+                and STATUS = 'Y'
+                order by DISPLAY_SEQUENCE
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HOLIDAY_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P255_STATUS (
+        type: switch
+        label {
+            label: Status
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P255_HOLIDAYS_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P255_WEEKDAY (
+        type: selectList
+        label {
+            label: Weekday
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Sunday;SUN,Monday;MON,Tuesday;TUE,Wednesday;WED,Thursday;THU,Friday;FRI,Saturday;SAT
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-holidays-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw150
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: WEEKDAY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P255_HOLIDAYS_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P255_HOLIDAYS_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 299826302517924848
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-holidays-t (
+        name: Fetch Row from XXEBA_SALES_HOLIDAYS_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_HOLIDAYS_T
+            pkColumn: HOLIDAYS_ID
+            pkItem: P255_HOLIDAYS_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 299825064721924846
+        }
+    )
+
+    process process-row-of-xxeba-sales-holidays-t (
+        name: Process Row of XXEBA_SALES_HOLIDAYS_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_HOLIDAYS_T
+            pkColumn: HOLIDAYS_ID
+            pkItem: P255_HOLIDAYS_ID
+            supportedOperations: [
+                insert
+                update
+            ]
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 299825478049924847
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 299825917663924847
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

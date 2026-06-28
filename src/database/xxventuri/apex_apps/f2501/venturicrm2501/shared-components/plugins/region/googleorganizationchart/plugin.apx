@@ -1,0 +1,136 @@
+plugin googleOrganizationChart (
+    name: Google Organization Chart
+    staticId: KEYMER.JOHN.GOOGLE_ORG_CHART
+    type: region
+    component {
+        standardAttributes: [
+            regionSourceIsSqlQuery
+            noDataFoundMessageAttr
+        ]
+    }
+    source {
+        plsqlCode:
+            ```plsql
+            function f_render (
+              p_region              in apex_plugin.t_region,
+              p_plugin              in apex_plugin.t_plugin,
+              p_is_printer_friendly in boolean )
+            return apex_plugin.t_region_render_result
+            is
+              l_region_id  varchar2(50) := nvl(p_region.static_id,'R' || to_char(p_region.id,'fm99999999999999999999')) || '_chart';
+              l_data       apex_plugin_util.t_column_value_list2;
+              l_chart_opts varchar2(500);
+            begin
+              l_data := apex_plugin_util.get_data2(p_sql_statement  => p_region.source,
+                                                p_min_columns    => 4,
+                                                p_max_columns    => 4,
+                                                p_component_name => p_region.name);
+              
+              if l_data(1).value_list.count = 0 then
+                htp.p(nvl(p_region.no_data_found_message,'no data found'));
+                return null;
+              end if;
+              
+              l_chart_opts := '{';
+              l_chart_opts := l_chart_opts || 'allowCollapse:' || case when p_region.attribute_01 = 'Y' then 'true' else 'false' end || ', ';
+              l_chart_opts := l_chart_opts || 'allowHtml:' || case when p_region.attribute_02 = 'Y' then 'true' else 'false' end;
+              
+              if p_region.attribute_03 is not null then
+                l_chart_opts := l_chart_opts || ', nodeClass:''' ||  p_region.attribute_03 || ''',';
+              end if;
+              
+              l_chart_opts := l_chart_opts || ', size:''' || lower(p_region.attribute_04) || '''';
+              
+              if p_region.attribute_05 is not null then
+                l_chart_opts := l_chart_opts || ', selectedNodeClass:''' ||  p_region.attribute_05 || '''';
+              end if;
+              
+              htp.p(htf.div(cattributes=>'id="'||l_region_id|| '"')||'</div>');
+            
+              htp.p(
+                q'[ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                <script type="text/javascript">
+                google.charts.load('current', {packages:["orgchart"]});
+                google.charts.setOnLoadCallback(drawChart);
+            
+                function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Name');
+                data.addColumn('string', 'Manager');
+                data.addColumn('string', 'ToolTip');
+                
+                data.addRows([
+              ]');
+              
+              for i in 1 .. l_data(1).value_list.count loop
+                htp.p('[' 
+                      || '{v:''' 
+                      || l_data(2).value_list(i).varchar2_value 
+                      || ''', f:'''
+                      || case when l_data(1).value_list(i).varchar2_value is not null then 
+                           htf.anchor(curl=>l_data(1).value_list(i).varchar2_value, ctext=>l_data(3).value_list(i).varchar2_value)
+                         else l_data(3).value_list(i).varchar2_value end
+                      || '''},'
+                      || '''' || l_data(4).value_list(i).varchar2_value || ''','
+                      || ''''''
+                      || ']'
+                      || case when i < l_data(1).value_list.count then ',' end
+                );
+              end loop;
+              
+              htp.p(
+                q'[
+                  ]);
+                  
+                  var chart = new google.visualization.OrgChart(document.getElementById(']' || l_region_id || q'['));
+                  chart.draw(data, ]' || l_chart_opts || q'[});
+                }
+                </script>
+              ]');
+              
+              return null;
+            end;
+            ```
+    }
+    callbacks {
+        apiInterface: function
+        renderProcedureName: f_render
+    }
+    advanced {
+        substituteAttributeValues: true
+    }
+    information {
+        version: 1.0
+        helpText:
+            ```
+            Render an organization style chart using the Google Charts API. Accepts a SQL statement as the region source with the following mandatory columns.
+            1) Link - A URL to link the node to. Use Null for none. Ensure you prepare the URL if session state protection is enabled.
+            2) Child Key - The key to use for this node. This can be numeric or text.
+            3) Child Display Value - The text to display. You may use HTML if you have chosen this option.
+            4) Parent Key - The key of this nodes parent.
+            ```
+    }
+
+    standardAttributeConfig (
+        name: regionSourceIsSqlQuery
+        validation {
+            required: true
+        }
+        sqlQuery {
+            minColumns: 4
+            maxColumns: 4
+        }
+        help {
+            helpText: Enter a SQL Query to return the hierarchy
+        }
+        examples {
+            examples:
+                ```
+                Select null link, '1' key_value, 'Value' display_value, '' parent_key
+                from dual;
+                ```
+        }
+    )
+
+)
+

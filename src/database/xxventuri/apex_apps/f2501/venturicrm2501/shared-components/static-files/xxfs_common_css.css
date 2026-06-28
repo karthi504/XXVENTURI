@@ -1,0 +1,106 @@
+/* Created On: 06-Jun-2017 */
+.text_upper{ 
+	text-transform: uppercase;
+}
+th#IRCSS80,
+td[headers=IRCSS80] {
+    min-width: 80px;
+}
+th#IRCSS90,
+td[headers=IRCSS90] {
+    min-width: 90px;
+}
+th#IRCSS100,
+td[headers=IRCSS100] {
+    min-width: 100px;
+}
+th#IRCSS110,
+td[headers=IRCSS110] {
+    min-width: 110px;
+}
+th#IRCSS120,
+td[headers=IRCSS120] {
+    min-width: 120px;
+}
+th#IRCSS150,
+td[headers=IRCSS150] {
+    min-width: 150px;
+}
+th#IRCSS200,
+td[headers=IRCSS200] {
+    min-width: 200px;
+}
+/*.ins_status{
+	padding: 4px;
+    border-radius: 3px;
+	width:100%; 
+	display: block;
+}
+.t-Form-inputContainer input[type=text],
+input.datepicker,
+input.password,
+input.popup_lov,
+input.text_field,
+select.selectlist[size="1"],
+.t-Form--stretchInputs .t-Form-fieldContainer select.selectlist,
+.t-Form-label,
+select.yes_no,
+span.display_only {
+    font-size: 1.4rem!important;
+    padding: .7rem;
+    height: 3.2rem;
+}
+.t-Button {
+    padding: 1.2rem 1.6rem;
+	font-size: 1.4rem;
+    line-height: 1.6rem;
+}
+.select2-container .select2-choice { 
+    height: 30px!important; 
+    line-height: 29px!important;
+}
+.t-TreeNav .a-TreeView-node--topLevel>.a-TreeView-content .a-TreeView-label {
+    line-height: 40px;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5rem;
+    transition: opacity .1s;
+}
+
+.t-TreeNav .a-TreeView-node--topLevel ul .a-TreeView-content .a-TreeView-label{
+    padding: 0;
+    line-height: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	font-size: 1.4rem;
+}
+
+.t-Button--hot {
+    font-weight: 700;
+}
+.a-GV, .a-IRR, .a-Button{
+    font-size: 1.2rem;
+} 
+.t-Footer-apex{
+	display:none;
+}
+.t-Body-contentInner {
+    padding: 5px;
+}
+
+
+/* Logo and Application Title  */
+/*#Application_logo img{
+	content:url("#WORKSPACE_IMAGES#Fouraai_Logo.png");
+    display:inline;
+}
+#Application_logo div{
+    display: inline;
+    vertical-align: super;
+    margin-left: 1%;
+    position: absolute;
+    margin-top: 8px;
+}
+.t-Header-logo a{
+    width:100% !important;
+}*/

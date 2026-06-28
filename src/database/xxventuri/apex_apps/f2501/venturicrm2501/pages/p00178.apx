@@ -1,0 +1,827 @@
+page 178 (
+    name: Price List
+    title: Price List
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region price-list (
+        name: Price List
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region standard (
+        name: Standard
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select DISTINCT UPPER(p.product_name) as product_code,
+                p.id,
+                  p.brand_id,
+                  p.PRODUCT_PRICE,p.CURRENCY_TYPE,p.UNIT_OF_MEASURE,p.PRODUCT_COST,p.PRODUCT_CURRENCY_TYPE,
+                  p.LEAD_TIME,
+                  p.MINIMUM_ORDER_QUANTITY,
+                  p.row_key, 
+                  p.product_sku,
+                  p.product_family_id,
+                  p.CATALOGUE_NO,
+                  p.product_description,
+                  p.location,
+                  (select sum(S.QTY_IN_STOCK) from XXEBA_TALLY_STOCK_T S where S.PRODUCT_CODE= P.ROW_KEY and 
+                S.BATCH_SEQUENCE = (select MAX(BATCH_SEQUENCE)from XXEBA_TALLY_STOCK_T )) STOCK,
+                  (select MAX(UPDATED_DATE) from XXEBA_TALLY_STOCK_T S where S.PRODUCT_CODE= P.ROW_KEY and 
+                S.BATCH_SEQUENCE = (select MAX(BATCH_SEQUENCE)from XXEBA_TALLY_STOCK_T )) STOCK_LAST_UPDATED,
+                  p.created,
+                  p.created_by,
+                  p.updated,
+                  p.updated_by
+                from eba_sales_products p
+                where p.status = 'Y'
+                -- where p.brand_id IN (1000,1001,1005,1028,1032,1033)
+                and p.BRAND_ID NOT IN (1008,1027,1011,1006,1010,1012,1014,1031,1015,1023,1016)
+                ORDER BY UPDATED DESC
+                
+                
+                /*where p.STATUS='Y'
+                AND p.id=p.id+0   -- P.CATALOGUE_NO
+                */
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 149146466976558981
+        }
+
+        column BRAND_ID (
+            type: hidden
+            heading {
+                heading: Brand Id
+            }
+            layout {
+                sequence: 59
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column CATALOGUE_NO (
+            type: plainText
+            heading {
+                heading: Ordering Code
+            }
+            layout {
+                sequence: 29
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: T
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 16
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 17
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column CURRENCY_TYPE (
+            type: plainText
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: Id
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column LEAD_TIME (
+            type: plainText
+            heading {
+                heading: Lead Time
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column LOCATION (
+            type: plainText
+            heading {
+                heading: Location
+            }
+            layout {
+                sequence: 69
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column MINIMUM_ORDER_QUANTITY (
+            type: plainText
+            heading {
+                heading: Minimum Order Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column PRODUCT_CODE (
+            type: plainText
+            heading {
+                heading: Product
+            }
+            layout {
+                sequence: 3
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PRODUCT_COST (
+            type: plainText
+            heading {
+                heading: Cost Price
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: G
+            }
+            security {
+                authorizationScheme: @xxeba-admin-coordinator
+            }
+        )
+
+        column PRODUCT_CURRENCY_TYPE (
+            type: plainText
+            heading {
+                heading: "Currency "
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+            security {
+                authorizationScheme: @xxeba-admin-coordinator
+            }
+        )
+
+        column PRODUCT_DESCRIPTION (
+            type: plainText
+            heading {
+                heading: Product Description
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        column PRODUCT_FAMILY_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Group
+            }
+            lov {
+                lov: @product-families
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column PRODUCT_PRICE (
+            type: plainText
+            heading {
+                heading: Unit Price
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column PRODUCT_SKU (
+            type: plainText
+            heading {
+                heading: HSN Number
+                alignment: center
+            }
+            layout {
+                sequence: 12
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column ROW_KEY (
+            type: plainText
+            heading {
+                heading: Row Key
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column STOCK (
+            type: plainText
+            heading {
+                heading: Stock
+            }
+            layout {
+                sequence: 39
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column STOCK_LAST_UPDATED (
+            type: plainText
+            heading {
+                heading: Stock Updated On
+            }
+            layout {
+                sequence: 49
+            }
+            appearance {
+                formatMask: DD-Mon-YY HH:MI PM
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column UNIT_OF_MEASURE (
+            type: plainText
+            heading {
+                heading: UOM
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column UPDATED (
+            type: plainText
+            heading {
+                heading: Price Updated On
+            }
+            layout {
+                sequence: 18
+            }
+            appearance {
+                formatMask: DD-Mon-YY HH:MI PM
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                htmlDomId: IRCSS120
+                endUserAlias: R
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 19
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1491544 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CATALOGUE_NO (
+                sequence: 3
+            )
+
+            displayColumn CURRENCY_TYPE (
+                sequence: 4
+            )
+
+            displayColumn MINIMUM_ORDER_QUANTITY (
+                sequence: 9
+            )
+
+            displayColumn PRODUCT_CODE (
+                sequence: 1
+            )
+
+            displayColumn PRODUCT_COST (
+                sequence: 8
+            )
+
+            displayColumn PRODUCT_PRICE (
+                sequence: 5
+            )
+
+            displayColumn PRODUCT_SKU (
+                sequence: 2
+            )
+
+            displayColumn STOCK (
+                sequence: 6
+            )
+
+            displayColumn STOCK_LAST_UPDATED (
+                sequence: 7
+            )
+
+            displayColumn UPDATED (
+                sequence: 10
+            )
+
+            sort (
+                column: PRODUCT_CODE
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: STOCK_LAST_UPDATED
+                sort {
+                    direction: desc
+                    sequence: 2
+                }
+            )
+
+        )
+
+    )
+
+    region tab-container (
+        name: "Tab Container "
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @tabs-container
+            templateOptions: [
+                #DEFAULT#
+                t-TabsRegion-mod--simple
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region tally-stock (
+        name: Tally Stock
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT DISTINCT UPPER(p.product_name) ,
+                s.product_code,
+                s.qty_in_stock,
+                s.stock_in_uom,
+                s.updated_date,
+                s.batch_sequence
+                FROM
+                    xxeba_tally_stock_t  s,
+                    eba_sales_products   p
+                WHERE
+                    s.product_code = p.ROW_KEY(+)
+                   AND S.BATCH_SEQUENCE = (select MAX(s2.BATCH_SEQUENCE) from XXEBA_TALLY_STOCK_T s2)
+                order by updated_date desc
+                ```
+        }
+        layout {
+            sequence: 40
+            parentRegion: @tab-container
+            slot: tabs
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        serverSideCondition {
+            type: never
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+            displayPosition: topAndBottomRight
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 761861592225460203
+        }
+
+        column BATCH_SEQUENCE (
+            type: plainText
+            heading {
+                heading: Batch Sequence
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column PRODUCT_CODE (
+            type: plainText
+            heading {
+                heading: Ordering Code
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column QTY_IN_STOCK (
+            type: plainText
+            heading {
+                heading: Qty in Stock
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column STOCK_IN_UOM (
+            type: plainText
+            heading {
+                heading: Unit of Measure
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: F
+            }
+        )
+
+        column UPDATED_DATE (
+            type: plainText
+            heading {
+                heading: Updated Date
+                alignment: center
+            }
+            layout {
+                sequence: 40
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column "UPPER(P.PRODUCT_NAME)" (
+            type: plainText
+            heading {
+                heading: Upper(p.product Name)
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        pageHeader {
+            pageHeaderText: Tally Stock
+        }
+
+        savedReport 8133932 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn PRODUCT_CODE (
+                sequence: 1
+            )
+
+            displayColumn QTY_IN_STOCK (
+                sequence: 2
+            )
+
+            displayColumn STOCK_IN_UOM (
+                sequence: 3
+            )
+
+            displayColumn UPDATED_DATE (
+                sequence: 4
+            )
+
+            sort (
+                column: PRODUCT_CODE
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: PRODUCT_NAME
+                sort {
+                    direction: desc
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: QTY_IN_STOCK
+                sort {
+                    direction: desc
+                    sequence: 3
+                }
+            )
+
+        )
+
+    )
+
+    button upload-price-list (
+        buttonName: UPLOAD_PRICE_LIST
+        label: Upload Price List
+        layout {
+            sequence: 10
+            region: @standard
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--primary
+            ]
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 117
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+)
+

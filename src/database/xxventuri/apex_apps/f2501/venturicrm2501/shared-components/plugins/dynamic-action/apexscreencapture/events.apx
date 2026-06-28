@@ -1,0 +1,8 @@
+event screencapture-error-db (
+    name: Screen Capture - Error saving to DB
+)
+
+event screencapture-saved-db (
+    name: Screen Capture - Saved to DB
+)
+

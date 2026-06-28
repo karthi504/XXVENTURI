@@ -1,0 +1,141 @@
+page 186 (
+    name: Google Map
+    title: Geo Location
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    css {
+        inline:
+            ```css
+            #map {
+             height: 100%;
+            }
+            #mapp .t-Region-body {
+             height: 600px !important;
+            }
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region view-location (
+        name: View Location
+        type: plugin/jk64SimpleGoogleMap
+        layout {
+            sequence: 1230
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+                t-Form--slimPadding
+                margin-top-none
+                margin-bottom-none
+                margin-left-none
+                margin-right-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            synchronizeWithItem: P186_LAT_LONG
+        }
+    )
+
+    pageItem P186_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @view-location
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P186_LATITUDE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @view-location
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P186_LAT_LONG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @view-location
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P186_LONGITUDE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @view-location
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    process set-url (
+        name: Set URL
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                SELECT LAST_UPDATED_LATITUDE,  LAST_UPDATED_LONGITUDE, LAST_UPDATED_LATITUDE||','||LAST_UPDATED_LONGITUDE into :P186_LATITUDE, :P186_LONGITUDE, :P186_LAT_LONG
+                FROM eba_sales_customers
+                WHERE ID = :P186_ID;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 140470974222708656
+        }
+    )
+
+)
+

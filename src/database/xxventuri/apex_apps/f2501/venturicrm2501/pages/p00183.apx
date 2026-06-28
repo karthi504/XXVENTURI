@@ -1,0 +1,661 @@
+page 183 (
+    name: Sale Order copy
+    title: Sale Order copy
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region sales-orders (
+        name: Sales Orders
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select 
+                'Sales Orders'  "Sales Orders",
+                --T.TERRITORY_NAME "Branch",
+                T.BILLING_REGION "Branch",
+                C.CUSTOMER_CODE "PartyAccountCode",
+                'A' "PriceList",
+                --R.REP_LAST_NAME||' '||R.REP_LAST_NAME "Executive",
+                initcap(R.USER_NAME)  "Executive",
+                0 "ShippingDiffBilling",
+                --'"'||L.CUSTOMER_ADDRESS1||', '||L.CUSTOMER_ADDRESS2||', '||CT.CITY_NAME||', '||ST.STATE||', '||CN.COUNTRY_NAME||', '||L.CUSTOMER_POSTAL_CODE||'"' "ShippingAddress",
+                '' "ShippingAddress",
+                '' "Remarks",
+                --OP.PRODUCT_NAME "ProductCode",
+                SP.PRODUCT_NAME "ProductCode",
+                SP.CATALOGUE_NO "Ordering Code",     -- Column added on 19-June-18 by Thamaraiselvan
+                OP.QUANTITY "Quantity",OP.DELIVERY_DATE "Deliverydate",
+                OP.PRODUCT_PRICE "UnitRate",
+                --(select SP.PRODUCT_PRICE from EBA_SALES_PRODUCTS SP  where OP.PRODUCT_NAME = SP.PRODUCT_NAME and rownum=1) "UnitRate",
+                '' "DiscountBasis1",
+                '' "Discount1",
+                '18-'||SP.PRODUCT_SKU "TaxStructure",
+                SO.REMARKS  "Comments",
+                SO.PO_NUMBER "ReferenceBillNo",
+                SO.PO_DATE "ReferenceBillDate",
+                'Nearest Integer' "RoundOffType",
+                SO.ORDER_DATE "DATE",
+                'SO' "A",
+                SO.ORDER_NUMBER "B",
+                (select PART_NUMBER from XXEBA_SALES_ACC_PRODUCTS where PRODUCT_ID=OP.PRODUCT_ID AND CUSTOMER_ID=SO.CUSTOMER_ID) "Part Number"
+                from
+                XXEBA_ORDER_PRODUCTS OP,
+                XXEBA_SALES_ORDER SO,
+                EBA_SALES_TERRITORIES T,
+                EBA_SALES_CUSTOMERS C,
+                EBA_SALES_SALESREPS R,
+                EBA_SALES_CUSTOMER_LOCATIONS L,
+                XXEBA_SALES_CITIES_T CT,
+                EBA_SALES_STATES ST,
+                EBA_SALES_COUNTRIES CN,
+                EBA_SALES_PRODUCTS SP
+                where 
+                OP.ORDER_ID = SO.ORDER_ID
+                --and SO.TERRITORY_ID = T.ID
+                and C.CUSTOMER_TERRITORY_ID = T.ID
+                and SO.CUSTOMER_ID = C.ID
+                and SO.SALES_REP = R.ID
+                and SO.DELIVERY_LOCATION = L.ID(+)
+                and L.CITY_ID = CT.CITY_ID(+)
+                and L.STATE_ID = ST.ID(+)
+                and L.COUNTRY_ID = CN.ID(+)
+                and OP.PRODUCT_ID = SP.ID(+)
+                and SO.STATUS = 'Y' 
+                and NVL(SO.EXPORT_FLAG,'N')!='Y' -- NVL handled by Karkuvelraja T on 02-Jun-2018
+                --and SO.ORDER_DATE between :P183_FROM_DATE and :P183_TO_DATE
+                order by SO.ORDER_NUMBER;
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+            columnAttributes: style="display:block"
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            htmlDomId: Export_report
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 103
+                items: {
+                    P103_ORDER_ID: #ORDER_ID#
+                    P103_DEAL_ID: #DEAL_ID#
+                }
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="Edit">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 297976416346153417
+        }
+
+        column A (
+            type: plainText
+            heading {
+                heading: A
+            }
+            layout {
+                sequence: 260
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AU
+            }
+        )
+
+        column B (
+            type: plainText
+            heading {
+                heading: B
+            }
+            layout {
+                sequence: 270
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AV
+            }
+        )
+
+        column Branch (
+            type: plainText
+            heading {
+                heading: Branch
+                alignment: center
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+        )
+
+        column Comments (
+            type: plainText
+            heading {
+                heading: Comments
+                alignment: center
+            }
+            layout {
+                sequence: 160
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column DATE (
+            type: plainText
+            heading {
+                heading: Date
+                alignment: center
+            }
+            layout {
+                sequence: 250
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MM-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AW
+            }
+        )
+
+        column Deliverydate (
+            type: plainText
+            heading {
+                heading: Deliverydate
+                alignment: center
+            }
+            layout {
+                sequence: 280
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column Discount1 (
+            type: plainText
+            heading {
+                heading: Discount1
+                alignment: center
+            }
+            layout {
+                sequence: 140
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AH
+            }
+        )
+
+        column DiscountBasis1 (
+            type: plainText
+            heading {
+                heading: DiscountBasis1
+                alignment: center
+            }
+            layout {
+                sequence: 130
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AG
+            }
+        )
+
+        column Executive (
+            type: plainText
+            heading {
+                heading: Executive
+                alignment: center
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column "Ordering Code" (
+            type: plainText
+            heading {
+                heading: Ordering code
+                alignment: center
+            }
+            layout {
+                sequence: 290
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AY
+            }
+        )
+
+        column "Part Number" (
+            type: plainText
+            heading {
+                heading: Part Number
+                alignment: center
+            }
+            layout {
+                sequence: 300
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AZ
+            }
+        )
+
+        column PartyAccountCode (
+            type: plainText
+            heading {
+                heading: PartyAccountCode
+                alignment: center
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column PriceList (
+            type: plainText
+            heading {
+                heading: PriceList
+                alignment: center
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column ProductCode (
+            type: plainText
+            heading {
+                heading: ProductCode
+                alignment: center
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column Quantity (
+            type: plainText
+            heading {
+                heading: Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 110
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AE
+            }
+        )
+
+        column ReferenceBillDate (
+            type: plainText
+            heading {
+                heading: Referencebilldate
+                alignment: center
+            }
+            layout {
+                sequence: 220
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MM-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: AQ
+            }
+        )
+
+        column ReferenceBillNo (
+            type: plainText
+            heading {
+                heading: Referencebillno
+                alignment: center
+            }
+            layout {
+                sequence: 240
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AS
+            }
+        )
+
+        column Remarks (
+            type: plainText
+            heading {
+                heading: Remarks
+                alignment: center
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column RoundOffType (
+            type: plainText
+            heading {
+                heading: RoundOffType
+                alignment: center
+            }
+            layout {
+                sequence: 190
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AM
+            }
+        )
+
+        column "Sales Orders" (
+            type: plainText
+            heading {
+                heading: Sales Orders
+            }
+            layout {
+                sequence: 230
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AR
+            }
+        )
+
+        column ShippingAddress (
+            type: plainText
+            heading {
+                heading: ShippingAddress
+                alignment: center
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column ShippingDiffBilling (
+            type: plainText
+            heading {
+                heading: ShippingAddressisDifferentfromBillingAddress
+                alignment: center
+            }
+            layout {
+                sequence: 70
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column TaxStructure (
+            type: plainText
+            heading {
+                heading: TaxStructure
+                alignment: center
+            }
+            layout {
+                sequence: 150
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AI
+            }
+        )
+
+        column UnitRate (
+            type: plainText
+            heading {
+                heading: UnitRate
+                alignment: center
+            }
+            layout {
+                sequence: 120
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AF
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 1493261 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn A (
+                sequence: 21
+            )
+
+            displayColumn B (
+                sequence: 22
+            )
+
+            displayColumn "Branch" (
+                sequence: 2
+            )
+
+            displayColumn "Comments" (
+                sequence: 16
+            )
+
+            displayColumn DATE (
+                sequence: 20
+            )
+
+            displayColumn "Deliverydate" (
+                sequence: 8
+            )
+
+            displayColumn "Discount1" (
+                sequence: 14
+            )
+
+            displayColumn "DiscountBasis1" (
+                sequence: 13
+            )
+
+            displayColumn "Executive" (
+                sequence: 5
+            )
+
+            displayColumn "Ordering Code" (
+                sequence: 23
+            )
+
+            displayColumn "Part Number" (
+                sequence: 24
+            )
+
+            displayColumn "PartyAccountCode" (
+                sequence: 3
+            )
+
+            displayColumn "PriceList" (
+                sequence: 4
+            )
+
+            displayColumn "ProductCode" (
+                sequence: 10
+            )
+
+            displayColumn "Quantity" (
+                sequence: 11
+            )
+
+            displayColumn "ReferenceBillDate" (
+                sequence: 18
+            )
+
+            displayColumn "ReferenceBillNo" (
+                sequence: 17
+            )
+
+            displayColumn "Remarks" (
+                sequence: 9
+            )
+
+            displayColumn "RoundOffType" (
+                sequence: 19
+            )
+
+            displayColumn "Sales Orders" (
+                sequence: 1
+            )
+
+            displayColumn "ShippingAddress" (
+                sequence: 7
+            )
+
+            displayColumn "ShippingDiffBilling" (
+                sequence: 6
+            )
+
+            displayColumn "TaxStructure" (
+                sequence: 15
+            )
+
+            displayColumn "UnitRate" (
+                sequence: 12
+            )
+
+        )
+
+    )
+
+)
+

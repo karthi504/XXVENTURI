@@ -1,0 +1,2156 @@
+page 164 (
+    name: Additional Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            $('#weekly_box .days').click(function (){
+                if ( $(this).hasClass("week_selected") ){
+                    $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val().replace($(this).attr('id')+',', ""));
+                    $(this).removeClass('week_selected');
+                }
+                else{
+                    //alert($('.week_selected').length);
+                    //alert($v('P164_VISIT_REPET_DAYS'));
+                    var select_w = $('.week_selected').length;
+                    var freq_days = $v('P164_VISIT_REPET_DAYS');
+                    if(select_w == freq_days){
+                        var first_select = $('#P164_SCHEDULES_LIST').val().substr(0,3);
+                        $('#'+first_select).removeClass('week_selected');
+                        $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val().replace(first_select+',', ""));
+                    }
+                    $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val()+$(this).attr('id')+',');
+                    $(this).addClass('week_selected');
+                } 
+            });
+            
+            $('#monthly_box .date').click(function (){
+                if ( $(this).hasClass("date_selected") ){
+                    $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val().replace($(this).attr('id')+',', ""));
+                    $(this).removeClass('date_selected');
+                }
+                else{
+                    var select_w = $('.date_selected').length;
+                    var freq_days = $v('P164_VISIT_REPET_DAYS');
+                     if(select_w == freq_days){
+                        var first_select = $('#P164_SCHEDULES_LIST').val().substr(0, $('#P164_SCHEDULES_LIST').val().indexOf(","));
+                        $('#'+first_select).removeClass('date_selected');
+                        $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val().replace(first_select+',', ""));
+                    }
+                    $('#P164_SCHEDULES_LIST').val($('#P164_SCHEDULES_LIST').val()+$(this).attr('id')+',');
+                   $(this).addClass('date_selected');
+                } 
+            });
+            
+            $('#date_button').click(function (){
+                $('#mothly_schedue_value span').text($('#P164_SCHEDULES_LIST').val().slice(0,-1));
+                $('#mothly_schedue_value').show();
+                $('#monthly_box').hide();
+            });
+            ```
+    }
+    css {
+        inline:
+            ```css
+            .calender-hot-button{
+                    background-color: #0572CE !important;
+                    color: #fff !important;
+            }
+            
+            .days {
+                float: left;
+                margin: 6px;
+                width: 26px;
+                text-align: center;
+                border: 1px solid;
+                border-radius: 250px;
+                cursor: pointer;
+            }
+            
+            #weekly_box{
+                margin-top: -6px;
+                margin-left: 20px;
+            }
+            
+            .week_selected{
+                background: #0585e0;
+                color: #fff;
+                font-weight: bold;
+            }
+            
+            .date {
+                width: 26px;
+                text-align: center;
+                cursor: pointer;
+                border: 1px outset;
+            }
+            
+            #monthly_box{
+                float: left;
+                margin-left: 20px;
+            }
+            
+            #monthly_box table{
+                border:1px solid #c7c7c7;
+            }
+            
+            .date:hover {
+                border: 1px dotted;
+            }
+                
+            .date_selected{
+                background: #0585e0;
+                color: #fff;
+                font-weight: bold;
+            }
+            
+            #mothly_schedue_value{
+                margin: 0 0 0 10px;
+            }
+                
+            #date_button{
+                padding: 0 12px;
+                background: #0572ce;
+                border: 1px solid #0464b4;
+                color: #fff;
+                cursor: pointer;
+            }
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region additional-details (
+        name: Additional Details
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-left-md
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P164_FLAG
+            value: A
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-sales-customer-details (
+        name: Form on XXEBA_SALES_CUSTOMER_DETAILS
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region recommendations-details (
+        name: Recommendations Details
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P164_FLAG
+            value: R
+        }
+        security {
+            authorizationScheme: !@xxeba-admin-teamlead
+        }
+    )
+
+    region recommendations-details-2 (
+        name: Recommendations Details
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: item=value
+            item: P164_FLAG
+            value: R
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    pageItem P164_ASSIGNED_TO (
+        type: plugin/select2
+        label {
+            label: Assigned To
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 80
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ASSIGNED_TO
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ASSIGNED_TO_1 (
+        type: plugin/select2
+        label {
+            label: Assigned To
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 70
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ASSIGNED_TO
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_COMMENTS (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 3
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMMENTS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_COMMENTS_1 (
+        type: textarea
+        label {
+            label: Comments
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+            height: 3
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: COMMENTS
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREATION_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATION_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_CURRENCY (
+        type: selectList
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select CURRENCY_CODE d, CURRENCY_CODE  as r from EBA_SALES_CURRENCIES
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 5
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw90
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_CURRENCY
+            used: always
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_DAYS (
+        type: selectList
+        label {
+            label: "Credit Terms "
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (
+                select 'No Credit'd,'0' r, '1' seq from dual
+                union
+                select 'Immediate'd,'1' r, '2' seq from dual
+                union 
+                select '30 Days' d,'30' r ,'3' seq from dual
+                union 
+                select '45 Days' d,'45' r ,'4' seq from dual
+                union 
+                select '60 Days' d,'60' r ,'5' seq from dual
+                union 
+                select '90 Days' d,'90' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 80
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_DAYS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_LIMIT (
+        type: numberField
+        label {
+            label: Credit Limit
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 90
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_LIMIT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_LIMIT_CURRENCY (
+        type: selectList
+        label {
+            label: Currency
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select CURRENCY_CODE d, CURRENCY_CODE  as r from EBA_SALES_CURRENCIES
+        }
+        layout {
+            sequence: 60
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_LIMIT_CURRENCY
+            used: always
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_LIMIT_REC (
+        type: numberField
+        label {
+            label: Credit Limit Recommended
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 50
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_LIMIT_REC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_LIMIT_REC_1 (
+        type: numberField
+        label {
+            label: Credit Limit Recommended
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 40
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_TERMS_REC (
+        type: selectList
+        label {
+            label: Credit Terms Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (
+                select 'No Credit'd,'0' r, '1' seq from dual
+                union
+                select 'Immediate'd,'1' r, '2' seq from dual
+                union 
+                select '30 Days' d,'30' r ,'3' seq from dual
+                union 
+                select '45 Days' d,'45' r ,'4' seq from dual
+                union 
+                select '60 Days' d,'60' r ,'5' seq from dual
+                union 
+                select '90 Days' d,'90' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 40
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_TERMS_REC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CREDIT_TERMS_REC_1 (
+        type: selectList
+        label {
+            label: Credit Terms Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (
+                select 'No Credit'd,'0' r, '1' seq from dual
+                union
+                select 'Immediate'd,'1' r, '2' seq from dual
+                union 
+                select '30 Days' d,'30' r ,'3' seq from dual
+                union 
+                select '45 Days' d,'45' r ,'4' seq from dual
+                union 
+                select '60 Days' d,'60' r ,'5' seq from dual
+                union 
+                select '90 Days' d,'90' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 30
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREDIT_TERMS_REC
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_DETAILS_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DETAILS_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ENQUIRY_COMPETITOR (
+        type: textField
+        label {
+            label: Enquired With Competitor
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ENQUIRY_COMPETITOR
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ENQUIRY_CUSTOMER (
+        type: textField
+        label {
+            label: Enquired With Customer
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ENQUIRY_CUSTOMER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ENQUIRY_EMPLOYEE (
+        type: textField
+        label {
+            label: Enquired With Employee
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ENQUIRY_EMPLOYEE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ENQUIRY_SUPPLIER (
+        type: textField
+        label {
+            label: Enquired With Supplier
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ENQUIRY_SUPPLIER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_EXPECTED_BUSINESS (
+        type: numberField
+        label {
+            label: " Business Expected"
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 20
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EXPECTED_BUSINESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_EXPECTED_BUSINESS_1 (
+        type: numberField
+        label {
+            label: " Business Expected"
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 10
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 20
+        }
+        validation {
+            valueRequired: true
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_EXPECTED_BUSINESS_CURRENC (
+        type: selectList
+        label {
+            label: Currency
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select CURRENCY_CODE d, CURRENCY_CODE  as r from EBA_SALES_CURRENCIES
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EXPECTED_BUSINESS_CURRENCY
+            used: always
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_FLAG (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_GRACE_DAYS (
+        type: selectList
+        label {
+            label: Grace Days
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (select 'No Grace'd,'0' r, '1' seq from dual
+                union 
+                select '3 Days' d,'3' r ,'2' seq from dual
+                union 
+                select '5 Days' d,'5' r ,'3' seq from dual
+                union 
+                select '7 Days' d,'7' r ,'4' seq from dual
+                union 
+                select '10 Days' d,'10' r ,'5' seq from dual
+                union 
+                select '15 Days' d,'15' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 110
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GRACE_DAYS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_GRACE_DAYS_REC (
+        type: selectList
+        label {
+            label: Grace Days Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (select 'No Grace'd,'0' r, '1' seq from dual
+                union 
+                select '3 Days' d,'3' r ,'2' seq from dual
+                union 
+                select '5 Days' d,'5' r ,'3' seq from dual
+                union 
+                select '7 Days' d,'7' r ,'4' seq from dual
+                union 
+                select '10 Days' d,'10' r ,'5' seq from dual
+                union 
+                select '15 Days' d,'15' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 70
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GRACE_DAYS_REC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_GRACE_DAYS_REC_1 (
+        type: selectList
+        label {
+            label: Grace Days Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (select 'No Grace'd,'0' r, '1' seq from dual
+                union 
+                select '3 Days' d,'3' r ,'2' seq from dual
+                union 
+                select '5 Days' d,'5' r ,'3' seq from dual
+                union 
+                select '7 Days' d,'7' r ,'4' seq from dual
+                union 
+                select '10 Days' d,'10' r ,'5' seq from dual
+                union 
+                select '15 Days' d,'15' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 60
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GRACE_DAYS_REC
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_INTRODUCED_BY (
+        type: textField
+        label {
+            label: Introduced By
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 80
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: INTRODUCED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_MODE_OF_DELIVERY (
+        type: selectList
+        label {
+            label: Mode Of Delivery
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:In Person;In Person,Courier ;Courier,Transport;Transport
+            displayExtraValues: false
+            nullDisplayValue: - Select Mode Delivery -
+        }
+        layout {
+            sequence: 70
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MODE_OF_DELIVERY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_NEXT_SCHEDULE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @recommendations-details-2
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SCHEDULE_FREQUENCY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_NEXT_SCHEDULE_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @recommendations-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SCHEDULE_FREQUENCY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_RECOMMENDED_BY (
+        type: plugin/select2
+        label {
+            label: Recommended By
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS where status='Y'
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 110
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RECOMMENDED_BY
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_number  number;
+                Begin
+                lv_number :=:user_id;
+                return lv_number;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_RECOMMENDED_BY_1 (
+        type: plugin/select2
+        label {
+            label: Recommended By
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS where status='Y'
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 100
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: RECOMMENDED_BY
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_number  number;
+                Begin
+                lv_number :=:user_id;
+                return lv_number;
+                END;
+                ```
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_ROWID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ROWID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_SCHEDULES_LIST (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @recommendations-details-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_SCHEDULES_LIST_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @recommendations-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_UPDATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_UPDATE_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-sales-customer-details
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATE_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_VERIFIED_BY (
+        type: plugin/select2
+        label {
+            label: Verified By
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select  REP_FIRST_NAME  ||' '||REP_LAST_NAME as d,ID as r from EBA_SALES_SALESREPS
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 120
+            region: @additional-details
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VERIFIED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_VISIT_FREQUENCY_REC (
+        type: selectList
+        label {
+            label: Visit Frequency Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select VISIT_FREQUENCY, ID from XXEBA_SALES_VISIT_FREQUENCY order by ORDER_SEQUENCE
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 90
+            region: @recommendations-details-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+            postText:
+                ```html
+                <div id="weekly_box">
+                    <div class="days" id='SUN'>S</div>
+                    <div class="days" id='MON'>M</div>
+                    <div class="days" id='TUE'>T</div>
+                    <div class="days" id='WED'>W</div>
+                    <div class="days" id='THU'>T</div>
+                    <div class="days" id='FRI'>F</div>
+                    <div class="days" id='SAT'>S</div>
+                </div>
+                <div id="monthly_box">
+                    <table>
+                       <tr><td class="date" id='1'>1</td> <td class="date" id='2'>2</td> <td class="date" id='3'>3</td><td class="date" id='4'>4</td><td class="date" id='5'>5</td><td class="date" id='6'>6</td><td class="date" id='7'>7</td></tr>
+                <tr><td class="date" id='8'>8</td> <td class="date" id='9'>9</td><td class="date" id='10'>10</td><td class="date" id='11'>11</td><td class="date" id='12'>12</td><td class="date" id='13'>13</td> <td class="date" id='14'>14</td></tr>
+                <tr><td class="date" id='15'>15</td><td class="date" id='16'>16</td><td class="date" id='17'>17</td><td class="date" id='18'>18</td><td class="date" id='19'>19</td><td class="date" id='20'>20</td><td class="date" id='21'>21</td></tr>
+                <tr><td class="date" id='22'>22</td><td class="date" id='23'>23</td><td class="date" id='24'>24</td><td class="date" id='25'>25</td> <td class="date" id='26'>26</td> <td class="date" id='27'>27</td><td class="date" id='28'>28</td></tr>
+                        <tr><td class="date" id='29'>29</td><td class="date" id='30'>30</td><td class="date" id='31'>31</td> <td colspan="4" style="text-align: right;"><input type='button' value="OK" id="date_button"></td> </tr>
+                    </table> 
+                </div>
+                
+                <div id='mothly_schedue_value' style="display:none"> Dates <span></span></div>
+                ```
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VISIT_FREQUENCY_REC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_VISIT_FREQUENCY_REC_1 (
+        type: selectList
+        label {
+            label: Visit Frequency Recommended
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select VISIT_FREQUENCY, ID from XXEBA_SALES_VISIT_FREQUENCY order by ORDER_SEQUENCE
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 80
+            region: @recommendations-details
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: VISIT_FREQUENCY_REC
+            used: always
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_VISIT_REPET_DAYS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @recommendations-details-2
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P164_VISIT_REPET_DAYS_1 (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @recommendations-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P164_DETAILS_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P164_DETAILS_ID
+        }
+        security {
+            authorizationScheme: @xxeba-admin-teamlead
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-frequence (
+        name: Set Frequence
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P164_VISIT_FREQUENCY_REC
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var frq =  $( "#P164_VISIT_FREQUENCY_REC option:selected" ).text().charAt(0)
+                    //alert(frq);
+                    $('#P164_NEXT_SCHEDULE').val(frq);
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-javascript-code-2 (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    /*  below code to select week days and month days
+                    var schedule =  $( "#P164_VISIT_FREQUENCY_REC option:selected" ).text().charAt(0)
+                    //var schedule = $('#P164_NEXT_SCHEDULE').val();
+                    $('#P164_SCHEDULES_LIST').val('');
+                    
+                    $('.week_selected').removeClass('week_selected');
+                    $('.date_selected').removeClass('date_selected');
+                    
+                    if(schedule == 'D' || schedule == '-'){
+                        $('#weekly_box').hide();
+                        $('#monthly_box').hide();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P136_SCHEDULES_LIST').hide();
+                    }
+                    else if(schedule == 'W'){
+                        $('#weekly_box').show();
+                         $('#monthly_box').hide();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P164_SCHEDULES_LIST').hide();
+                    }
+                    else if(schedule == 'M'){
+                        $('#weekly_box').hide();
+                         $('#monthly_box').show();
+                        $('#mothly_schedue_value').hide();
+                    //  $('#P164_SCHEDULES_LIST').hide();
+                    }
+                    
+                    */
+                    
+                     $('#weekly_box').hide();
+                     $('#monthly_box').hide();
+                    ```
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select FREQUENCY_DAYS from XXEBA_SALES_VISIT_FREQUENCY where ID = :P164_VISIT_FREQUENCY_REC
+                itemsToSubmit: P164_VISIT_FREQUENCY_REC
+            }
+            affectedElements {
+                selectionType: items
+                items: P164_VISIT_REPET_DAYS
+            }
+            execution {
+                sequence: 30
+            }
+        )
+
+    )
+
+    validation p164-creation-date-must-be-timestamp (
+        name: P164_CREATION_DATE must be timestamp
+        execution {
+            sequence: 260
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P164_CREATION_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P164_CREATION_DATE
+        }
+    )
+
+    validation p164-update-date-must-be-timestamp (
+        name: P164_UPDATE_DATE must be timestamp
+        execution {
+            sequence: 280
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P164_UPDATE_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P164_UPDATE_DATE
+        }
+    )
+
+    process add-appointment (
+        name: Add Appointment
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    v_appointment_id    number;
+                    v_rep_id                   number;
+                    
+                begin
+                
+                select DEFAULT_REP_ID into v_rep_id from EBA_SALES_CUSTOMERS where ID = :P164_CUSTOMER_ID;
+                
+                begin
+                select APPOINTMENT_ID into v_appointment_id from XXEBA_SALES_APPOINTMENT where CUSTOMER_DETAIL_ID = :P164_DETAILS_ID;
+                exception 
+                    when others then 
+                        v_appointment_id := null;
+                end;
+                
+                if v_appointment_id is null  then
+                    insert into XXEBA_SALES_APPOINTMENT (CUSTOMER_ID, APPOINTMENT_TYPE, APPOINTMENT_DATE
+                        , APPOINTMENT_PURPOSE, CONTACT_PERSON_ID 
+                        , CONTACT_LOCATION_ID, COMMENTS, LEAD_ID, OPPORTUNITY_ID , APPOINTMENT_STATUS, SALESREPS_ID, CUSTOMER_DETAIL_ID)
+                    values (:P164_CUSTOMER_ID, 'Direct Mail', null
+                        , 'Meeting', :P136_CONTACT_PERSON_ID
+                        , :P136_CONTACT_LOCATION_ID, 'Scheduled from Account''s Visit Frequency ', null, null , 'Scheduled', v_rep_id, :P164_DETAILS_ID)returning APPOINTMENT_ID into v_appointment_id;
+                
+                    insert into XXEBA_SALES_MEETING_SCHEDULE (APPOINTMENT_ID, SCHEDULE_TYPE, SCHEDULE_SEQUENCE)
+                    values(v_appointment_id, :P164_NEXT_SCHEDULE, :P164_SCHEDULES_LIST);
+                
+                else
+                  update XXEBA_SALES_MEETING_SCHEDULE set SCHEDULE_TYPE = :P164_NEXT_SCHEDULE, SCHEDULE_SEQUENCE = :P164_SCHEDULES_LIST
+                    where APPOINTMENT_ID = v_appointment_id;
+                end if;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 67798127524401552
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 80
+        }
+        advanced {
+            executionMappingIdentifier: 70706635990735859
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-customer-details (
+        name: Fetch Row from XXEBA_SALES_CUSTOMER_DETAILS
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_CUSTOMER_DETAILS
+            pkColumn: DETAILS_ID
+            pkItem: P164_DETAILS_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 70705383720735858
+        }
+    )
+
+    process process-row-of-xxeba-sales-customer-details (
+        name: Process Row of XXEBA_SALES_CUSTOMER_DETAILS
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_CUSTOMER_DETAILS
+            pkColumn: DETAILS_ID
+            pkItem: P164_DETAILS_ID
+            returnKeyIntoItem: P164_DETAILS_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 70705778973735859
+        }
+    )
+
+    process recommendation-credit-limit-update (
+        name: Recommendation- Credit Limit Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :P164_FLAG='R' THEN 
+                   UPDATE EBA_SALES_CUSTOMERS SET STATUS='U', VERIFIED_BY=null, VERIFY_COMMENTS=null, TEAM_LEAD_ID=null WHERE ID=:P164_CUSTOMER_ID;
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 26668741231805450
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process recommendation-status-update (
+        name: Recommendation Status Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :P164_FLAG='R' THEN 
+                   UPDATE EBA_SALES_CUSTOMERS SET STATUS='R' WHERE ID=:P164_CUSTOMER_ID;
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 26668659917805449
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 70706212605735859
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process set-recomendation-details (
+        name: Set  Recomendation Details 1
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                select (EXPECTED_BUSINESS ||' '||EXPECTED_BUSINESS_CURRENCY)expected, 
+                (CREDIT_LIMIT_REC ||' '||CREDIT_LIMIT_CURRENCY) credit_limit
+                into :P164_EXPECTED_BUSINESS_1,
+                :P164_CREDIT_LIMIT_REC_1
+                from XXEBA_SALES_CUSTOMER_DETAILS
+                where details_id = :P164_DETAILS_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 16215300954362494
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P164_DETAILS_ID
+        }
+    )
+
+    branch (
+        name: Goto 94
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 94
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

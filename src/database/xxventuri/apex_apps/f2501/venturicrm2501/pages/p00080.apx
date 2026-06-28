@@ -1,0 +1,3913 @@
+page 80 (
+    name: Opportunity
+    title: Opportunity
+    appearance {
+        pageTemplate: @marquee
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    css {
+        inline:
+            ```css
+            .t-Footer{
+            	display:none;
+            }
+            
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <!DOCTYPE html>
+            <html>
+            
+            <body>
+                <script>
+                   
+            		function msk_Quotation (p_deal_id,p_url,p_datasource,p_location_id,p_user_id,p_contact_person,p_payment,p_delivery,p_salutations,p_subject,lv_reference_number)
+            {
+                var v_deal = document.getElementById(p_deal_id).value;
+                var v_location = document.getElementById(p_location_id).value;              
+                var v_user = document.getElementById(p_user_id).value;              
+                var v_contact_person = document.getElementById(p_contact_person).value;   
+                var v_payment = document.getElementById(p_payment).value;
+                var v_delivery = document.getElementById(p_delivery).value;
+                var v_salutations = document.getElementById(p_salutations).value;
+                var v_subject = document.getElementById(p_subject).value;
+                var v_datasource = document.getElementById(p_datasource).value;
+                var v_url = document.getElementById(p_url).value;
+                var v_reference_no = document.getElementById(lv_reference_number).value;
+            
+                window.open(""+v_url+"report?_repName=quotation_report_bgd_v1&_repFormat=pdf&_dataSource="+v_datasource+"&_outFilename=&_repLocale=en_US&_repEncoding=&p1="+v_deal+"&p2="+v_location+"&p3="+v_user+"&p4="+v_contact_person+"&p5="+v_reference_no+"&p6="+v_payment+"&p7="+v_delivery+"&p8="+v_salutations+"&p9="+v_subject+""); 
+            
+                /* window.open("http://182.72.176.221:8083/JasperReportsIntegration/report?_repName=quotation_report&_repFormat=pdf&_dataSource=prod2&_outFilename=&_repLocale=en_US&_repEncoding=&p1="+v_deal+"&p2="+v_location+"");   */                     
+            }
+                    
+            function proposal(p_deal_id,p_url,p_datasource,p_salutation,p_name) 
+             {
+                var v_order_id = document.getElementById(p_deal_id).value;
+                var v_datasource = document.getElementById(p_datasource).value;
+                var v_url = document.getElementById(p_url).value;
+                var v_salutation = document.getElementById(p_salutation).value;
+                var v_name = document.getElementById(p_name).value;
+                  window.open(""+v_url+"report?_repName=workaholic_project_proposal&_repFormat=pdf&_dataSource="+v_datasource+"&_outFilename=&_repLocale=en_US&_repEncoding=&p1="+v_order_id+"&p2="+v_salutation+"&p3="+v_name+"");       
+             } 
+                </script>
+            </body>
+            </html>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: Manage an opportunity's details, products, competitors, team members, links, attachments, and/or comments. You can also validate the opportunity.
+    }
+
+    region appointment (
+        name: Appointment
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                Select NULL EDIT,CUSTOMER_ID,LEAD_ID,OPPORTUNITY_ID,APPOINTMENT_TYPE,APPOINTMENT_DATE,CONTACT_ADDRESS,APPOINTMENT_ID,
+                APPOINTMENT_PURPOSE,CONTACT_PERSON_ID,CONTACT_LOCATION_ID,COMMENTS from XXEBA_SALES_APPOINTMENT where  OPPORTUNITY_ID= :P80_ID
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: setPaginationSelectList
+        }
+
+        column APPOINTMENT_DATE (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Appointment Date
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY HH:MI PM
+            }
+        )
+
+        column APPOINTMENT_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 10
+            }
+        )
+
+        column APPOINTMENT_PURPOSE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Purpose
+            }
+            layout {
+                sequence: 11
+            }
+        )
+
+        column APPOINTMENT_TYPE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Fixed Through
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column COMMENTS (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Comments
+            }
+            layout {
+                sequence: 12
+            }
+        )
+
+        column CONTACT_ADDRESS (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Contact Address
+            }
+            layout {
+                sequence: 7
+            }
+        )
+
+        column CONTACT_LOCATION_ID (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Location
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: Select CUSTOMER_LOCATION_NAME AS d,ID as r from EBA_SALES_CUSTOMER_LOCATIONS
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column CONTACT_PERSON_ID (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Contact Person
+            }
+            lov {
+                type: sqlQuery
+                sqlQuery: "Select CONTACT_NAME As d,id AS  r from EBA_SALES_CUSTOMER_CONTACTS "
+            }
+            layout {
+                sequence: 8
+            }
+        )
+
+        column CUSTOMER_ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 136
+                    items: {
+                        P136_APPOINTMENT_ID: #APPOINTMENT_ID#
+                    }
+                    clearCache: 136
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column LEAD_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column OPPORTUNITY_ID (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+    region breadcrumb-display (
+        name: &BREADCRUMB_DISPLAY.
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region competition (
+        name: Competition
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select c.competitor_name competitor, NULL EDIT,c.id,
+                  dc.competition_desc,
+                  dc.competitor_threat_id,
+                  (
+                    select competitor_threat 
+                    from eba_sales_competitor_threats x 
+                    where x.id = dc.competitor_threat_id
+                  ) threat,
+                  dc.created,
+                  lower(dc.created_by) created_by
+                from eba_sales_deal_competition dc
+                join eba_sales_competitors c
+                  on c.id = dc.competitor_id
+                where dc.deal_id = :P80_ID
+                ```
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                t-Region--noPadding
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No competition identified, click "+" icon to add a competitor
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column COMPETITION_DESC (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Description
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column COMPETITOR (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Competitor
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+        column COMPETITOR_THREAT_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 5
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Added
+            }
+            layout {
+                sequence: 6
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 27
+                    items: {
+                        P27_ID: #ID#
+                    }
+                    clearCache: 27
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 8
+            }
+        )
+
+        column THREAT (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Threat
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+    )
+
+    region history (
+        name: History
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                    l_history varchar2(4000);
+                begin
+                    for c1 in
+                    (
+                        select
+                            '<p class="audit-info">Last updated <strong>'||apex_util.get_since(updated)
+                                ||'</strong> by <strong>' ||
+                                apex_escape.html(lower(updated_by))||'</strong>.
+                             <br />Created '||apex_util.get_since(created) ||' by '||apex_escape.html(lower(created_by))
+                                ||'.</span>' as history
+                          from eba_sales_deals
+                         where id = :P80_ID
+                    )
+                    loop
+                        l_history := c1.history;
+                    end loop;
+                    sys.htp.p( l_history );
+                end;
+                ```
+        }
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @alert
+            templateOptions: [
+                #DEFAULT#
+                t-Alert--horizontal
+                t-Alert--customIcons
+                t-Alert--info
+                t-Alert--accessibleHeading
+            ]
+            icon: fa-clock-o
+        }
+    )
+
+    region opportunity-actions (
+        name: Opportunity Actions
+        type: list
+        source {
+            list: @actions-opportunity
+        }
+        layout {
+            sequence: 10
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            listTemplate: @links-list
+            templateOptions: [
+                #DEFAULT#
+                t-LinksList--actions
+                t-LinksList--showTopIcons
+            ]
+        }
+    )
+
+    region opportunity-details (
+        name: Opportunity Details
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d.id,
+                  d.row_key,
+                  t.id territory_id,
+                  t.territory_name,
+                  c.id account_id,
+                  c.customer_name account,
+                  d.deal_probability || '%' deal_probability,
+                  (select  CUSTOMER_LOCATION_NAME  from  EBA_SALES_CUSTOMER_LOCATIONS where ID=d.LOCATION_ID) as LOCATION_ID,
+                  --d.LOCATION_ID,
+                  case
+                    when deal_probability > 0 and deal_probability < 100
+                    then 'Yes'
+                    else 'No'
+                  end open,
+                  case
+                    when deal_close_date < sysdate and deal_probability != 0 and deal_probability != 100
+                    then 'Yes'
+                    else 'No'
+                  end past_due,
+                  d.deal_amount,
+                  d.qtr || ' ' || 
+                    to_char(deal_close_date,'Day DD-MON-YYYY') || 
+                    ' (' || apex_util.get_since(deal_close_date) || ')' deal_close_date,
+                  dsc.status_code,
+                  d.updated,
+                  lower(d.updated_by) updated_by,
+                  d.created,
+                  lower(d.created_by) created_by,
+                  sr.rep_first_name || ' ' || sr.rep_last_name as sales_rep_name
+                
+                from eba_sales_deals d
+                join eba_sales_customers c
+                  on c.id = d.customer_id
+                left join eba_sales_deal_status_codes dsc
+                  on dsc.id = d.deal_status_code_id
+                left join eba_sales_territories t
+                  on t.id = c.customer_territory_id
+                left join eba_sales_salesreps sr
+                  on sr.id = d.salesrep_id_01
+                where d.id = :P80_ID;
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            template: @value-attribute-pairs-column
+            templateOptions: [
+                #DEFAULT#
+                t-AVPList--leftAligned
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: no data found
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column ACCOUNT (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Account
+            }
+            layout {
+                sequence: 2
+            }
+            link {
+                target: {
+                    page: 94
+                    items: {
+                        P94_ID: #ACCOUNT_ID#
+                    }
+                    clearCache: 94
+                    action: resetPagination
+                }
+                linkText: #ACCOUNT#
+            }
+        )
+
+        column ACCOUNT_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 14
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            heading {
+                heading: Created
+            }
+            layout {
+                sequence: 15
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column DEAL_AMOUNT (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Opportunity Amount
+            }
+            layout {
+                sequence: 7
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G990
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DEAL_CLOSE_DATE (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            heading {
+                heading: Close Date
+            }
+            layout {
+                sequence: 6
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DEAL_PROBABILITY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Probability
+            }
+            layout {
+                sequence: 8
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column LOCATION_ID (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: "Location "
+                alignment: center
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column OPEN (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Open
+            }
+            layout {
+                sequence: 10
+            }
+        )
+
+        column PAST_DUE (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Past Due
+            }
+            layout {
+                sequence: 5
+            }
+        )
+
+        column ROW_KEY (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: Key
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column SALES_REP_NAME (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            heading {
+                heading: &REP_TITLE.
+            }
+            layout {
+                sequence: 9
+            }
+        )
+
+        column STATUS_CODE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Stage
+            }
+            layout {
+                sequence: 11
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TERRITORY_ID (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 13
+            }
+        )
+
+        column TERRITORY_NAME (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Account Territory
+            }
+            layout {
+                sequence: 3
+            }
+            serverSideCondition {
+                type: expression
+                plsqlExpression:
+                    ```plsql
+                    apex_util.get_build_option_status(
+                      p_application_id    => :APP_ID,
+                      p_build_option_name => 'Territories'
+                    ) = 'INCLUDE'
+                    ```
+            }
+        )
+
+        column UPDATED (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            heading {
+                heading: Updated
+            }
+            layout {
+                sequence: 16
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #UPDATED# by #UPDATED_BY#
+            }
+        )
+
+        column UPDATED_BY (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 17
+            }
+        )
+
+    )
+
+    region products (
+        name: Products
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select null edit,
+                    dp.id,
+                    dp.PRODUCT_PRICE,
+                    dp.CURRENCY_TYPE,
+                    p.id as product_id,
+                    dp.deal_id,
+                    dp.tcv,
+                    dp.term,
+                    dp.close_date,
+                    dp.qtr,
+                    decode(p.sold_as, 'SUBSCRIPTION', 'Cloud Subscription', 'PURCHASE', 'On-Premise Purchase', p.sold_as) sold_as,
+                    p.product_name product,
+                    --p.product_description,
+                    dp.quote_price,
+                    dp.DEAL_PROD_DESCRIPTION description,
+                    --dp.DEAL_PROD_PROBABILITY product_probablity,
+                    dp.created,
+                    lower(dp.created_by) created_by,
+                    p.product_family_id,p.brand_id,
+                    dp.QUANTITY
+                  from EBA_SALES_DEAL_PRODUCTS dp,
+                       EBA_SALES_PRODUCTS p,
+                       EBA_SALES_PRODUCT_FAMILIES f
+                 where dp.deal_id = :P80_ID 
+                   and dp.product_id = p.id
+                   and p.product_family_id = f.id (+) AND dp.status='Y'
+                 order by dp.updated desc
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        reportLayout {
+            numberOfRows: 10000000
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                t-Report--stretch
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        pagination {
+            type: rowRangesXToYOfZNoPagination
+        }
+        performance {
+            maxRowsToProcess: 600
+        }
+        messages {
+            whenNoDataFound: No products associated with this opportunity, click "+" icon to associate products
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column BRAND_ID (
+            reportColumnQueryId: 18
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Brand Name
+            }
+            lov {
+                type: sharedComponent
+                lov: @xx-brands-lov
+            }
+            layout {
+                sequence: 4
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CLOSE_DATE (
+            reportColumnQueryId: 9
+            derivedColumn: N
+            heading {
+                heading: Delivery Date
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column CREATED (
+            reportColumnQueryId: 15
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 18
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 16
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 12
+            }
+        )
+
+        column CURRENCY_TYPE (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Currency
+                alignment: center
+            }
+            layout {
+                sequence: 7
+                columnAlignment: center
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column DEAL_ID (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 2
+            }
+        )
+
+        column DESCRIPTION (
+            reportColumnQueryId: 14
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 11
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 108
+                    items: {
+                        P108_DEAL_ID: #DEAL_ID#
+                        P108_ID: #ID#
+                    }
+                    clearCache: 108
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 1
+            }
+        )
+
+        column PRODUCT (
+            reportColumnQueryId: 12
+            derivedColumn: N
+            type: link
+            heading {
+                heading: Product
+            }
+            layout {
+                sequence: 5
+            }
+            link {
+                target: {
+                    page: 108
+                    items: {
+                        P108_ID: #ID#
+                    }
+                    clearCache: 108
+                    action: resetPagination
+                }
+                linkText: #PRODUCT#
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column PRODUCT_FAMILY_ID (
+            reportColumnQueryId: 17
+            derivedColumn: N
+            type: plainTextBasedOnLov
+            heading {
+                heading: Group
+            }
+            lov {
+                type: sharedComponent
+                lov: @product-families
+            }
+            layout {
+                sequence: 9
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column PRODUCT_ID (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 19
+            }
+        )
+
+        column PRODUCT_PRICE (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Price
+                alignment: center
+            }
+            layout {
+                sequence: 6
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column QTR (
+            reportColumnQueryId: 10
+            derivedColumn: N
+            heading {
+                heading: Quarter
+            }
+            layout {
+                sequence: 17
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column QUANTITY (
+            reportColumnQueryId: 19
+            derivedColumn: N
+            heading {
+                heading: Quantity
+                alignment: center
+            }
+            layout {
+                sequence: 8
+                columnAlignment: end
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column QUOTE_PRICE (
+            reportColumnQueryId: 13
+            derivedColumn: N
+            heading {
+                heading: Amount/ARR
+                alignment: center
+            }
+            layout {
+                sequence: 14
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: FML999G999G999G999G999
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column SOLD_AS (
+            reportColumnQueryId: 11
+            derivedColumn: N
+            heading {
+                heading: Sold As
+            }
+            layout {
+                sequence: 13
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TCV (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            heading {
+                heading: Total Contract Value
+                alignment: center
+            }
+            layout {
+                sequence: 16
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: FML999G999G999G999G999
+            }
+            sorting {
+                sortable: false
+            }
+        )
+
+        column TERM (
+            reportColumnQueryId: 8
+            derivedColumn: N
+            heading {
+                heading: Term
+            }
+            layout {
+                sequence: 15
+            }
+            sorting {
+                sortable: false
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+    )
+
+    region quotations (
+        name: Quotations
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: dialogsDrawersAndPopups
+        }
+        appearance {
+            template: @inline-dialog
+            templateOptions: [
+                #DEFAULT#
+                js-dialog-size720x480
+            ]
+        }
+        advanced {
+            htmlDomId: MAIL_QUOTE
+        }
+    )
+
+    region region-display-selector (
+        name: Region Display Selector
+        type: regionDisplaySelector
+        layout {
+            sequence: 1230
+            slot: masterDetail
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            rememberSelection: bySession
+        }
+    )
+
+    region team-members (
+        name: Team Members
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select t.id,null edit, r.rep_first_name || ' ' || r.rep_last_name team_member,
+                  lower(r.rep_email) email,
+                  r2.role_name role,
+                  t.created,
+                  lower(t.created_by) created_by
+                from eba_sales_deal_team t
+                join eba_sales_salesreps r
+                  on r.id = t.rep_id
+                join eba_sales_salesrep_roles r2
+                  on r2.id = r.rep_role
+                where t.deal_id = :P80_ID
+                ```
+        }
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+            cssClasses: js-dynamicHideShowRegion
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--stretch
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+                t-Report--inline
+            ]
+            showNullValuesAs: " - "
+        }
+        performance {
+            maxRowsToProcess: 500
+        }
+        messages {
+            whenNoDataFound: No team members assigned, click "+" icon to add a assign team members
+        }
+        componentAdvanced {
+            stripHtml: true
+        }
+
+        column CREATED (
+            reportColumnQueryId: 6
+            derivedColumn: N
+            heading {
+                heading: Added
+            }
+            layout {
+                sequence: 5
+            }
+            appearance {
+                formatMask: SINCE
+            }
+            columnFormatting {
+                htmlExpression: #CREATED# by #CREATED_BY#
+            }
+        )
+
+        column CREATED_BY (
+            reportColumnQueryId: 7
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 6
+            }
+        )
+
+        column EDIT (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            type: link
+            heading {
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            link {
+                target: {
+                    page: 30
+                    items: {
+                        P30_ID: #ID#
+                    }
+                    clearCache: 30
+                    action: resetPagination
+                }
+                linkText: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+            }
+        )
+
+        column EMAIL (
+            reportColumnQueryId: 4
+            derivedColumn: N
+            heading {
+                heading: Email
+            }
+            layout {
+                sequence: 4
+            }
+        )
+
+        column ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            type: hidden
+            layout {
+                sequence: 7
+            }
+        )
+
+        column ROLE (
+            reportColumnQueryId: 5
+            derivedColumn: N
+            heading {
+                heading: Role
+            }
+            layout {
+                sequence: 3
+            }
+        )
+
+        column TEAM_MEMBER (
+            reportColumnQueryId: 3
+            derivedColumn: N
+            heading {
+                heading: Team Member
+            }
+            layout {
+                sequence: 2
+            }
+            sorting {
+                defaultSequence: 1
+            }
+        )
+
+    )
+
+    region usage-metrics-90-days (
+        name: Usage Metrics - 90 days
+        type: plugin/badgeList
+        source {
+            sqlQuery:
+                ```sql
+                select count(*) c,
+                  'Views' l,
+                  1 disp
+                from eba_sales_clicks
+                where opp_id = :P80_ID 
+                  and view_timestamp > sysdate - 90
+                union all
+                select count(distinct(app_username)) c,
+                  'Users' l,
+                  2 disp
+                from eba_sales_clicks
+                where opp_id = :P80_ID 
+                  and view_timestamp > sysdate - 90
+                order by disp
+                ```
+        }
+        layout {
+            sequence: 60
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            badgeStyle: circular
+            value: C
+            bottomLabel: L
+            linkTarget: {
+                page: 138
+                items: {
+                    P138_ENTITY_TYPE: OPPORTUNITY
+                    P138_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 138
+            }
+            layout: 2Columns
+        }
+    )
+
+    region validations (
+        name: Validations
+        type: plugin/contentValidator
+        source {
+            sqlQuery:
+                ```sql
+                select v.verified_by,
+                  v.created
+                from eba_sales_verifications v
+                where opp_id = :P80_ID
+                order by v.created desc
+                ```
+        }
+        layout {
+            sequence: 50
+            slot: rightSideColumn
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hiddenOverflow
+            ]
+            cssClasses: js-validateRegion
+        }
+        settings {
+            validationLink: {
+                page: 146
+                items: {
+                    P146_ENTITY_TYPE: OPPORTUNITY
+                    P146_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 146
+                action: resetPagination
+            }
+            previousValidationsLink: {
+                page: 147
+                items: {
+                    P147_ENTITY_TYPE: OPPORTUNITY
+                    P147_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 147
+                action: resetPagination
+            }
+        }
+    )
+
+    pageItem P80_ACCOUNT (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @opportunity-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_CONTACT_PERSON (
+        type: selectList
+        label {
+            label: Contact Person
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select CONTACT_NAME As d,id AS  r from EBA_SALES_CUSTOMER_CONTACTS where CUSTOMER_ID =:P80_ACCOUNT and STATUS='Y';
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            customAttributes: style="width:  200px";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_CONTACT_PERSON_SALUTATION (
+        type: textField
+        label {
+            label: "Kind Attn.: "
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 6
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 50
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: style="width: 296px;
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_DATA_SOURCE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @opportunity-details
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT TRIM(CHAR_VALUE) 
+                  FROM XXEBA_SALES_PARAMETERS_T
+                 WHERE UPPER(CODE) = UPPER('DATA_SOURCE_NAME')
+                   AND STATUS = 'Y';
+                ```
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_DEAL_LOCATION (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @opportunity-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_DELIVERY (
+        type: selectList
+        label {
+            label: "Delivery "
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select description R,stock_code AS D from XXVENTURI.XXEBA_STOCK_CODES WHERE STOCK_CODE != 0 AND STATUS = 'Y' ORDER BY 1 ASC
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 70
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                lv_stockcode number;
+                BEGIN
+                BEGIN
+                SELECT stock_code into lv_stockcode
+                FROM
+                  (SELECT rank() OVER (ORDER BY stock_code DESC) AS row_num,
+                    stock_code 
+                  FROM xxventuri.xxeba_stock_codes
+                  WHERE stock_code != 0
+                  AND status        = 'Y'
+                  )
+                WHERE row_num =1;
+                END;
+                RETURN lv_stockcode;
+                END;
+                
+                ```
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_company_id         NUMBER;
+                  v_no_of_rows NUMBER;
+                BEGIN
+                  SELECT PREFERENCE_VALUE
+                  INTO v_company_id
+                  FROM EBA_SALES_PREFERENCES
+                  WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                  SELECT COUNT(*)
+                  INTO v_no_of_rows
+                  FROM EBA_SALES_DEAL_PRODUCTS
+                  WHERE DEAL_ID =:P80_ID;
+                  IF v_company_id       = 1 THEN
+                    RETURN true;
+                  ELSE
+                    RETURN false;
+                  END IF;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  RETURN false;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @opportunity-details
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_MAIL_ACCOUNT_NAME (
+        type: textField
+        label {
+            label: Account
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 50
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select CUSTOMER_NAME from EBA_SALES_CUSTOMERS where ID = :P80_ACCOUNT
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_MAIL_LOCATON_ID (
+        type: selectList
+        label {
+            label: Location
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                Select CUSTOMER_LOCATION_NAME AS d,ID as r from EBA_SALES_CUSTOMER_LOCATIONS where CUSTOMER_ID =:P80_ACCOUNT
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            customAttributes: style="width:  200px";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_MAIL_SUBJECT (
+        type: selectList
+        label {
+            label: Subject
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:Quotation for Special Tools;Quotation for Special Tools,Quotation for Lubricants;Quotation for Lubricants,Others;Others
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 130
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            columnSpan: 7
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_OTHERS (
+        type: textField
+        label {
+            label: Mail Subject
+            alignment: left
+        }
+        layout {
+            sequence: 140
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_PAYMENT (
+        type: selectList
+        label {
+            label: "Payment "
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Immediate;Immediate,7 Days;7,30 Days;30,45 Days;45
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 50
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Immediate
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_company_id         NUMBER;
+                  v_no_of_rows NUMBER;
+                BEGIN
+                  SELECT PREFERENCE_VALUE
+                  INTO v_company_id
+                  FROM EBA_SALES_PREFERENCES
+                  WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                  SELECT COUNT(*)
+                  INTO v_no_of_rows
+                  FROM EBA_SALES_DEAL_PRODUCTS
+                  WHERE DEAL_ID =:P80_ID;
+                  IF v_company_id       = 1 THEN
+                    RETURN true;
+                  ELSE
+                    RETURN false;
+                  END IF;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  RETURN false;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_PERSON_MAIL (
+        type: textField
+        label {
+            label: Email Address
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_PERSON_MAIL_CC (
+        type: textField
+        label {
+            label: CC Mails
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_QUOTE_TYPE_ID (
+        type: selectList
+        label {
+            label: Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select LIST_VALUE AS D,LIST_ID AS R  from XXEBA_LIST_VALUES
+                where  LIST_CODE='QUOTATION_TYPE'
+                order by DISPLAY_SEQUENCE;
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 80
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_REFERENCE_NUMBER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 160
+            region: @quotations
+            slot: regionBody
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_company_id NUMBER;
+                  lv_reference_number VARCHAR2(50);
+                  BEGIN
+                    BEGIN
+                      SELECT PREFERENCE_VALUE
+                      INTO v_company_id
+                      FROM EBA_SALES_PREFERENCES
+                      WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                    eXCEPTION WHEN OTHERS THEN
+                    v_company_id:=NULL;
+                    eND;
+                
+                  IF v_company_id = 1 then
+                    SELECT 'VT'||TO_CHAR(SYSDATE,'YYMM')||lpad(xxfs_pm_msk_qut_seq.nextval,4,0)
+                      INTO lv_reference_number
+                      FROM dual;
+                  ELSIF   v_company_id = 2 then   
+                     SELECT   'W/'||to_char(sysdate, 'YYYY')||'/'||flex_flag_01 
+                      INTO lv_reference_number
+                      FROM eba_sales_deals
+                      WHERE ID = :P80_ID;
+                  END IF;
+                
+                  RETURN lv_reference_number;
+                  eND;
+                ```
+        }
+    )
+
+    pageItem P80_SALUTATIONS (
+        type: selectList
+        label {
+            label: "Kind Attn.: "
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC:Mr.;Mr.,Ms.;Ms.
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @quotations
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_SUBJECT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @quotations
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P80_URL (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @opportunity-details
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery:
+                ```sql
+                SELECT TRIM(CHAR_VALUE) 
+                  FROM XXEBA_SALES_PARAMETERS_T
+                 WHERE UPPER(CODE) = UPPER('JASPER_REPORTS_URL')
+                   AND STATUS = 'Y';
+                ```
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments:
+                ```
+                SELECT TRIM(CHAR_VALUE) 
+                  FROM XXEBA_SALES_PARAMETERS_T
+                 WHERE UPPER(CODE) = UPPER('JASPER_REPORTS_URL')
+                   AND STATUS = 'Y';
+                ```
+        }
+    )
+
+    pageItem P80_USER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @quotations
+            slot: regionBody
+        }
+        source {
+            type: item
+            item: USER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button add-appointment (
+        buttonName: ADD_APPOINTMENT
+        label: Add appointment
+        layout {
+            sequence: 10
+            region: @appointment
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 136
+                items: {
+                    P136_OPPORTUNITY_ID: &P80_ID.
+                }
+                clearCache: 136
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel-mail (
+        buttonName: Cancel_Mail
+        label: Cancel
+        layout {
+            sequence: 50
+            region: @quotations
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:closeModal()
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button edit-opp (
+        buttonName: EDIT_OPP
+        label: Edit Opportunity
+        layout {
+            sequence: 20
+            region: @breadcrumb-display
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 16
+                items: {
+                    P16_ID: &P80_ID.
+                }
+                clearCache: 16
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select 1
+                from EBA_SALES_OPPORTUNITIES_V
+                where id = :P80_ID and DEAL_PROBABILITY > 0 and DEAL_PROBABILITY < 100
+                ```
+        }
+    )
+
+    button mail-view-quote (
+        buttonName: MAIL_VIEW_QUOTE
+        label: View Quote
+        layout {
+            sequence: 10
+            region: @quotations
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button make-decision (
+        buttonName: MAKE_DECISION
+        label: Close Won / Lost
+        layout {
+            sequence: 10
+            region: @breadcrumb-display
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+            cssClasses: uButtonAlt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 79
+                items: {
+                    P79_ID: &P80_ID.
+                }
+                clearCache: 79
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery:
+                ```sql
+                select 1
+                from EBA_SALES_OPPORTUNITIES_V
+                where id = :P80_ID and DEAL_PROBABILITY > 0 and DEAL_PROBABILITY < 100
+                ```
+        }
+    )
+
+    button pop-comp (
+        buttonName: POP_COMP
+        label: Add Competition
+        layout {
+            sequence: 90
+            region: @competition
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 27
+                items: {
+                    P27_DEAL_ID: &P80_ID.
+                }
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button pop-link (
+        buttonName: POP_LINK
+        label: Add Link
+        layout {
+            sequence: 240
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 114
+                items: {
+                    P114_ENTITY_TYPE: OPPORTUNITY
+                    P114_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 114
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button pop-product (
+        buttonName: POP_PRODUCT
+        label: Add Product
+        layout {
+            sequence: 90
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 108
+                items: {
+                    P108_DEAL_ID: &P80_ID.
+                    P108_SOURCE_PAGE: 80
+                }
+                clearCache: 108
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button pop-team (
+        buttonName: POP_TEAM
+        label: Add Team Member
+        layout {
+            sequence: 160
+            region: @team-members
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 30
+                items: {
+                    P30_DEAL_ID: &P80_ID.
+                }
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button popattachment (
+        buttonName: POPATTACHMENT
+        label: Add Attachment
+        layout {
+            sequence: 10
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 99
+                items: {
+                    P99_ENTITY_TYPE: OPPORTUNITY
+                    P99_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 99
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button popcomment (
+        buttonName: POPCOMMENT
+        label: Add Comment
+        layout {
+            sequence: 200
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 22
+                items: {
+                    P22_ENTITY_TYPE: OPPORTUNITY
+                    P22_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 22
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button print (
+        buttonName: Print
+        label: Print
+        layout {
+            sequence: 50
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 80
+                items: {
+                    OPPORTUNITY_ID: &P80_ID.
+                }
+                action: resetPagination
+                request: APPLICATION_PROCESS=Generat_PDF
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button proposal-view (
+        buttonName: PROPOSAL_VIEW
+        label: View Proposal
+        layout {
+            sequence: 30
+            region: @quotations
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:proposal('P80_ID','P80_URL','P80_DATA_SOURCE','P80_SALUTATIONS','P80_CONTACT_PERSON_SALUTATION')
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_company_id         NUMBER;
+                  v_no_of_rows NUMBER;
+                BEGIN
+                  SELECT PREFERENCE_VALUE
+                  INTO v_company_id
+                  FROM EBA_SALES_PREFERENCES
+                  WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                  SELECT COUNT(*)
+                  INTO v_no_of_rows
+                  FROM EBA_SALES_DEAL_PRODUCTS
+                  WHERE DEAL_ID =:P80_ID;
+                  IF v_company_id       = 2 AND v_no_of_rows >= 1 THEN
+                    RETURN true;
+                  ELSE
+                    RETURN false;
+                  END IF;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  RETURN false;
+                END;
+                ```
+        }
+    )
+
+    button quote-send-mail (
+        buttonName: QUOTE_SEND_MAIL
+        label: Send Mail
+        layout {
+            sequence: 40
+            region: @quotations
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 1 from EBA_SALES_DEAL_PRODUCTS where DEAL_ID =:P80_ID
+        }
+    )
+
+    button quote-view (
+        buttonName: QUOTE_VIEW
+        label: View Quote
+        layout {
+            sequence: 20
+            region: @quotations
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:msk_Quotation('P80_ID','P80_URL','P80_DATA_SOURCE','P80_MAIL_LOCATON_ID','P80_USER_ID','P80_CONTACT_PERSON_SALUTATION','P80_PAYMENT','P80_DELIVERY','P80_SALUTATIONS','P80_SUBJECT','P80_REFERENCE_NUMBER')
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_company_id         NUMBER;
+                  v_no_of_rows NUMBER;
+                BEGIN
+                  SELECT PREFERENCE_VALUE
+                  INTO v_company_id
+                  FROM EBA_SALES_PREFERENCES
+                  WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                  SELECT COUNT(*)
+                  INTO v_no_of_rows
+                  FROM EBA_SALES_DEAL_PRODUCTS
+                  WHERE DEAL_ID =:P80_ID;
+                  IF v_company_id       = 1 AND v_no_of_rows >= 1 THEN
+                    RETURN true;
+                  ELSE
+                    RETURN false;
+                  END IF;
+                EXCEPTION
+                WHEN OTHERS THEN
+                  RETURN false;
+                END;
+                ```
+        }
+    )
+
+    button send (
+        buttonName: SEND
+        label: Send
+        layout {
+            sequence: 40
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button send-mail (
+        buttonName: SEND_MAIL
+        label: Send Mail
+        layout {
+            sequence: 80
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button side-edit-opp (
+        buttonName: SIDE_EDIT_OPP
+        label: Edit Opportunity
+        layout {
+            sequence: 60
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 16
+                items: {
+                    P16_ID: &P80_ID.
+                }
+                clearCache: 16
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button side-make-decision (
+        buttonName: SIDE_MAKE_DECISION
+        label: Close Won / Lost
+        layout {
+            sequence: 50
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+            cssClasses: uButtonAlt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 79
+                items: {
+                    P79_ID: &P80_ID.
+                }
+                clearCache: 79
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button view-attachments (
+        buttonName: VIEW_ATTACHMENTS
+        label: View Attachments
+        layout {
+            sequence: 20
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 92
+                items: {
+                    P92_ENTITY_TYPE: OPPORTUNITY
+                    P92_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 92
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button view-comments (
+        buttonName: VIEW_COMMENTS
+        label: View Comments
+        layout {
+            sequence: 210
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 88
+                items: {
+                    P88_ENTITY_TYPE: OPPORTUNITY
+                    P88_ENTITY_ID: &P80_ID.
+                }
+                clearCache: 88
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button view-comp (
+        buttonName: VIEW_COMP
+        label: View Competition
+        layout {
+            sequence: 100
+            region: @competition
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: f?p=&APP_ID.:86:&SESSION.:::86:P86_ID:&P80_ID.
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-links (
+        buttonName: VIEW_LINKS
+        label: View Links
+        layout {
+            sequence: 250
+            slot: legacyOrphanComponents
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-external-link-square
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 89
+                items: {
+                    P89_ENTITY_TYPE: OPPORTUNITY
+                    P89_ENTITY_ID: &P80_ID.
+                }
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button view-opp-products (
+        buttonName: VIEW_OPP_PRODUCTS
+        label: View Products
+        layout {
+            sequence: 100
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: f?p=&APP_ID.:85:&SESSION.:::9,85:P85_ID:&P80_ID.
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button view-quote (
+        buttonName: VIEW_QUOTE
+        label: View/Email Quotation
+        layout {
+            sequence: 60
+            region: @products
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:openModal('MAIL_QUOTE');
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: rowsReturned
+            sqlQuery: select 1 from EBA_SALES_DEAL_PRODUCTS where DEAL_ID =:P80_ID
+        }
+    )
+
+    button view-team-members (
+        buttonName: VIEW_TEAM_MEMBERS
+        label: View Team
+        layout {
+            sequence: 170
+            region: @team-members
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--noUI
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: f?p=&APP_ID.:87:&SESSION.:::87:P87_ID:&P80_ID.
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction edit-opportunity-dialog-closed (
+        name: Edit Opportunity dialog closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 16
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    $('.t-Breadcrumb-item.is-active > span').text(this.data.P16_DEAL_NAME);
+                    apex.message.showPageSuccess('Action Processed.');
+                    ```
+            }
+            execution {
+                sequence: 30
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @opportunity-details
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction name-validations (
+        name: Name Validations
+        execution {
+            sequence: 150
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @quote-send-mail
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var persion = $('#P80_CONTACT_PERSON').val();
+                    if(persion.trim().length == 0){
+                        $('#P80_CONTACT_PERSON_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    /*else{
+                        apex.submit( 'REJECT');
+                    }*/
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction personal-email-validation (
+        name: Personal Email Validation
+        execution {
+            sequence: 160
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @quote-send-mail
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var mail = $('#P80_PERSON_MAIL').val();
+                    var salutation = $('#P80_CONTACT_PERSON_SALUTATION').val();
+                    var quote = $('#P80_QUOTE_TYPE_ID').val();
+                    if(salutation.trim().length == 0){
+                       // $('#P80_PERSON_MAIL_error_placeholder').html('');
+                        $('#P80_CONTACT_PERSON_SALUTATION_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    else
+                    {
+                        $('#P80_CONTACT_PERSON_SALUTATION_error_placeholder').html('');
+                    }
+                    if(mail.trim().length == 0){
+                        // $('#P80_CONTACT_PERSON_SALUTATION_error_placeholder').html('');
+                        $('#P80_PERSON_MAIL_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    else
+                    {
+                        $('#P80_PERSON_MAIL_error_placeholder').html('');
+                    }
+                    
+                    if(quote.trim().length == 0){
+                        $('#P80_QUOTE_TYPE_ID_error_placeholder').html('<span class="t-Form-error">Please fill out this field.</span>');
+                    }
+                    else
+                    {
+                        $('#P80_QUOTE_TYPE_ID_error_placeholder').html('');
+                    }
+                    
+                    if(salutation.trim().length >0 && mail.trim().length > 0 && quote.trim().length > 0){
+                        apex.submit( 'SEND_MAIL');
+                    }
+                    
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-appointment (
+        name: Refresh Appointment
+        execution {
+            sequence: 130
+        }
+        when {
+            event: apexafterrefresh
+            selectionType: region
+            region: @appointment
+        }
+    )
+
+    dynamicAction refresh-competition (
+        name: Refresh Competition
+        execution {
+            sequence: 50
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 27
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @competition
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-products (
+        name: Refresh Products
+        execution {
+            sequence: 40
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 108
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @products
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-reports-after-add (
+        name: Refresh Reports after add
+        execution {
+            sequence: 120
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @pop-product
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @appointment
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @products
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-3 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @opportunity-details
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-reports-after-edit (
+        name: Refresh Reports after Edit
+        execution {
+            sequence: 110
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @products
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @products
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh-2 (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @opportunity-details
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-team (
+        name: Refresh Team
+        execution {
+            sequence: 60
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 30
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @team-members
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-updates (
+        name: Refresh Updates
+        execution {
+            sequence: 90
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId === 22
+        }
+    )
+
+    dynamicAction refresh-validations (
+        name: Refresh Validations
+        execution {
+            sequence: 100
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: this.data && this.data.dialogPageId ===127
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @validations
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-mail (
+        name: Set Mail
+        execution {
+            sequence: 140
+        }
+        when {
+            selectionType: items
+            items: P80_CONTACT_PERSON
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: sqlQuery
+                sqlQuery: select CONTACT_EMAIL,initcap(CONTACT_NAME) from EBA_SALES_CUSTOMER_CONTACTS where ID = :P80_CONTACT_PERSON
+                itemsToSubmit: P80_CONTACT_PERSON
+            }
+            affectedElements {
+                selectionType: items
+                items: [
+                    P80_PERSON_MAIL
+                    P80_CONTACT_PERSON_SALUTATION
+                ]
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-other-subject (
+        name: Set Other Subject
+        execution {
+            sequence: 190
+        }
+        when {
+            selectionType: items
+            items: P80_OTHERS
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P80_OTHERS
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P80_OTHERS
+                itemsToSubmit: P80_OTHERS
+            }
+            affectedElements {
+                selectionType: items
+                items: P80_SUBJECT
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-subject (
+        name: Set Subject
+        execution {
+            sequence: 180
+        }
+        when {
+            selectionType: items
+            items: P80_MAIL_SUBJECT
+        }
+        clientSideCondition {
+            type: item!=value
+            item: P80_MAIL_SUBJECT
+            value: Others
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlExpression
+                plsqlExpression: :P80_MAIL_SUBJECT
+                itemsToSubmit: P80_MAIL_SUBJECT
+            }
+            affectedElements {
+                selectionType: items
+                items: P80_SUBJECT
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show-hide-others (
+        name: Show/Hide/Others
+        execution {
+            sequence: 170
+        }
+        when {
+            selectionType: items
+            items: P80_MAIL_SUBJECT
+        }
+        clientSideCondition {
+            type: item=value
+            item: P80_MAIL_SUBJECT
+            value: Others
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P80_OTHERS
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P80_OTHERS
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    validation others-validation (
+        name: Others Validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P80_OTHERS
+        }
+        error {
+            errorMessage: Subject field must have some value
+            associatedItem: @P80_OTHERS
+        }
+        serverSideCondition {
+            type: item=value
+            item: P80_MAIL_SUBJECT
+            value: Others
+        }
+    )
+
+    computation last-page (
+        itemName: LAST_PAGE
+        execution {
+            sequence: 20
+            point: afterFooter
+        }
+        computation {
+            type: staticValue
+            staticValue: 80
+        }
+    )
+
+    computation p16-id (
+        itemName: P16_ID
+        execution {
+            sequence: 10
+            point: afterFooter
+        }
+        computation {
+            type: staticValue
+            staticValue: &P80_ID.
+        }
+    )
+
+    process file-insert-process (
+        name: "File Insert process "
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  p_url VARCHAR2(200);
+                  p_report_name VARCHAR2(200);
+                  p_report_format VARCHAR2(200);
+                  p_datasoure VARCHAR2(200);
+                  p_outfilename VARCHAR2(200);
+                  p_report_language VARCHAR2(200);
+                  p_encode VARCHAR2(200);
+                  p_filename VARCHAR2(200);
+                  lv_reference_number VARCHAR2(30);
+                  lv_subject VARCHAR2(500);
+                  lv_body_html CLOB;
+                  p_p1 NUMBER;
+                  p_p2 NUMBER;
+                  p_p3 NUMBER;
+                  p_p4 VARCHAR2(30);
+                  p_p5 VARCHAR2(30);
+                  p_p6 VARCHAR2(30);
+                  p_p7 VARCHAR2(30);
+                  p_p8 VARCHAR2(30);
+                  p_p9 VARCHAR2(4000);
+                  l_id NUMBER;
+                  lv_filename VARCHAR2(100);
+                  l_email_id   VARCHAR2(100) := :p80_person_mail;
+                  p_qut_id NUMBER;
+                  l_document BLOB;
+                  lv_sales_person VARCHAR2(60);
+                  lv_mobile_number VARCHAR2(30);
+                  lv_manager_mail VARCHAR2(100);
+                  lv_email_id VARCHAR2(300);
+                  v_from_mail_alias VARCHAR2(200);
+                  v_company_id number;
+                  	 lv_v_body      CLOB;
+                  lv_v_crlf  VARCHAR2(2) := chr(13)||chr(10);
+                
+                  lv_subject_doc varchar2(4000);
+                 
+                BEGIN
+                
+                      SELECT TRIM(CHAR_VALUE)
+                        INTO p_url
+                        FROM XXEBA_SALES_PARAMETERS_T
+                       WHERE CODE = 'JASPER_REPORTS_URL' 
+                         AND STATUS = 'Y';
+                
+                      
+                      SELECT TRIM(CHAR_VALUE)
+                        INTO p_datasoure
+                        FROM XXEBA_SALES_PARAMETERS_T
+                       WHERE CODE = 'DATA_SOURCE_NAME' 
+                         AND STATUS = 'Y';
+                     
+                     SELECT TRIM(CHAR_VALUE)
+                        INTO p_report_name
+                        FROM XXEBA_SALES_PARAMETERS_T
+                       WHERE CODE = 'QUOTE_REPORT_NAME' 
+                         AND STATUS = 'Y';
+                         
+                     SELECT TRIM(CHAR_VALUE)
+                       INTO v_from_mail_alias
+                       FROM XXEBA_SALES_PARAMETERS_T
+                       WHERE CODE = 'FROM_MAIL_ALIAS' 
+                       AND STATUS = 'Y';    
+                       
+                    SELECT PREFERENCE_VALUE
+                  INTO v_company_id
+                  FROM EBA_SALES_PREFERENCES
+                  WHERE PREFERENCE_NAME = 'COMPANY_ID';
+                
+                        select (case when :P80_MAIL_SUBJECT = 'Others' then 
+                            :P80_OTHERS
+                        else 
+                            :P80_MAIL_SUBJECT
+                        end ) as subject into lv_subject_doc from dual;
+                  --raise_application_error(-20001, 'Test');
+                 --p_url := 'http://13.127.204.122:8080/JasperReportsIntegration/';
+                -- p_report_name := 'quotation_report_bgd_v1'; --  Quatation_msk_withheadera
+                  p_report_format := 'pdf';
+                 -- p_datasoure := 'prod1';
+                  p_outfilename := NULL;
+                  p_report_language := 'en_US';
+                  p_encode := NULL;
+                --  lv_filename := 'quation.pdf';
+                  p_p1 := :p80_id;
+                  p_p2 := :P80_MAIL_LOCATON_ID;
+                  p_p3 := :p80_user_id;
+                  p_p4 :=  REPLACE(:p80_contact_person_salutation,' ','_');
+                  p_p6 := :p80_payment;
+                  p_p7 := :p80_delivery;
+                  p_p8 := :p80_salutations;
+                  p_p9 := replace(:P80_SUBJECT,' ','%20');
+                  
+                    --p_p1 := 140525944224093380882513112004789482521;
+                  --p_p2 := 140322162328483337550012870452746081452;
+                  --p_p3 := 137299580992928658344444066683110435759;
+                  --p_p4 := 'Richard';
+                  --p_p6 := 'Immediate';
+                  --p_p7 := '9';
+                 -- p_p8 := 'Mr.';
+                
+                  
+                  BEGIN
+                  
+                  IF v_company_id = 1 then
+                    SELECT 'VT'||TO_CHAR(SYSDATE,'YYMM')||lpad(xxfs_pm_msk_qut_seq.nextval,4,0)
+                      INTO lv_reference_number
+                      FROM dual;
+                  ELSIF   v_company_id = 2 then   
+                     SELECT   'W/'||to_char(sysdate, 'YYYY')||'/'||flex_flag_01 
+                      INTO lv_reference_number
+                      FROM eba_sales_deals
+                      WHERE ID = :P80_ID;
+                  END IF;
+                    EXCEPTION WHEN OTHERS THEN
+                    xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_Quotation_Email',NULL,1); 
+                  END;
+                --raise_application_error (-20001,lv_reference_number);
+                   BEGIN
+                    SELECT r.rep_email
+                      INTO lv_email_id
+                      FROM eba_sales_salesreps r
+                     WHERE ID = :p80_user_id;
+                  EXCEPTION
+                    WHEN OTHERS THEN
+                     xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_Quotation_Email',NULL,4); 
+                  END;
+                  
+                  lv_filename := 'Quotation_'||lv_reference_number||'.pdf';
+                  --raise_application_error (-20001,lv_filename);
+                  IF v_company_id = 1 then
+                         xxfs_pm_msk_js_pkg.xxfs_lob_download_proc(p_url => p_url,
+                                                               p_report_name => p_report_name,
+                                                               p_report_format => p_report_format,
+                                                               p_datasoure => p_datasoure,
+                                                               p_outfilename => p_outfilename,
+                                                               p_report_language => p_report_language,
+                                                               p_encode => p_encode,
+                                                               p_filename => lv_filename,
+                                                               p_p1 => p_p1,
+                                                               p_p2 => p_p2,
+                                                               p_p3 => p_p3,
+                                                               p_p4 => p_p4,
+                                                               p_p5 => lv_reference_number,
+                                                               p_p6 => p_p6,
+                                                               p_p7 => p_p7,
+                                                               p_p8 => p_p8,
+                                                               p_p9 => p_p9,
+                                                               p_qut_id => p_qut_id
+                                                              );
+                  ELSIF v_company_id = 2 then
+                     xxfs_pm_msk_js_pkg.xxfs_lob_download_proc(p_url => p_url,
+                                                               p_report_name => p_report_name,
+                                                               p_report_format => p_report_format,
+                                                               p_datasoure => p_datasoure,
+                                                               p_outfilename => p_outfilename,
+                                                               p_report_language => p_report_language,
+                                                               p_encode => p_encode,
+                                                               p_filename => lv_filename,
+                                                               p_p1 => p_p1,
+                                                               p_p2 => p_p8,
+                                                               p_p3 => p_p4,
+                                                               p_p4 => p_p4,
+                                                               p_p5 => lv_reference_number,
+                                                               p_p6 => p_p6,
+                                                               p_p7 => p_p7,
+                                                               p_p8 => p_p8,
+                                                               p_p9 => p_p9,
+                                                               p_qut_id => p_qut_id
+                                                              );
+                   END IF;
+                   -- raise_application_error (-20001,p_qut_id);
+                  
+                  BEGIN
+                    SELECT file_blob 
+                      INTO l_document 
+                      FROM eba_sales_files 
+                     WHERE ID=p_qut_id;
+                  EXCEPTION
+                    WHEN OTHERS THEN
+                     xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_Quotation_Email',NULL,2); 
+                  END;
+                    if v_company_id = 1 then
+                    lv_subject := 'Quotation from Msk Venturi Tools (Ref.: '||lv_reference_number||')';
+                    elsif v_company_id = 2 then
+                    lv_subject := 'Project Proposal from Workaholic (Ref.: '||lv_reference_number||')';
+                    end if;
+                    --lv_filename := 'Quotation_'||LV_REFERENCE_NUMBER||'.pdf';
+                  BEGIN
+                    SELECT ess.rep_first_name||' '||ess.rep_last_name, 
+                           ess.rep_cell_phone 
+                      INTO lv_sales_person, 
+                           lv_mobile_number
+                      FROM eba_sales_salesreps ess
+                     WHERE ess.ID = :p80_user_id
+                       AND ROWNUM   = 1;
+                    EXCEPTION
+                    WHEN OTHERS THEN
+                     xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_Quotation_Email',NULL,3); 
+                  END;
+                
+                  BEGIN
+                    SELECT (SELECT rep_email 
+                              FROM eba_sales_salesreps m 
+                             WHERE m.ID = r.rep_manager_id
+                           )
+                      INTO lv_manager_mail
+                      FROM eba_sales_salesreps r
+                     WHERE ID = :p80_user_id;
+                  EXCEPTION
+                    WHEN OTHERS THEN
+                     xxfs_pm_error_log_pkg.record_log('ERROR','MSK_Tools_Quotation_Email',NULL,4); 
+                  END;  
+                  
+                  IF v_company_id = 1 then 
+                  lv_v_body :=  'To view the content of this message, please use an HTML enabled mail client.'      || lv_v_crlf;
+                    lv_body_html:= '<html><body> Dear '||:p80_contact_person_salutation||','||'<br><br>'
+                                   ||'Please find attached our competitive quotation.'||'<br><br>'
+                                   ||'We request you to review and arrange to send us your valuable Purchase Order.'||'<br><br>'
+                                   ||'Thanking you.'||'<br><br>'
+                                   ||'Yours Truly,'
+                                   ||'<br>'||lv_sales_person
+                                   ||'<br>'||lv_mobile_number;
+                  ELSIF v_company_id = 2 then
+                     lv_body_html:= 'Dear '||:P80_SALUTATIONS||' '||:p80_contact_person_salutation||','||'<br><br>'
+                                   ||'Please find attached our best Project Proposal.'||'<br><br>'
+                                   ||'We request you to review and arrange to send us your valuable Purchase Order.'||'<br><br>'
+                                   ||'Thanking you.'||'<br><br>'
+                                   ||'Yours Truly,'
+                                   ||'<br>'||lv_sales_person
+                                   ||'<br>'||lv_mobile_number;
+                  
+                  
+                  END IF;                 
+                   xxfs_pm_error_log_pkg.record_log('Log',' - Before Mail',lv_body_html,4); 
+                   
+                    if lv_manager_mail is not null then
+                        lv_email_id := lv_manager_mail||','||lv_email_id||','||:P80_PERSON_MAIL_CC;
+                    end if;
+                
+                 --- commented to check NEW EMAIL Process   
+                    l_id := apex_mail.send (p_to        => :p80_person_mail, 
+                                            p_cc        => lv_email_id||','||:P80_PERSON_MAIL_CC,
+                                            p_bcc       => 'richard.d@4iapps.com,rajan@venturitool.com',
+                                            p_from       => v_from_mail_alias,
+                                            p_subj       => lv_subject,
+                                            p_body       => lv_v_body,
+                                            p_body_html  => lv_body_html
+                                           );
+                   xxfs_pm_error_log_pkg.record_log('Log',' - After Mail',lv_body_html,4); 
+                
+                            apex_mail.add_attachment(p_mail_id    => l_id,
+                                                     p_attachment => l_document,
+                                                     p_filename   => lv_filename,
+                                                     p_mime_type  => 'application/pdf'
+                                                    );
+                           xxfs_pm_error_log_pkg.record_log('Log',' - After Attachemnt',lv_filename,4); 
+                       
+                      apex_mail.push_queue(p_smtp_hostname => '4iapps-com.mail.protection.outlook.com', p_smtp_portno => 25);  
+                      ---apex_mail.push_queue(P_SMTP_HOSTNAME => '213.199.154.87', P_SMTP_PORTNO => 25);  
+                
+                
+                /*  New Email Process
+                  send_venturi_mail(p_to  => :p80_person_mail,
+                            p_cc          => 'richard.d@4iapps.com',
+                            p_bcc         => 'drdalvi@gmail.com',
+                            p_from        => 'CRM@venturitool.com',
+                            p_subject     => lv_subject,
+                            p_text_msg    => lv_body_html,
+                            p_attach_name => lv_filename,
+                            p_attach_mime => 'application/pdf',
+                            p_attach_clob => blob_to_clob(l_document)  
+                            );
+                */
+                
+                  EXCEPTION
+                 
+                    WHEN UTL_HTTP.request_failed THEN
+                       -- DBMS_OUTPUT.PUT_LINE(SQLERRM);
+                       raise_application_error (-20001,'Please Contact your application adminstrator');
+                    WHEN OTHERS THEN
+                      --DBMS_OUTPUT.PUT_LINE(SQLERRM);
+                      --raise_application_error (-20001,'Please Contact your application adminstrator');
+                        raise_application_error(-20010,'CO Error ='||DBMS_UTILITY.FORMAT_ERROR_STACK||' ' ||DBMS_UTILITY.FORMAT_ERROR_BACKTRACE); 
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        successMessage {
+            successMessage: Quotation Sent Successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 76818208304437261
+        }
+        serverSideCondition {
+            type: request=Value
+            value: SEND_MAIL
+        }
+        comments {
+            comments:
+                ```
+                 IF v_company_id = 1 then 
+                    lv_body_html:= 'Dear '||:p80_contact_person_salutation||','||'<br><br>'
+                                   ||'Please find attached our competitive quotation.'||'<br><br>'
+                                   ||'We request you to review and arrange to send us your valuable Purchase Order.'||'<br><br>'
+                                   ||'Thanking you.'||'<br><br>'
+                                   ||'Yours Truly,'
+                                   ||'<br><br>'||lv_sales_person
+                                   ||'<br><br>'||lv_mobile_number;
+                  ELSIF v_company_id = 2 then
+                     lv_body_html:= 'Dear '||:P80_SALUTATIONS||' '||:p80_contact_person_salutation||','||'<br><br>'
+                                   ||'Please find attached our best Project Proposal.'||'<br><br>'
+                                   ||'We request you to review and arrange to send us your valuable Purchase Order.'||'<br><br>'
+                                   ||'Thanking you.'||'<br><br>'
+                                   ||'Yours Truly,'
+                                   ||'<br><br>'||lv_sales_person
+                                   ||'<br><br>'||lv_mobile_number;
+                  
+                ```
+        }
+    )
+
+    process init-page (
+        name: Init page
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                insert into eba_sales_clicks (
+                    entity_type,
+                    opp_id,
+                    app_username  
+                ) values (
+                    'OPPORTUNITY',
+                    :P80_ID,
+                    lower(:APP_USER)
+                );
+                
+                delete from eba_sales_clicks 
+                where view_timestamp < (sysdate - 90) 
+                  and opp_id = :P80_ID;
+                
+                ```
+        }
+        execution {
+            sequence: 70
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 76818593114437262
+        }
+    )
+
+    process send-mail (
+        name: SEND_MAIL
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                /*DECLARE
+                  P_P1 NUMBER;
+                  P_P2 NUMBER;
+                  l_id NUMBER;
+                  l_email_id   VARCHAR2(100) := :P80_PERSON_MAIL;
+                  P_QUT_ID NUMBER;
+                  l_document BLOB;
+                BEGIN
+                  P_P1 := :P80_ID;
+                  P_P2 := :P80_DEAL_LOCATION;
+                  
+                XXFS_PM_MSK_JS_PKG.XXFS_LOB_DOWNLOAD_PROC(
+                    P_P1 => P_P1,
+                    P_P2 => P_P2,
+                    P_QUT_ID => P_QUT_ID
+                  );
+                  l_id := APEX_MAIL.SEND(
+                        p_to        => 'selvamani.d@4iapps.com,satheesh.p@4iapps.com',
+                        p_from      => 'CRM Desk "@" 4i Apps <CRM_Desk@4iapps.com>',
+                        p_subj      => 'Product Quotation',
+                        p_body      => 'Please review product Quotation..',
+                        p_body_html => '<b>Please</b> review the attachment');
+                        
+                  select FILE_BLOB into l_document from  EBA_SALES_FILES  where ID=P_QUT_ID;
+                
+                        APEX_MAIL.ADD_ATTACHMENT(
+                            p_mail_id    => l_id,
+                            p_attachment => l_document,
+                            p_filename   => 'Quotation.pdf',
+                            p_mime_type  => 'application/pdf');
+                             apex_mail.push_queue(P_SMTP_HOSTNAME => '4iapps-com.mail.protection.outlook.com', P_SMTP_PORTNO => 25);  
+                               exception when others then
+                          raise_application_error(-20100,'Error in sending Email...'||sqlerrm);
+                       
+                    COMMIT;
+                END;*/
+                
+                
+                APEX_MAIL.SEND(
+                        p_to        => 'selvamani.d@4iapps.com,satheesh.p@4iapps.com',
+                        p_from      => 'CRM Desk "@" 4i Apps <CRM_Desk@4iapps.com>',
+                        p_subj      => 'Product Quotation',
+                        p_body      => 'Please review product Quotation..',
+                        p_body_html => 'Please review the attachment');
+                ```
+        }
+        execution {
+            sequence: 60
+        }
+        successMessage {
+            successMessage: Mail sent successfully.
+        }
+        advanced {
+            executionMappingIdentifier: 76817752502437261
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process update-quote-submission (
+        name: Update Quote Submission
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 UPDATE eba_sales_deals SET QUOTE_TYPE_ID=:P80_QUOTE_TYPE_ID where ID=:P80_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 276078591853054072
+        }
+        serverSideCondition {
+            type: request=Value
+            value: SEND_MAIL
+        }
+    )
+
+    branch (
+        name: Go To Page 80
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 80
+                items: {
+                    P80_ID: &P80_ID.
+                }
+            }
+        }
+        comments {
+            comments: Created 11-JAN-2012 16:02 by MIKE
+        }
+    )
+
+)
+

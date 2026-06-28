@@ -1,0 +1,912 @@
+page 263 (
+    name: Efficiency Data
+    title: Efficiency Data
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region form-on-xxeba-efficiency-data-t (
+        name: Form on XXEBA_EFFICIENCY_DATA_T
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                i-h320
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P263_CREATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_CREATED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CREATED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_DAYS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 160
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select trunc(sysdate)-trunc(CREATED_DATE) as days from XXEBA_EFFICIENCY_DATA_T where EFFICIENCY_ID =:P263_EFFICIENCY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_EFFICIENCY_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EFFICIENCY_ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_EFFICIENCY_TYPE (
+        type: radioGroup
+        label {
+            label: Type
+            alignment: left
+        }
+        settings {
+            noOfCols: 2
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:On-Time;On-Time,Delayed;Delayed
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EFFICIENCY_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_MONTH (
+        type: selectList
+        label {
+            label: Select Period
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT to_char(add_months(SYSDATE, (LEVEL-1 )),'Month') as d, 
+                       to_char(add_months(SYSDATE, (LEVEL-1 )),'Month') as r 
+                  FROM dual 
+                CONNECT BY LEVEL <= to_number(extract(month from sysdate))
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 30
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        default {
+            type: expression
+            plsqlExpression: to_char(add_months( to_date(sysdate), 0 )-1,'Mon')
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P263_EFFICIENCY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+        comments {
+            comments: STATIC2:January;January,February;February,March;March,April;April,May;May,June;June,July;July,August;August,September;September,October;October,November;November,December;December
+        }
+    )
+
+    pageItem P263_PERF_FROM_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERF_FROM_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_PERF_REWARDS (
+        type: radioGroup
+        label {
+            label: Rewards
+            alignment: left
+        }
+        settings {
+            noOfCols: 3
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:1;1,2;2,5;5
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 100
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--radioButtonGroup
+            ]
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERF_REWARDS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_PERF_SCORE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERF_SCORE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_PERF_TO_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERF_TO_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_PERIOD_NAME (
+        type: textField
+        label {
+            label: Period name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PERIOD_NAME
+            used: always
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P263_EFFICIENCY_ID
+        }
+        readOnly {
+            type: itemIsNotNull
+            item: P263_EFFICIENCY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_SALES_REP_ID (
+        type: selectList
+        label {
+            label: Sales Engineer
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                 SELECT REP_FIRST_NAME||' '||REP_LAST_NAME AS D,
+                        ID AS R
+                 FROM EBA_SALES_SALESREPS L
+                 
+                 WHERE (upper(L.ID) in (SELECT  upper(r.ID)
+                                                         FROM eba_sales_salesreps r
+                                                        START WITH r.id = :USER_ID
+                                                       CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                or 
+                    EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR 
+                           where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator'))
+                AND l.id <> :user_id
+                AND l.status = 'Y';
+                
+                ```
+        }
+        layout {
+            sequence: 70
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SALES_REP_ID
+            used: always
+        }
+        readOnly {
+            type: itemIsNotNull
+            item: P263_SALES_REP_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 110
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_UPDATED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATED_BY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_UPDATED_DATE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 150
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UPDATED_DATE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P263_YEAR (
+        type: selectList
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select to_char(add_months( to_date(sysdate), 0 )-1,'YYYY') as d, to_char(add_months( to_date(sysdate), 0 )-1,'YYYY') as r from dual;
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 40
+            region: @form-on-xxeba-efficiency-data-t
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        default {
+            type: expression
+            plsqlExpression: to_char(add_months( to_date(sysdate), 0 )-1,'YYYY');
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P263_EFFICIENCY_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Submit
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P263_EFFICIENCY_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Save
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: (:P263_DAYS < 50) and :P263_EFFICIENCY_ID is not null
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-efficiency-type-color (
+        name: Change efficiency type color
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P263_EFFICIENCY_TYPE
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P263_EFFICIENCY_TYPE')=='On-Time') {
+                       
+                         $('label[for="P263_EFFICIENCY_TYPE_0"]').css("background-color","green");
+                         $('label[for="P263_EFFICIENCY_TYPE_0"]').css("color","white");
+                         $('label[for="P263_EFFICIENCY_TYPE_1"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_EFFICIENCY_TYPE_1"]').css("color","black");
+                    }
+                     if ($v('P263_EFFICIENCY_TYPE')=='Delayed') {
+                         $('label[for="P263_EFFICIENCY_TYPE_1"]').css("background-color","#F9690E");
+                         $('label[for="P263_EFFICIENCY_TYPE_1"]').css("color","white");
+                         $('label[for="P263_EFFICIENCY_TYPE_0"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_EFFICIENCY_TYPE_0"]').css("color","black");
+                         
+                    }
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction change-perf-score-color-change (
+        name: Change perf score color change
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P263_PERF_REWARDS
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    if ($v('P263_PERF_REWARDS')==1) {
+                       
+                         $('label[for="P263_PERF_REWARDS_0"]').css("background-color","red");
+                         $('label[for="P263_PERF_REWARDS_0"]').css("color","white");
+                         $('label[for="P263_PERF_REWARDS_1"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_1"]').css("color","black");
+                         $('label[for="P263_PERF_REWARDS_2"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_2"]').css("color","black");
+                         
+                    }
+                     if ($v('P263_PERF_REWARDS')==2) {
+                         $('label[for="P263_PERF_REWARDS_1"]').css("background-color","orange");
+                         $('label[for="P263_PERF_REWARDS_1"]').css("color","white");
+                         $('label[for="P263_PERF_REWARDS_0"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_0"]').css("color","black");
+                         $('label[for="P263_PERF_REWARDS_2"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_2"]').css("color","black");
+                        
+                         
+                    }
+                    
+                    if ($v('P263_PERF_REWARDS')==5) {
+                         $('label[for="P263_PERF_REWARDS_2"]').css("background-color","green");
+                         $('label[for="P263_PERF_REWARDS_2"]').css("color","white");
+                         $('label[for="P263_PERF_REWARDS_0"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_0"]').css("color","black");
+                         $('label[for="P263_PERF_REWARDS_1"]').css("background-color","#f8f8f8");
+                         $('label[for="P263_PERF_REWARDS_1"]').css("color","black");
+                       
+                    
+                    }
+                    
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p263-created-date-must-be-timestamp (
+        name: P263_CREATED_DATE must be timestamp
+        execution {
+            sequence: 110
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P263_CREATED_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P263_CREATED_DATE
+        }
+    )
+
+    validation p263-updated-date-must-be-timestamp (
+        name: P263_UPDATED_DATE must be timestamp
+        execution {
+            sequence: 130
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P263_UPDATED_DATE
+        }
+        error {
+            errorMessage: #LABEL# must be a valid timestamp.
+            associatedItem: @P263_UPDATED_DATE
+        }
+    )
+
+    validation rep-id-validation (
+        name: REP_ID_VALIDATION
+        execution {
+            sequence: 140
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_count NUMBER;
+                BEGIN
+                  SELECT COUNT(1)
+                  INTO v_count
+                  FROM XXEBA_EFFICIENCY_DATA_T
+                  WHERE SALES_REP_ID= :P263_SALES_REP_ID
+                  AND PERIOD_NAME = :P263_MONTH
+                    ||'-'
+                    || :P263_YEAR;
+                   
+                  IF v_count      > 0 THEN
+                    RETURN 'Sorry already you have entered';
+                  END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 60
+        }
+        advanced {
+            executionMappingIdentifier: 364567989092352114
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE,DELETE
+        }
+    )
+
+    process fetch-row-from-xxeba-efficiency-data-t (
+        name: Fetch Row from XXEBA_EFFICIENCY_DATA_T
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_EFFICIENCY_DATA_T
+            pkColumn: EFFICIENCY_ID
+            pkItem: P263_EFFICIENCY_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 364566766789352113
+        }
+    )
+
+    process insert-into-xxeba-efficiency-data-t (
+        name: Insert into XXEBA_EFFICIENCY_DATA_T
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  IF :P263_EFFICIENCY_ID IS NULL THEN
+                    INSERT
+                    INTO XXEBA_EFFICIENCY_DATA_T
+                      (
+                        PERIOD_NAME,
+                        PERF_FROM_DATE,
+                        PERF_TO_DATE,
+                        SALES_REP_ID,
+                        EFFICIENCY_TYPE,
+                        PERF_SCORE,
+                        PERF_REWARDS
+                      )
+                      VALUES
+                      (
+                        :P263_MONTH
+                        ||'-'
+                        ||:P263_YEAR,
+                        TRUNC(last_day(add_months(to_date('01-'
+                        ||:P263_MONTH
+                        ||:P263_YEAR),-1))+1),
+                        last_day(add_months(to_date('01-'
+                        ||:P263_MONTH
+                        ||:P263_YEAR),0)),
+                        :P263_SALES_REP_ID,
+                        :P263_EFFICIENCY_TYPE,
+                        DECODE(:P263_EFFICIENCY_TYPE,'On-Time',5,'Delayed',2),
+                        :P263_PERF_REWARDS
+                      );
+                  elsif :P263_EFFICIENCY_ID IS NOT NULL THEN
+                    UPDATE XXEBA_EFFICIENCY_DATA_T
+                    SET EFFICIENCY_TYPE = :P263_EFFICIENCY_TYPE,
+                      PERF_SCORE        = DECODE(:P263_EFFICIENCY_TYPE,'On-Time',5,'Delayed',2),
+                      PERF_REWARDS      = :P263_PERF_REWARDS
+                    WHERE EFFICIENCY_ID = :P263_EFFICIENCY_ID;
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 364580355757363252
+        }
+    )
+
+    process process-row-of-xxeba-efficiency-data-t (
+        name: Process Row of XXEBA_EFFICIENCY_DATA_T
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_EFFICIENCY_DATA_T
+            pkColumn: EFFICIENCY_ID
+            pkItem: P263_EFFICIENCY_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 364567144242352113
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 364567560730352113
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+)
+

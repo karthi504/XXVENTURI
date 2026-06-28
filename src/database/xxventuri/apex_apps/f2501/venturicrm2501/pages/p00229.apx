@@ -1,0 +1,323 @@
+page 229 (
+    name: Verification Details
+    title: Verification Details
+    pageGroup: @accounts
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    security {
+        authorizationScheme: @xxeba-admin-coordinator
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region button-bar (
+        name: Button Bar
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region form-items (
+        name: form items
+        type: staticContent
+        layout {
+            sequence: 40
+            parentRegion: @validation-details
+            slot: subRegions
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region introduction-text (
+        name: Introduction text
+        type: staticContent
+        layout {
+            sequence: 1
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region validation-details (
+        name: Validation Details
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: [
+                #DEFAULT#
+                t-Form--stretchInputs
+            ]
+        }
+    )
+
+    pageItem P229_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @form-items
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P229_I_VALIDATE (
+        type: checkboxGroup
+        label {
+            label: Check to validate
+            alignment: left
+        }
+        lov {
+            type: staticValues
+            staticValues: STATIC2:I Verify this info is accurate;VALIDATED
+        }
+        layout {
+            sequence: 30
+            region: @form-items
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+        }
+        source {
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P229_VERIFICATION_COMMENT (
+        type: textarea
+        label {
+            label: Comment
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 20
+            region: @form-items
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional-above
+            templateOptions: #DEFAULT#
+            width: 60
+            height: 5
+        }
+        validation {
+            valueRequired: true
+            maxLength: 4000
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select verify_comments from EBA_SALES_CUSTOMERS  where ID=:P229_CUSTOMER_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P229_VERIFIED_BY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @form-items
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select verified_by from EBA_SALES_CUSTOMERS  where ID=:P229_CUSTOMER_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @button-bar
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Verify
+        layout {
+            sequence: 20
+            region: @button-bar
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+            icon: fa-check
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P229_VERIFIED_BY
+        }
+    )
+
+    dynamicAction cancel-clicked (
+        name: Cancel clicked
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation p229-i-validate-is-not-null (
+        name: P229_I_VALIDATE is not null
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsNotNull
+            item: P229_I_VALIDATE
+        }
+        error {
+            errorMessage: Please check to validate.
+        }
+    )
+
+    process close-dialog (
+        name: close dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 319387870456427659
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process create-verification (
+        name: Create verification
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                 BEGIN
+                  UPDATE EBA_SALES_CUSTOMERS
+                  SET verified_on  =sysdate,
+                    verified_by    =:USER_ID,
+                    verify_comments=:P229_VERIFICATION_COMMENT,
+                    status         ='V'
+                  WHERE id         =:P229_CUSTOMER_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Validation saved.
+        }
+        error {
+            errorMessage: Unable to save validation.
+        }
+        advanced {
+            executionMappingIdentifier: 319388253220427659
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process init-page (
+        name: Init page
+        type: executeCode
+        source {
+            plsqlCode: :P229_ENTITY_TYPE_LOWER := lower(:P229_ENTITY_TYPE);
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 319388708155427660
+        }
+    )
+
+)
+

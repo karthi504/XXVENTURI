@@ -1,0 +1,473 @@
+customAttribute attribute_01 (
+    apexlangName: jquerySelector
+    attribute: 1
+    name: JQuery Selector
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 10
+    }
+    default {
+        value: body
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: N
+    }
+    help {
+        helpText: Enter the JQuery Selector that should be captured.
+    }
+    examples {
+        examples:
+            ```
+            body - for complete document<br>
+            #my_div - for capturing only a DIV<br>
+            .my_class - for capturing only a region with a specific class
+            ```
+    }
+)
+
+customAttribute attribute_02 (
+    apexlangName: openImageInNewTabOrSaveToDb
+    attribute: 2
+    name: Open image in new tab (or save to DB)
+    type: yesNo
+    appearance {
+        sequence: 20
+    }
+    default {
+        value: true
+    }
+    help {
+        helpText:
+            ```
+            Choose whether the image should be opened in a new window or saved to DB using PL/SQL (for BLOBs).<br>
+            Y - New Tab<br>
+            N - Save to DB using PL/SQL code
+            ```
+    }
+)
+
+customAttribute attribute_03 (
+    apexlangName: plsqlCode
+    attribute: 3
+    name: PLSQL Code
+    type: plsqlCode
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 30
+    }
+    default {
+        value:
+            ```
+            DECLARE
+              --
+              l_collection_name VARCHAR2(100);
+              l_blob            BLOB;
+              l_filename        VARCHAR2(100);
+              l_mime_type       VARCHAR2(100);
+              l_token           VARCHAR2(32000);
+              --
+            BEGIN
+              -- get defaults
+              l_mime_type := nvl(apex_application.g_x01,
+                                 'image/png');
+              l_filename  := 'screenshot_' || to_char(SYSDATE,
+                                                      'YYYYMMDDHH24MISS');
+              -- file name based on mime type
+              IF l_mime_type = 'image/png' THEN
+                l_filename := l_filename || '.png';
+              ELSIF l_mime_type = 'image/jpeg' THEN
+                l_filename := l_filename || '.jpg';
+              ELSIF l_mime_type = 'application/pdf' THEN
+                l_filename := l_filename || '.pdf';
+              END IF;
+              -- build CLOB from f01 30k Array
+              dbms_lob.createtemporary(l_blob,
+                                       FALSE,
+                                       dbms_lob.session);
+              FOR i IN 1 .. apex_application.g_f01.count LOOP
+                l_token := wwv_flow.g_f01(i);
+                IF length(l_token) > 0 THEN
+                  dbms_lob.append(l_blob,
+                                  to_blob(utl_encode.base64_decode(utl_raw.cast_to_raw(l_token))));
+                END IF;
+              END LOOP;
+              --
+              -- create own collection (here starts custom part (for example a Insert statement))
+              -- collection name
+              l_collection_name := 'SCREEN_CAPTURE';
+              -- check if exist
+              IF NOT apex_collection.collection_exists(p_collection_name => l_collection_name) THEN
+                apex_collection.create_collection(l_collection_name);
+              END IF;
+              -- add collection member (only if BLOB not null)
+              IF dbms_lob.getlength(lob_loc => l_blob) IS NOT NULL THEN
+                apex_collection.add_member(p_collection_name => l_collection_name,
+                                           p_c001            => l_filename, -- filename
+                                           p_c002            => l_mime_type, -- mime_type
+                                           p_d001            => SYSDATE, -- date created
+                                           p_blob001         => l_blob); -- BLOB img content
+              END IF;
+              --
+            END;
+            ```
+    }
+    dependingOn {
+        attribute: @attribute_02/component
+        conditionType: =
+        value: N
+    }
+    help {
+        helpText:
+            ```
+            PLSQL code which saves the image to database tables or collections.<br>
+            Default to Collection "SCREEN_CAPTURE".<br>
+            Column c001 => filename<br>
+            Column c002 => mime_type<br>
+            Column d001 => date created<br>
+            Column blob001 => BLOB of image<br>
+            ```
+    }
+    examples {
+        examples:
+            ```
+            SELECT c001    AS filename,<br>
+                   c002    AS mime_type,<br>
+                   d001    AS date_created,<br>
+                   blob001 AS img_content<br>
+              FROM apex_collections<br>
+             WHERE collection_name = 'SCREEN_CAPTURE';
+            ```
+    }
+)
+
+customAttribute attribute_04 (
+    apexlangName: backgroundColor
+    attribute: 4
+    name: Background color
+    appearance {
+        sequence: 40
+    }
+    default {
+        value: #fff
+    }
+    help {
+        helpText:
+            ```
+            Background color of the captured image (In Hex with # in front).<br>
+            Canvas background color, if none is specified in DOM. Set undefined for transparent.
+            ```
+    }
+)
+
+customAttribute attribute_05 (
+    apexlangName: width
+    attribute: 5
+    name: Width
+    type: number
+    appearance {
+        sequence: 50
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: N
+    }
+    help {
+        helpText: Width in pixels
+    }
+)
+
+customAttribute attribute_06 (
+    apexlangName: height
+    attribute: 6
+    name: Height
+    type: number
+    appearance {
+        sequence: 60
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: N
+    }
+    help {
+        helpText: Height in pixels
+    }
+)
+
+customAttribute attribute_07 (
+    apexlangName: letterRendering
+    attribute: 7
+    name: Letter rendering
+    type: selectList
+    appearance {
+        sequence: 70
+    }
+    default {
+        value: false
+    }
+    help {
+        helpText: Whether to render each letter separately
+    }
+
+    entry false (
+        sequence: 20
+        display: False
+        return: false
+    )
+
+    entry true (
+        sequence: 10
+        display: True
+        return: true
+    )
+
+)
+
+customAttribute attribute_08 (
+    apexlangName: allowTaint
+    attribute: 8
+    name: Allow taint
+    type: selectList
+    appearance {
+        sequence: 80
+    }
+    default {
+        value: false
+    }
+    help {
+        helpText: Whether to allow cross-origin images to taint the canvas
+    }
+
+    entry false (
+        sequence: 20
+        display: False
+        return: false
+    )
+
+    entry true (
+        sequence: 10
+        display: True
+        return: true
+    )
+
+)
+
+customAttribute attribute_09 (
+    apexlangName: logging
+    attribute: 9
+    name: Logging
+    type: selectList
+    appearance {
+        sequence: 90
+    }
+    default {
+        value: false
+    }
+    help {
+        helpText: Whether to log events in the console.
+    }
+
+    entry false (
+        sequence: 20
+        display: False
+        return: false
+    )
+
+    entry true (
+        sequence: 10
+        display: True
+        return: true
+    )
+
+)
+
+customAttribute attribute_10 (
+    apexlangName: domUiSelector
+    attribute: 10
+    name: DOM UI Selector
+    type: yesNo
+    appearance {
+        sequence: 5
+    }
+    help {
+        helpText: Choose if a graphical selector should be used or not.
+    }
+)
+
+customAttribute attribute_11 (
+    apexlangName: domFilter
+    attribute: 11
+    name: DOM Filter
+    appearance {
+        sequence: 6
+    }
+    default {
+        value: div
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: Y
+    }
+    help {
+        helpText:
+            ```
+            A selector that an element should match in order to be outlined and clicked. Default is 'div'.<br>
+            No value means no filter is enabled and all elements would be outlined.
+            ```
+    }
+    examples {
+        examples:
+            ```
+            for all divs: div<br>
+            for all divs with a ID attribute: div[id]
+            ```
+    }
+)
+
+customAttribute attribute_12 (
+    apexlangName: hideLabel
+    attribute: 12
+    name: Hide Label
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 7
+    }
+    default {
+        value: false
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: Y
+    }
+    help {
+        helpText: Shows a label above the visual indicator. The label contains the element's name, id, class name, and dimensions.
+    }
+
+    entry false (
+        sequence: 20
+        display: False
+        return: false
+    )
+
+    entry true (
+        sequence: 10
+        display: True
+        return: true
+    )
+
+)
+
+customAttribute attribute_13 (
+    apexlangName: selectorFillContent
+    attribute: 13
+    name: Selector Fill Content
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 9
+    }
+    default {
+        value: false
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: Y
+    }
+    help {
+        helpText: Whether the content of a selected area is filled with color or not.
+    }
+
+    entry false (
+        sequence: 20
+        display: False
+        return: false
+    )
+
+    entry true (
+        sequence: 10
+        display: True
+        return: true
+    )
+
+)
+
+customAttribute attribute_14 (
+    apexlangName: selectorBorderColor
+    attribute: 14
+    name: Selector Border Color
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 8
+    }
+    default {
+        value: #09c
+    }
+    dependingOn {
+        attribute: @attribute_10/component
+        conditionType: =
+        value: Y
+    }
+    help {
+        helpText:
+            ```
+            Color of the DOM selector outline (In Hex with # in front).<br>
+            If fill content is chosen, this color is 30% darker and transparent.
+            ```
+    }
+)
+
+customAttribute attribute_15 (
+    apexlangName: outputType
+    attribute: 15
+    name: Output Type
+    type: selectList
+    validation {
+        required: true
+    }
+    appearance {
+        sequence: 65
+    }
+    default {
+        value: PNG
+    }
+    help {
+        helpText: Mime-Type of the resulting screenshot image
+    }
+
+    entry jpeg (
+        sequence: 20
+        display: JPEG
+        return: JPEG
+    )
+
+    entry pdf (
+        sequence: 30
+        display: PDF
+        return: PDF
+    )
+
+    entry png (
+        sequence: 10
+        display: PNG
+        return: PNG
+    )
+
+)
+

@@ -1,0 +1,1920 @@
+page 5 (
+    name: Product Details
+    title: Product Details
+    pageGroup: @administration
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            function ReadOnlySelectList()
+            
+            {
+            
+            var l_request = html_GetElement('P5_DISCOUNT_PCT').value;
+            
+            var l_select=html_GetElement('P5_PRODUCT_COST');
+            
+            if (! l_request) l_select.disabled="true";
+               alert($x('P5_DISCOUNT_PCT').value+'-'+$x('P5_PRODUCT_COST').value);
+            
+            }
+                
+                 
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            
+            
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin-coordinator
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+    config {
+        buildOption: @products
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region product (
+        name: Product
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+            renderComponents: belowContent
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P5_BRAND_ID (
+        type: selectList
+        label {
+            label: "Brand Name "
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: "select BRAND_NAME as d,BRAND_ID as r from XXEBA_SALES_PRODUCT_BRANDS  where status='Y' order by 1 "
+            displayExtraValues: false
+            nullDisplayValue: - Select Brand -
+        }
+        layout {
+            sequence: 80
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: BRAND_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_CATALOGUE_ATTACHMENT (
+        type: fileUpload
+        label {
+            label: Catalogue Attachment
+            alignment: left
+        }
+        display {
+            displayAs: nativeFileBrowse
+            displayDownloadLink: false
+        }
+        storage {
+            mimeTypeColumn: ATT_MIMETYPE
+            filenameColumn: ATT_FILENAME
+            charSetColumn: "ATT_CHARSET  "
+            bobLastUpdatedColumn: ATT_LAST_UPDATE
+        }
+        layout {
+            sequence: 270
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CATALOGUE_ATTACHMENT
+            used: always
+        }
+    )
+
+    pageItem P5_CATALOGUE_NO (
+        type: textField
+        label {
+            label: Ordering Code
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 29
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CATALOGUE_NO
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_CURRENCY_TYPE (
+        type: selectList
+        label {
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select CURRENCY_CODE As d, CURRENCY_CODE  AS r from EBA_SALES_CURRENCIES
+            displayNullValue: false
+        }
+        layout {
+            sequence: 130
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CURRENCY_TYPE
+            used: always
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_DISCOUNT_PCT (
+        type: numberField
+        label {
+            label: Discount %
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: &P5_MAX_DISCOUNT.
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 140
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 29
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DISCOUNT_PCT
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_DURATION_TYPE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 250
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DURATION_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_LEAD_TIME (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 240
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: LEAD_TIME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_MAX_DISCOUNT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 50
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select NUM_VALUE  from XXEBA_SALES_PARAMETERS_T where CODE='MAX_DISCOUNT' AND STATUS='Y'
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_MINIMUM_ORDER_QUANTITY (
+        type: numberField
+        label {
+            label: Order Quantity
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 220
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 26
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MINIMUM_ORDER_QUANTITY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PACK_QUANTITY (
+        type: numberField
+        label {
+            label: Pack Quantity
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 200
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 29
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PACK_QUANTITY
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_CLASS_ID (
+        type: selectList
+        label {
+            label: Product Class
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select product_class_name d,  id r from xxeba_product_class order by 1
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 260
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_CLASS_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_COST (
+        type: numberField
+        label {
+            label: Product Cost
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 150
+            region: @product
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        advanced {
+            customAttributes: onkeypress="return ReadOnlySelectList";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_COST
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_CURRENCY_TYPE (
+        type: selectList
+        label {
+            label: New
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: Select CURRENCY_CODE As d, CURRENCY_CODE  AS r from EBA_SALES_CURRENCIES where CURRENCY_CODE =:P5_CURRENCY_TYPE
+            displayNullValue: false
+        }
+        cascadingLov {
+            parentItems: P5_CURRENCY_TYPE
+            itemsToSubmit: P5_CURRENCY_TYPE
+        }
+        layout {
+            sequence: 160
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_CURRENCY_TYPE
+            used: always
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_DESCRIPTION (
+        type: textarea
+        label {
+            label: Description
+            alignment: left
+        }
+        settings {
+            resizable: false
+            trimSpaces: none
+        }
+        layout {
+            sequence: 280
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 76
+            height: 4
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_DESCRIPTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_FAMILY_ID (
+        type: selectList
+        label {
+            label: Group
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @product-families
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 70
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_FAMILY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_NAME (
+        type: textFieldWithAutocomplete
+        label {
+            label: Product Name
+            alignment: left
+        }
+        settings {
+            infiniteScroll: false
+            fetchOnType: false
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select PRODUCT_NAME||' ['||CATALOGUE_NO||']' as product from eba_sales_PRODUCTS  where status='Y'
+                order by 1
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 20
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 88
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_PRICE (
+        type: numberField
+        label {
+            label: Price
+            alignment: left
+        }
+        settings {
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 120
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_PRICE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_SKU (
+        type: textField
+        label {
+            label: HSN Code
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 100
+            region: @product
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 26
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_SKU
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_PRODUCT_TYPE_ID (
+        type: selectList
+        label {
+            label: Product Type
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select PRODUCT_TYPE as d ,PRODUCT_TYPE_ID as r from XXEBA_SALES_PRODUCT_TYPES where status='Y' order by 1
+            displayExtraValues: false
+            nullDisplayValue: - Select Product Type -
+        }
+        layout {
+            sequence: 60
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_TYPE_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_SOLD_AS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: SOLD_AS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            helpText: Select "Cloud Subscription" or "On-Premise Purchase".
+        }
+    )
+
+    pageItem P5_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 300
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_STOCK_ID (
+        type: selectList
+        label {
+            label: Lead Time
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select Description as d,STOCK_ID as r from XXEBA_STOCK_CODES
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 230
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STOCK_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_STOCK_UOM (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 180
+            region: @product
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STOCK_UOM
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_STOCK_UOM_NAME (
+        type: textField
+        label {
+            label: Stock UOM
+            alignment: left
+        }
+        layout {
+            sequence: 190
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_TAGS (
+        type: plugin/tagEntry
+        label {
+            label: Tags
+            alignment: left
+        }
+        settings {
+            validationFailureMessage: Tags may not contain the following characters: : ; \ / ? &
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tag
+                from eba_sales_tags_type_sum
+                where content_type = 'PRODUCT'
+                
+                ```
+        }
+        layout {
+            sequence: 290
+            region: @product
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 89
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TAGS
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_TARIFF_CODE (
+        type: textField
+        label {
+            label: Tariff Code
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 29
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TARIFF_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P5_UNIT_OF_MEASURE (
+        type: selectList
+        label {
+            label: Order  UOM
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units
+                /*where unit_name='Nos'*/
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 170
+            region: @product
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UNIT_OF_MEASURE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Product
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P5_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--simple
+                t-Button--danger
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: expression
+            plsqlExpression: :P5_ID is not null and :P5_STATUS='Y'
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P5_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 30
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction clear-stock-uom-name (
+        name: "Clear Stock UOM Name "
+        execution {
+            sequence: 5
+        }
+        when {
+            selectionType: items
+            items: P5_STOCK_UOM
+        }
+        clientSideCondition {
+            type: itemIsNull
+            item: P5_STOCK_UOM
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    if :P5_STOCK_UOM is null then 
+                     :P5_STOCK_UOM_NAME := null;
+                    end if;
+                    ```
+                itemsToSubmit: P5_STOCK_UOM
+                itemsToReturn: P5_STOCK_UOM_NAME
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction disable-product-cost (
+        name: Disable - Product Cost
+        execution {
+            sequence: 80
+        }
+        when {
+            selectionType: items
+            items: P5_DISCOUNT_PCT
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P5_DISCOUNT_PCT
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-disable (
+            action: disable
+            affectedElements {
+                selectionType: items
+                items: P5_PRODUCT_COST
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-enable (
+            action: enable
+            affectedElements {
+                selectionType: items
+                items: P5_PRODUCT_COST
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-pack-qty (
+        name: Hide/ Show pack qty
+        execution {
+            sequence: 60
+        }
+        when {
+            selectionType: items
+            items: P5_STOCK_UOM_NAME
+        }
+        clientSideCondition {
+            type: item=value
+            item: P5_STOCK_UOM_NAME
+            value: Pack
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P5_PACK_QUANTITY_1
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P5_MINIMUM_ORDER_QUANTITY
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P5_PACK_QUANTITY_1
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P5_MINIMUM_ORDER_QUANTITY
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction hide-show-qty (
+        name: Hide/ Show qty
+        execution {
+            sequence: 70
+        }
+        when {
+            selectionType: items
+            items: P5_STOCK_UOM_NAME
+        }
+        clientSideCondition {
+            type: item=value
+            item: P5_STOCK_UOM_NAME
+            value: Nos
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-hide (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P5_MINIMUM_ORDER_QUANTITY
+            }
+            execution {
+                sequence: 10
+                fireWhenEventResultIs: false
+            }
+        )
+
+        action native-hide-2 (
+            action: hide
+            affectedElements {
+                selectionType: items
+                items: P5_PACK_QUANTITY_1
+            }
+            execution {
+                sequence: 20
+            }
+        )
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P5_MINIMUM_ORDER_QUANTITY
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-show-2 (
+            action: show
+            affectedElements {
+                selectionType: items
+                items: P5_PACK_QUANTITY_1
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 100
+        }
+        when {
+            selectionType: items
+            items: P5_UNIT_OF_MEASURE
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    BEGIN
+                    
+                    select unit_name ,UNIT_ID 
+                    into :P5_STOCK_UOM_NAME,:P5_STOCK_UOM 
+                    from XXEBA_SALES_Units where UNIT_ID = :P5_UNIT_OF_MEASURE;
+                    
+                    EXCEPTION
+                    WHEN NO_DATA_FOUND THEN 
+                     :P5_STOCK_UOM_NAME:= NULL;
+                     :P5_STOCK_UOM :=NULL;
+                     END;
+                    ```
+                itemsToSubmit: P5_UNIT_OF_MEASURE
+                itemsToReturn: [
+                    P5_STOCK_UOM
+                    P5_STOCK_UOM_NAME
+                ]
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction no-space (
+        name: No Space
+        execution {
+            sequence: 110
+        }
+        when {
+            event: keyup
+            selectionType: items
+            items: P5_CATALOGUE_NO
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var val = $v("P5_CATALOGUE_NO"); 
+                    $s("P5_CATALOGUE_NO", val.replace(/\s+/g, '')); // Removes spaces dynamically
+                    
+                    ```
+            }
+            affectedElements {
+                selectionType: items
+                items: P5_CATALOGUE_NO
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-product-cost (
+        name: Set Product Cost
+        execution {
+            sequence: 50
+        }
+        when {
+            selectionType: items
+            items: P5_ID
+        }
+        clientSideCondition {
+            type: itemIsNotNull
+            item: P5_ID
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    DECLARE
+                    lv_product_cost number;
+                    BEGIN
+                      select PRODUCT_COST into lv_product_cost from EBA_SALES_PRODUCTS where ID=:P5_ID ;
+                      :P5_PRODUCT_COST := lv_product_cost ;
+                      RETURN :P5_PRODUCT_COST;
+                    END;
+                    ```
+                itemsToSubmit: P5_ID
+            }
+            affectedElements {
+                selectionType: items
+                items: P5_PRODUCT_COST
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction set-stock-uom-namae (
+        name: SET STOCK UOM NAMAE
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P5_STOCK_UOM
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    Begin
+                    if :P5_STOCK_UOM is not null then
+                    select unit_name into :P5_STOCK_UOM_NAME from XXEBA_SALES_Units where UNIT_ID = :P5_STOCK_UOM;
+                    end if;
+                    end;
+                    ```
+                itemsToSubmit: P5_STOCK_UOM
+                itemsToReturn: P5_STOCK_UOM_NAME
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction set-value (
+        name: Set Value
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: [
+                P5_PRODUCT_PRICE
+                P5_DISCOUNT_PCT
+            ]
+        }
+
+        action native-set-value (
+            action: setValue
+            settings {
+                type: plsqlFunctionBody
+                plsqlFunctionBody:
+                    ```plsql
+                    BEGIN
+                      if nvl(:P5_DISCOUNT_PCT,0) > 0 then
+                          :P5_PRODUCT_COST := round((nvl(nvl(:P5_PRODUCT_PRICE,0),0) - (nvl(:P5_PRODUCT_PRICE,0)) * ((nvl(:P5_DISCOUNT_PCT,0) / 100))),2);
+                      else
+                          :P5_PRODUCT_COST := nvl(:P5_PRODUCT_COST,0);
+                      end if;
+                    
+                    RETURN :P5_PRODUCT_COST;
+                    
+                    END;
+                    ```
+                itemsToSubmit: [
+                    P5_PRODUCT_PRICE
+                    P5_DISCOUNT_PCT
+                ]
+            }
+            affectedElements {
+                selectionType: items
+                items: P5_PRODUCT_COST
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction stock-uom (
+        name: Stock_UOM
+        execution {
+            sequence: 90
+        }
+        when {
+            selectionType: items
+            items: P5_STOCK_UOM
+        }
+        serverSideCondition {
+            type: never
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    Begin
+                    if :P5_UNIT_OF_MEASURE is not null then
+                    select unit_name into :P5_STOCK_UOM_NAME from XXEBA_SALES_Units where UNIT_ID = :P5_STOCK_UOM;
+                    end if;
+                    end;
+                    ```
+                itemsToSubmit: P5_UNIT_OF_MEASURE
+                itemsToReturn: P5_STOCK_UOM
+                showProcessing: true
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation moq-pack-validation (
+        name: MOQ/Pack  Validation
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                IF :P5_STOCK_UOM_NAME  = 'Pack' THEN
+                  IF :P5_PACK_QUANTITY IS NULL THEN
+                    RETURN 'Pack Quantity must have some value';
+                  ELSE
+                    RETURN NULL;
+                  END IF;
+                END IF;
+                
+                
+                IF :P5_STOCK_UOM_NAME  = 'Nos' THEN
+                  IF :P5_MINIMUM_ORDER_QUANTITY IS NULL THEN
+                    RETURN 'Order Quantity must have some value';
+                  ELSE
+                    RETURN NULL;
+                  END IF;
+                END IF;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation order-quantity-for-multiples (
+        name: Order quantity for multiples
+        execution {
+            sequence: 70
+        }
+        validation {
+            plsqlExpression: MOD(:P5_MINIMUM_ORDER_QUANTITY, :P5_PACK_QUANTITY) = 0
+        }
+        error {
+            errorMessage:
+                ```
+                Order Quantity must be a multiple of Pack Quantity.
+                
+                ```
+            associatedItem: @P5_MINIMUM_ORDER_QUANTITY
+        }
+    )
+
+    validation ordering-code-validation-create (
+        name: Ordering Code Validation Create
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Begin
+                For rec  in (select CATALOGUE_NO from EBA_SALES_PRODUCTS )
+                loop
+                IF UPPER(trim(:P5_CATALOGUE_NO))=UPPER(trim(rec.CATALOGUE_NO)) then 
+                return 'Sorry! Ordering Code already exists.';
+                End if;
+                End LOOP;
+                End;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE
+        }
+    )
+
+    validation ordering-code-validation-update (
+        name: Ordering Code Validation Update
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Begin
+                For rec  in (select CATALOGUE_NO from EBA_SALES_PRODUCTS where id != :P5_ID and status!='X')
+                loop
+                IF trim(:P5_CATALOGUE_NO)=trim(rec.CATALOGUE_NO) then 
+                return 'Sorry! Ordering Code already exists.';
+                End if;
+                End LOOP;
+                End;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: SAVE
+        }
+    )
+
+    validation pack-quantity-for-multiple-tens (
+        name: Pack quantity for multiple tens
+        execution {
+            sequence: 60
+        }
+        validation {
+            plsqlExpression:
+                ```plsql
+                :P5_PACK_QUANTITY >= 10 
+                AND MOD(:P5_PACK_QUANTITY, 5) = 0
+                ```
+        }
+        error {
+            errorMessage: Pack quantity must be equal to or more than 10
+            associatedItem: @P5_PACK_QUANTITY
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    validation product-name-validation (
+        name: Product Name Validation
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_product_name EBA_SALES_PRODUCTS.product_name%TYPE;
+                BEGIN
+                  FOR rec IN (SELECT product_name FROM EBA_SALES_PRODUCTS)
+                  LOOP
+                    IF UPPER(TRIM(:P5_product_name)) = UPPER(TRIM(rec.product_name)) THEN 
+                      RETURN 'Sorry! Product Name already exists.';
+                    END IF;
+                  END LOOP;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE
+        }
+    )
+
+    validation product-price-validation (
+        name: Product Price Validation
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                IF to_number(:P5_PRODUCT_COST)  > to_number(:P5_PRODUCT_PRICE) THEN
+                RETURN 'Actual Price  should be greater than Product Cost';
+                END IF;
+                ```
+        }
+        error {
+            displayLocation: inlineInNotification
+            associatedItem: @P5_PRODUCT_PRICE
+        }
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 70
+        }
+        advanced {
+            executionMappingIdentifier: 722946055375616671
+        }
+    )
+
+    process delete-process (
+        name: Delete Process
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                Update  EBA_SALES_PRODUCTS SET STATUS ='X' where ID=:P5_ID;
+                EXCEPTION WHEN others then
+                raise_application_error(-20001,SQLERRM);
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 67687571529167856
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process fetch-row-from-eba-sales-products (
+        name: Fetch Row from eba_sales_PRODUCTS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_PRODUCTS
+            pkColumn: ID
+            pkItem: P5_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 4690807440669176585
+        }
+    )
+
+    process process-row-of-eba-sales-products (
+        name: Process Row of eba_sales_PRODUCTS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_PRODUCTS
+            pkColumn: ID
+            pkItem: P5_ID
+            returnKeyIntoItem: P5_ID
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_PRODUCTS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690807647926176591
+        }
+    )
+
+    process reset-page (
+        name: reset page
+        type: clearSessionState
+        execution {
+            sequence: 60
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 4690807826514176591
+        }
+        serverSideCondition {
+            whenButtonPressed: @delete
+        }
+    )
+
+    process stock-uom-update (
+        name: Stock UOM Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                IF :P5_ID IS NOT NULL AND :P5_STOCK_UOM_NAME='Nos' THEN
+                 UPDATE EBA_SALES_PRODUCTS SET STOCK_UOM = NULL, PACK_QUANTITY = NULL WHERE ID=:P5_ID;
+                END IF;
+                
+                IF :P5_ID IS NOT NULL AND :P5_STOCK_UOM_NAME='Pack' THEN
+                 UPDATE EBA_SALES_PRODUCTS SET  MINIMUM_ORDER_QUANTITY = NULL WHERE ID=:P5_ID;
+                END IF;
+                
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 363318459921602971
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+            type: never
+        }
+    )
+
+    process update-pack-quantity (
+        name: Update Pack Quantity
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                
+                UPDATE EBA_SALES_PRODUCTS
+                SET PACK_QUANTITY = :P5_PACK_QUANTITY
+                WHERE ID = :P5_ID;
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: save
+        }
+        advanced {
+            executionMappingIdentifier: 112931453566676720
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+)
+

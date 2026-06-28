@@ -1,0 +1,659 @@
+page 117 (
+    name: Upload Data
+    title: Upload Data
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region upload-data (
+        name: Upload Data
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1230
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region upload-file-region (
+        name: Upload File Region
+        type: staticContent
+        layout {
+            sequence: 1210
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region view-products (
+        name: View Products
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT SEQ_ID ,C001  PRODUCT_CODE , C002  ORDERING_CODE , C003  UNIT_PRICE , C004  CURRENCY ,C005 PRODUCT_COST, C006 DISCOUNT_PCT, C008 Result 
+                		FROM APEX_COLLECTIONS
+                		WHERE COLLECTION_NAME = 'SALES_PRODUCTS_COLLECTION' and SEQ_ID>1; 
+                       
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        advanced {
+            savedReportMappingIdentifier: 127646810068679009
+        }
+
+        column CURRENCY (
+            type: plainText
+            heading {
+                heading: Currency
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column DISCOUNT_PCT (
+            type: plainText
+            heading {
+                heading: Discount %
+                alignment: center
+            }
+            layout {
+                sequence: 140
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AD
+            }
+        )
+
+        column ORDERING_CODE (
+            type: plainText
+            heading {
+                heading: Ordering Code
+                alignment: center
+            }
+            layout {
+                sequence: 30
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: S
+            }
+        )
+
+        column PRODUCT_CODE (
+            type: plainText
+            heading {
+                heading: Product Code
+                alignment: center
+            }
+            layout {
+                sequence: 20
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column PRODUCT_COST (
+            type: plainText
+            heading {
+                heading: Product Cost
+                alignment: center
+            }
+            layout {
+                sequence: 130
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AC
+            }
+        )
+
+        column RESULT (
+            type: plainText
+            heading {
+                heading: Result
+                alignment: center
+            }
+            layout {
+                sequence: 120
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column SEQ_ID (
+            type: hidden
+            heading {
+                heading: Seq id
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column UNIT_PRICE (
+            type: plainText
+            heading {
+                heading: Unit Price
+                alignment: center
+            }
+            layout {
+                sequence: 50
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        page {
+            width: 8.5
+            height: 11
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+        columnHeadings {
+            fontWeight: normal
+            backgroundColor: #9bafde
+        }
+        columns {
+            backgroundColor: #efefef
+        }
+
+        savedReport 1276631 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CURRENCY (
+                sequence: 5
+            )
+
+            displayColumn DISCOUNT_PCT (
+                sequence: 7
+            )
+
+            displayColumn ORDERING_CODE (
+                sequence: 3
+            )
+
+            displayColumn PRODUCT_CODE (
+                sequence: 2
+            )
+
+            displayColumn PRODUCT_COST (
+                sequence: 6
+            )
+
+            displayColumn RESULT (
+                sequence: 1
+            )
+
+            displayColumn UNIT_PRICE (
+                sequence: 4
+            )
+
+        )
+
+    )
+
+    pageItem P117__UPLOAD_FILE (
+        type: fileUpload
+        label {
+            label: Select File to Import
+            alignment: left
+        }
+        display {
+            displayAs: nativeFileBrowse
+        }
+        storage {
+            type: appTempFiles
+            purgeFileAt: endOfRequest
+        }
+        layout {
+            sequence: 10
+            region: @upload-file-region
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+    )
+
+    button cancel (
+        buttonName: Cancel
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @upload-file-region
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button cancel-2 (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @view-products
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 33
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    button clear-data (
+        buttonName: CLEAR_DATA
+        label: Clear
+        layout {
+            sequence: 20
+            region: @view-products
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--warning
+            ]
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm('Are you sure want to clear the data?', 'CLEAR_DATA');
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button download-template (
+        buttonName: DOWNLOAD_TEMPLATE
+        label: Download Template
+        layout {
+            sequence: 30
+            region: @upload-file-region
+            slot: regionBody
+            startNewRow: false
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 117
+                clearCache: 117
+                action: resetPagination
+                request: APPLICATION_PROCESS=DOWNLOAD_TEMPLATE
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button load-file (
+        buttonName: LOAD_FILE
+        label: Get Data
+        layout {
+            sequence: 20
+            region: @upload-file-region
+            slot: regionBody
+            startNewRow: false
+            column: 6
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+        advanced {
+            customAttributes: style="margin-top: 4px;"
+        }
+    )
+
+    button save-data (
+        buttonName: Save_data
+        label: Import
+        layout {
+            sequence: 30
+            region: @view-products
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-dialog (
+        name: Close Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    //alert();
+                    $('.ui-dialog', window.parent.document).hide();
+                    //window.parent.document.getElementsByClassName('ui-dialog')[0].style.display = "none";
+                    $('.ui-widget-overlay', window.parent.document).hide();
+                    //window.parent.document.getElementsByClassName('ui-widget-overlay')[0].style.display = "none";
+                    
+                    ```
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process clear-collection (
+        name: Clear Collection
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                    APEX_COLLECTION.TRUNCATE_COLLECTION(
+                        p_collection_name => 'SALES_PRODUCTS_COLLECTION');
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 274158265774343881
+        }
+        serverSideCondition {
+            whenButtonPressed: @clear-data
+        }
+    )
+
+    process load-report-data (
+        name: Load Report Data
+        type: plugin/excel2collection
+        settings {
+            browseItem: P117__UPLOAD_FILE
+            collectionName: SALES_PRODUCTS_COLLECTION
+            csvSeparator: ;
+            csvEnclosedBy: "
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Uploaded sucessfully!!!!
+        }
+        advanced {
+            executionMappingIdentifier: 69868064480609796
+        }
+        serverSideCondition {
+            whenButtonPressed: @load-file
+        }
+    )
+
+    process save-collection (
+        name: Save_collection
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  v_count           NUMBER :=0;
+                  lv_product_cost   VARCHAR2(255);
+                  lv_max_discount_pct number;
+                  v_collection_name VARCHAR2(255);
+                  CURSOR C1
+                  IS
+                    SELECT SEQ_ID ,
+                      C001 PRODUCT_CODE ,
+                      C002 ORDERING_CODE ,
+                      C003 UNIT_PRICE ,
+                      C004 CURRENCY,
+                      C005 PRODUCT_COST,
+                      C006 DISCOUNT_PCT
+                    FROM APEX_COLLECTIONS
+                    WHERE COLLECTION_NAME = 'SALES_PRODUCTS_COLLECTION'
+                    AND SEQ_ID            >1;    
+                   r1 c1%rowtype;
+                  
+                  CURSOR C2 (p_product_code VARCHAR2, p_order_code VARCHAR2)
+                  IS
+                    SELECT --PRODUCT_NAME,
+                      --CATALOGUE_NO
+                      count(*) no_of_records
+                    FROM EBA_SALES_PRODUCTS
+                    WHERE --PRODUCT_NAME =trim(p_product_code)-- AND  /* Bharath Raju Date: 27-Apr-2021*/
+                    CATALOGUE_NO   = trim(p_order_code);
+                  r2 c2%rowtype;
+                  
+                BEGIN
+                
+                  v_collection_name := 'SALES_PRODUCTS_COLLECTION';
+                    
+                  select nvl(NUM_VALUE,0) into lv_max_discount_pct  from XXEBA_SALES_PARAMETERS_T where CODE='MAX_DISCOUNT' AND STATUS='Y';
+                  FOR r1 IN C1
+                  LOOP
+                    BEGIN
+                      IF r1.PRODUCT_CODE IS NULL AND r1.ORDERING_CODE IS NULL THEN
+                        APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE ( p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Invalid Product');
+                        --v_count:=v_count+1;
+                      elsif  r1.PRODUCT_CODE IS NOT NULL or r1.ORDERING_CODE IS NOT NULL THEN
+                        FOR r2 IN c2(r1.PRODUCT_CODE, r1.ORDERING_CODE)
+                            LOOP        
+                          IF r2.no_of_records = 0 THEN
+                          APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Product Not Found');
+                          --v_count:=v_count+1;
+                          END IF;  
+                         IF r2.no_of_records <> 0 and  r1.PRODUCT_COST is not null and r1.DISCOUNT_PCT is not null THEN
+                                    APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Not Updated');
+                          END IF;
+                         
+                          
+                          IF r2.no_of_records <> 0 and r1.DISCOUNT_PCT is null and r1.PRODUCT_COST is not null THEN
+                          
+                          IF TO_NUMBER(trim(r1.UNIT_PRICE)) > TO_NUMBER(trim(r1.PRODUCT_COST)) THEN 
+                          UPDATE EBA_SALES_PRODUCTS
+                          SET PRODUCT_PRICE        = TO_NUMBER(NVL(trim(r1.UNIT_PRICE),0)),
+                            CURRENCY_TYPE          = r1.CURRENCY,
+                            PRODUCT_COST           = TO_NUMBER(NVL(trim(r1.PRODUCT_COST),0)),
+                            PRODUCT_CURRENCY_TYPE  = r1.CURRENCY,
+                            DISCOUNT_PCT           = null
+                          WHERE --trim(PRODUCT_NAME) = trim(r1.PRODUCT_CODE) /* Bharath Raju Date: 27-Apr-2021*/
+                        --  AND 
+                          CATALOGUE_NO         = trim(r1.ORDERING_CODE);          
+                          APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Updated');
+                          ELSIF TO_NUMBER(trim(r1.UNIT_PRICE)) <= TO_NUMBER(trim(r1.PRODUCT_COST)) THEN 
+                          APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Actual Price should be greater than Product Cost.');
+                          END IF;
+                          
+                		  ELSIF r2.no_of_records <> 0 and r1.DISCOUNT_PCT is not null and r1.PRODUCT_COST is null  THEN
+                     
+                		  lv_product_cost := round((nvl(nvl(r1.UNIT_PRICE,0),0) - (nvl(r1.UNIT_PRICE,0)) * ((nvl(r1.DISCOUNT_PCT,0) / 100))),2);
+                          IF to_number(r1.DISCOUNT_PCT) <= to_number(lv_max_discount_pct) and to_number(r1.DISCOUNT_PCT) >=1 THEN
+                          UPDATE EBA_SALES_PRODUCTS
+                          SET PRODUCT_PRICE        = TO_NUMBER(NVL(trim(r1.UNIT_PRICE),0)),
+                            CURRENCY_TYPE          = r1.CURRENCY,
+                            PRODUCT_COST           = TO_NUMBER(NVL(trim(lv_product_cost),0)),--- TO_NUMBER(NVL(trim(r1.PRODUCT_COST),0)),
+                            PRODUCT_CURRENCY_TYPE  = r1.CURRENCY,
+                            DISCOUNT_PCT           = r1.DISCOUNT_PCT
+                          WHERE --trim(PRODUCT_NAME) = trim(r1.PRODUCT_CODE) /* Bharath Raju Date: 27-Apr-2021*/
+                          --AND
+                          CATALOGUE_NO         = trim(r1.ORDERING_CODE);          
+                          APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Updated');
+                          ELSIF to_number(r1.DISCOUNT_PCT) <= 0 THEN
+                          APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Discount % is not between the valid range of 1 and '||lv_max_discount_pct||'.');
+                          ELSIF to_number(r1.DISCOUNT_PCT) > to_number(lv_max_discount_pct)  THEN
+                           APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Discount % is not between the valid range of 1 and '||lv_max_discount_pct||'.');
+                       
+                          END IF;
+                         -- v_count:=v_count+1;
+                        END IF;                
+                      END LOOP;      
+                      END IF;      
+                      
+                    EXCEPTION
+                    WHEN OTHERS THEN
+                    
+                      APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE ( p_collection_name => 'SALES_PRODUCTS_COLLECTION', p_seq => r1.SEQ_ID, p_attr_number => 8, p_attr_value => 'Not Updated');
+                     -- v_count:=v_count+1;
+                    END;
+                  END LOOP;
+                --  raise_application_error(-20001, v_count);
+                EXCEPTION WHEN OTHERS THEN
+                RAISE_APPLICATION_ERROR(-20001, SQLERRM);
+                END; 
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Imported successfully!!!!!
+        }
+        advanced {
+            executionMappingIdentifier: 140469918181708645
+        }
+        serverSideCondition {
+            whenButtonPressed: @save-data
+        }
+    )
+
+)
+

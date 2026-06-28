@@ -1,0 +1,522 @@
+page 261 (
+    name: Permission Details - Approval
+    title: Permission Details - Approval
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region permission-approvals (
+        name: Permission Approvals
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region report (
+        name: Report 1
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select
+                P.REQUEST_ID, 
+                P.SALES_REP_ID,
+                P.PERMISSION_DATE,
+                P.FROM_TIME,
+                P.TO_TIME,
+                P.TOTAL_HOURS,
+                P.PERMISSION_REASON,
+                decode(trim(P.PERMISSION_STATUS),'S','Submitted','A','Approved','R','Rejected') as PERMISSION_STATUS,
+                P.STATUS,
+                P.CREATED_BY,
+                P.CREATION_DATE,
+                P.UPDATED_BY,
+                P.UPDATE_DATE,
+                P.APPROVED_BY,
+                P.APPROVED_DATE,
+                P.APPROVER_COMMENTS
+                from XXEBA_SALES_PERMISSIONS_T P, EBA_SALES_SALESREPS S  where PERMISSION_STATUS='S'
+                and P.SALES_REP_ID=S.ID 
+                and S.REP_MANAGER_ID =:USER_ID
+                AND P.CREATION_DATE >= ADD_MONTHS(TRUNC(ADD_MONTHS(SYSDATE, -3), 'YYYY'), 3)        --ADDED BY DINESH R ON 07-Oct-2025
+                AND P.CREATION_DATE <  ADD_MONTHS(TRUNC(ADD_MONTHS(SYSDATE, -3), 'YYYY'), 15)-1   --ADDED BY DINESH R ON 07-Oct-2025
+                -- AND L.CREATION_DATE >= ADD_MONTHS(TRUNC(SYSDATE), -6)
+                
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 260
+                items: {
+                    P260_REQUEST_ID: #REQUEST_ID#
+                    P260_SOURCE_PAGE: 261
+                }
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="Edit">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 598389648947104971
+        }
+
+        column APPROVED_BY (
+            type: hidden
+            heading {
+                heading: Approved By
+            }
+            layout {
+                sequence: 13
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: M
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column APPROVED_DATE (
+            type: hidden
+            heading {
+                heading: Approved Date
+            }
+            layout {
+                sequence: 14
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: N
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column APPROVER_COMMENTS (
+            type: hidden
+            heading {
+                heading: Approver Comments
+            }
+            layout {
+                sequence: 15
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: O
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column CREATED_BY (
+            type: plainText
+            heading {
+                heading: Created By
+            }
+            layout {
+                sequence: 9
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: I
+            }
+        )
+
+        column CREATION_DATE (
+            type: plainText
+            heading {
+                heading: Requested On
+                alignment: center
+            }
+            layout {
+                sequence: 10
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: J
+            }
+        )
+
+        column FROM_TIME (
+            type: plainText
+            heading {
+                heading: From Time
+                alignment: center
+            }
+            layout {
+                sequence: 4
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: D
+            }
+        )
+
+        column PERMISSION_DATE (
+            type: plainText
+            heading {
+                heading: Permission Date
+                alignment: center
+            }
+            layout {
+                sequence: 3
+                columnAlignment: center
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: C
+            }
+        )
+
+        column PERMISSION_REASON (
+            type: plainText
+            heading {
+                heading: Reason
+            }
+            layout {
+                sequence: 25
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column PERMISSION_STATUS (
+            type: plainText
+            heading {
+                heading: Status
+            }
+            layout {
+                sequence: 7
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: G
+            }
+        )
+
+        column REQUEST_ID (
+            type: plainText
+            heading {
+                heading: Request Id
+                alignment: center
+            }
+            layout {
+                sequence: 1
+                columnAlignment: center
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+        )
+
+        column SALES_REP_ID (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Employee Name
+            }
+            lov {
+                lov: @xx-sales-rep-lov
+            }
+            layout {
+                sequence: 2
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column STATUS (
+            type: plainTextBasedOnLov
+            heading {
+                heading: Status
+                alignment: center
+            }
+            lov {
+                lov: @xx-status-lov
+            }
+            layout {
+                sequence: 8
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        column TOTAL_HOURS (
+            type: plainText
+            heading {
+                heading: Total Hours
+                alignment: center
+            }
+            layout {
+                sequence: 35
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column TO_TIME (
+            type: plainText
+            heading {
+                heading: To Time
+                alignment: center
+            }
+            layout {
+                sequence: 5
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: E
+            }
+        )
+
+        column UPDATED_BY (
+            type: plainText
+            heading {
+                heading: Updated By
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column UPDATE_DATE (
+            type: plainText
+            heading {
+                heading: Update Date
+            }
+            layout {
+                sequence: 12
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 2992645 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATION_DATE (
+                sequence: 8
+            )
+
+            displayColumn FROM_TIME (
+                sequence: 3
+            )
+
+            displayColumn PERMISSION_DATE (
+                sequence: 2
+            )
+
+            displayColumn PERMISSION_REASON (
+                sequence: 6
+            )
+
+            displayColumn PERMISSION_STATUS (
+                sequence: 7
+            )
+
+            displayColumn SALES_REP_ID (
+                sequence: 1
+            )
+
+            displayColumn TOTAL_HOURS (
+                sequence: 5
+            )
+
+            displayColumn TO_TIME (
+                sequence: 4
+            )
+
+        )
+
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 30
+            region: @report
+            slot: rightOfInteractiveReportSearchBar
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 260
+                clearCache: 260
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    dynamicAction create-button-dialog-closed (
+        name: Create Button - Dialog Closed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @create
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction edit-report-dialog-closed (
+        name: Edit Report - Dialog Closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @report
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @report
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

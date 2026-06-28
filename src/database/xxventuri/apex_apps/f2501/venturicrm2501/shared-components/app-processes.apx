@@ -1,0 +1,494 @@
+appProcess breadcrumb-for-account (
+    name: Breadcrumb for Account
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '94' then nv('P94_ID')
+                end;
+            
+              select customer_name
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_customers
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: 94
+    }
+)
+
+appProcess breadcrumb-for-contact (
+    name: Breadcrumb for Contact
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '24' then nv('P24_ID')
+                end;
+            
+              select contact_name
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_customer_contacts
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: 24
+    }
+)
+
+appProcess breadcrumb-for-lead (
+    name: Breadcrumb for Lead
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '133' then nv('P133_ID')
+                end;
+            
+              select lead_name_01
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_leads
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: 133
+    }
+)
+
+appProcess breadcrumb-for-opportunity (
+    name: Breadcrumb for Opportunity
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '80' then nv('P80_ID')
+                  when '85' then nv('P85_ID')
+                end;
+            
+              select deal_name
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_deals
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: [
+            80
+            85
+        ]
+    }
+)
+
+appProcess breadcrumb-for-product (
+    name: Breadcrumb for Product
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '61' then nv('P61_ID')
+                end;
+            
+              select product_name
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_products
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: 61
+    }
+)
+
+appProcess breadcrumb-for-territory (
+    name: Breadcrumb for Territory
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            declare
+            
+              l_id number;
+            
+            begin
+            
+              l_id := 
+                case :APP_PAGE_ID
+                  when '93' then nv('P93_ID')
+                  when '123' then nv('P123_TERRITORY_ID')
+                  when '125' then nv('P125_TERRITORY_ID')
+                end;
+            
+              select territory_name
+              into :BREADCRUMB_DISPLAY
+              from eba_sales_territories
+              where id = l_id;
+            
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+    }
+    serverSideCondition {
+        type: currentPageInList
+        pages: [
+            93
+            123
+            125
+        ]
+    }
+)
+
+appProcess download-template (
+    name: DOWNLOAD_TEMPLATE
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            DECLARE
+            
+            	v_filename      VARCHAR2(255);
+            	v_mimetype      VARCHAR2(512);
+            	v_file_data     BLOB;
+            
+            	CURSOR  get_step_file_url
+            	IS
+            		SELECT FILENAME, FILE_MIMETYPE, FILE_BLOB
+            			 FROM EBA_SALES_FILES
+            			WHERE ID = 208224086929905749225802869609554993681;
+            
+            		--select *  from XXMP_TEMPLATE_FILE where KPI_CODE = 'COMM-004';
+            BEGIN
+            
+            	OPEN get_step_file_url;
+            	LOOP
+            	FETCH get_step_file_url INTO v_filename, v_mimetype, v_file_data;
+            	EXIT WHEN get_step_file_url%notfound;
+            		sys.htp.init;
+            		sys.owa_util.mime_header(v_mimetype, FALSE);
+            		sys.htp.p('Content-length: '|| sys.dbms_lob.getlength( v_file_data ));
+            		sys.htp.p('Content-Disposition: attachment; filename="'||v_filename||'"' );
+            		sys.htp.p('Cache-Control: max-age=0');
+            		sys.owa_util.http_header_close;
+            
+            		sys.wpg_docload.download_file(v_file_data);
+            		apex_application.stop_apex_engine;
+            	END LOOP;
+            	CLOSE get_step_file_url;
+            	
+            	EXCEPTION WHEN OTHERS THEN
+            	sys.htp.prn('error: '||sqlerrm);
+            	apex_application.stop_apex_engine;     
+            END;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: ajaxCallback
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+    }
+)
+
+appProcess generat-pdf (
+    name: Generat_PDF
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            DECLARE
+            
+            /* 	v_file_name				VARCHAR2(1000) := NULL; */
+                v_report_data			CLOB;
+            	v_report_layout			CLOB;
+            	
+            
+            
+            BEGIN
+            
+                
+            	xxeba_product_quotation_pkg.xxoeb_build_report_data(:OPPORTUNITY_ID, v_report_data);
+            
+            	xxeba_product_quotation_pkg.xxoeb_build_report_layout(v_report_layout);
+            
+                -- Print pdf file using "download_print_document" type(signature 2)
+                apex_util.download_print_document (
+                    p_file_name => 'PDF file'
+                  , p_content_disposition => 'ATTACHMENT'
+                  , p_report_data => v_report_data
+                  , p_report_layout =>   v_report_layout 
+                  , p_report_layout_type => 'xsl-fo'
+                  , p_document_format => 'pdf'
+                --  , p_print_server => 'http://apexcentral.us.oracle.com:7779/apex/_/fop2pdf'
+                );
+                
+            END;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: ajaxCallback
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+    }
+)
+
+appProcess product-upload-template (
+    name: PRODUCT_UPLOAD_TEMPLATE
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            DECLARE
+            
+            	v_filename      VARCHAR2(255);
+            	v_mimetype      VARCHAR2(512);
+            	v_file_data     BLOB;
+            
+            	CURSOR  get_step_file_url
+            	IS
+            		SELECT FILENAME, FILE_MIMETYPE, FILE_BLOB
+            			 FROM EBA_SALES_FILES
+            			WHERE ID = 208224215899710385684867255180791334166;
+            
+            		--select *  from XXMP_TEMPLATE_FILE where KPI_CODE = 'COMM-004';
+            BEGIN
+            
+            	OPEN get_step_file_url;
+            	LOOP
+            	FETCH get_step_file_url INTO v_filename, v_mimetype, v_file_data;
+            	EXIT WHEN get_step_file_url%notfound;
+            		sys.htp.init;
+            		sys.owa_util.mime_header(v_mimetype, FALSE);
+            		sys.htp.p('Content-length: '|| sys.dbms_lob.getlength( v_file_data ));
+            		sys.htp.p('Content-Disposition: attachment; filename="'||v_filename||'"' );
+            		sys.htp.p('Cache-Control: max-age=0');
+            		sys.owa_util.http_header_close;
+            
+            		sys.wpg_docload.download_file(v_file_data);
+            		apex_application.stop_apex_engine;
+            	END LOOP;
+            	CLOSE get_step_file_url;
+            	
+            	EXCEPTION WHEN OTHERS THEN
+            	sys.htp.prn('error: '||sqlerrm);
+            	apex_application.stop_apex_engine;     
+            END;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: ajaxCallback
+    }
+    security {
+        authorizationScheme: mustNotBePublicUser
+    }
+)
+
+appProcess set-counts (
+    name: set counts
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :PRODUCTS
+            from eba_sales_products where status='Y';
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :CUSTOMERS
+            from eba_sales_customers c
+                where c.status in ('Y','R','U','A') and (upper(c.DEFAULT_REP_ID) in (SELECT upper(r.ID)
+                                                     FROM eba_sales_salesreps r
+                                                    START WITH r.id = :USER_ID
+                                                   CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                 or 
+                EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                ) ;
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :DEALS
+            from eba_sales_deals d,eba_sales_customers c
+            where d.CUSTOMER_ID= c.id
+            --  and(upper(cc.CREATED_BY) in (SELECT  upper(r.USER_NAME)
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                 
+                                                     FROM eba_sales_salesreps r
+                                                    START WITH r.id = :USER_ID
+                                                   CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                 or 
+                EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                )
+                and source_type = 'D';
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :TERRITORIES
+            from eba_sales_territories;
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :LEADS
+            from eba_sales_leads l,eba_sales_customers c
+            where l.ACCOUNT_ID = c.id
+            --  and(upper(cc.CREATED_BY) in (SELECT  upper(r.USER_NAME)
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                 
+                                                     FROM eba_sales_salesreps r
+                                                    START WITH r.id = :USER_ID
+                                                   CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                 or 
+                EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                )   ;
+                
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+               into :CONTACTS
+            from eba_sales_customer_contacts cc, eba_sales_customers c
+            where cc.customer_id = c.id and c.status='A'
+            --  and(upper(cc.CREATED_BY) in (SELECT  upper(r.USER_NAME)
+                and(upper(c.DEFAULT_REP_ID) in (SELECT  upper(r.ID)                                 
+                                                     FROM eba_sales_salesreps r
+                                                    START WITH r.id = :USER_ID
+                                                   CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                 or 
+                EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                )   ;
+                
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :COMPETITION
+            from eba_sales_deal_competition;
+            
+            select trim(to_char(count(*),'999G999G999G990'))
+            into :APPOINTMENT
+            from XXEBA_SALES_APPOINTMENT
+            where  APPOINTMENT_DATE >= sysdate
+            and nvl(APPOINTMENT_STATUS,'S') not in ('Cancel','Visited') and
+            upper(CREATED_BY) in (SELECT upper(r.USER_NAME)
+                                                     FROM eba_sales_salesreps r
+                                                    START WITH r.id = :USER_ID
+                                                   CONNECT BY PRIOR r.id= r.REP_MANAGER_ID)
+                                                    or 
+                EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator');
+            ```
+    }
+    execution {
+        sequence: 3
+    }
+)
+
+appProcess set-time-zone (
+    name: set Time Zone
+    type: executeCode
+    source {
+        plsqlCode: eba_sales_tz_init;
+    }
+    execution {
+        sequence: 2
+    }
+    error {
+        errorMessage: Unable to set timezone
+    }
+)
+
+appProcess trim-all-page-items (
+    name: Trim All Page Items
+    type: executeCode
+    source {
+        plsqlCode:
+            ```plsql
+            begin
+                for c1 in (select item_name
+                           from apex_application_page_items
+                           where application_id = :APP_ID
+                               and page_id = :APP_PAGE_ID
+                               and display_as_code in ('NATIVE_TEXT_FIELD',
+                                                       'NATIVE_TEXTAREA',
+                                                       'NATIVE_NUMBER_FIELD') ) loop
+                    apex_util.set_session_state( c1.item_name,
+                        regexp_replace(apex_util.get_session_state( c1.item_name ),
+                            '^[[:space:]]*(.*?)[[:space:]]*$', '\1'
+                        )
+                    );
+                end loop;
+            end;
+            ```
+    }
+    execution {
+        sequence: 1
+        point: afterSubmit
+    }
+)
+

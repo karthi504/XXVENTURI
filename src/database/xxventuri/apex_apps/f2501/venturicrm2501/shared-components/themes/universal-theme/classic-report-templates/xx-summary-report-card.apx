@@ -1,0 +1,83 @@
+classicReportTemplate xx-summary-report-card (
+    name: XX_Summary_Report_Card
+    templateClass: standard
+    type: namedColumn
+    reportTemplate {
+        top: <ul class="t-Cards #COMPONENT_CSS_CLASSES#" #REPORT_ATTRIBUTES# id="#REGION_STATIC_ID#_cards">
+        bottom:
+            ```html
+            </ul>
+            <table class="t-Report-pagination" role="presentation">#PAGINATION#</table>
+            ```
+    }
+    rowTemplate1 {
+        template:
+            ```html
+            <li class="t-Cards-item #CARD_MODIFIERS#">
+              <div class="t-Card tRow-Card">
+                <a href="#CARD_LINK#" class="t-Card-wrap tRow-Card-wrap" style="background-color:#CARD_COLOR#;" title="#CARD_SUBTITLE#">
+                  <div class="t-Card-icon tRow-Card-icon u-color" style="background-color:#CARD_COLOR#"><span class="t-Icon tRow-Card-icon #CARD_ICON#"><span class="t-Card-initials" role="presentation">#CARD_INITIALS#</span></span></div>
+                  <div class="t-Card-titleWrap"><h3 class="t-Card-title" style="color:#FFFFFF">#CARD_TITLE#</h3></div>
+                  <div class="t-Card-body">
+                    <div class="t-Card-desc">#CARD_TEXT#</div>
+                    <div class="t-Card-info">#CARD_SUBTEXT#</div>
+                  </div>
+                  <span class="t-Card-colorFill u-color" style="background-color:#CARD_COLOR#"></span>
+                </a>
+              </div>
+            </li>
+            ```
+        conditionType: plsqlExpression
+        plsqlExpression: :CARD_LINK is not null
+    }
+    rowTemplate2 {
+        template:
+            ```html
+            <li class="t-Cards-item #CARD_MODIFIERS#">
+              <div class="t-Card tRow-Card">
+                <div class="t-Card-wrap tRow-Card-wrap" style="background-color:#CARD_COLOR#;" title="#CARD_SUBTITLE#">
+                  <div class="t-Card-icon tRow-Card-icon u-color" style="background-color:#CARD_COLOR#"><span class="t-Icon tRow-Card-icon #CARD_ICON#"><span class="t-Card-initials" role="presentation">#CARD_INITIALS#</span></span></div>
+                  <div class="t-Card-titleWrap"><h3 class="t-Card-title" style="color:#FFFFFF">#CARD_TITLE#</h3></div>
+                  <div class="t-Card-body">
+                    <div class="t-Card-desc">#CARD_TEXT#</div>
+                    <div class="t-Card-info">#CARD_SUBTEXT#</div>
+                  </div>
+                  <span class="t-Card-colorFill u-color" style="background-color:#CARD_COLOR#"></span>
+                </div>
+              </div>
+            </li>
+            ```
+    }
+    pagination {
+        template: <span class="t-Report-paginationText">#TEXT#</span>
+        nextPage:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--next">
+              #PAGINATION_NEXT#<span class="a-Icon icon-right-arrow"></span>
+            </a>
+            ```
+        previousPage:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--prev">
+              <span class="a-Icon icon-left-arrow"></span>#PAGINATION_PREVIOUS#
+            </a>
+            ```
+        nextSet:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--next">
+              #PAGINATION_NEXT_SET#<span class="a-Icon icon-right-arrow"></span>
+            </a>
+            ```
+        previousSet:
+            ```html
+            <a href="#LINK#" class="t-Button t-Button--small t-Button--noUI t-Report-paginationLink t-Report-paginationLink--prev">
+              <span class="a-Icon icon-left-arrow"></span>#PAGINATION_PREVIOUS_SET#
+            </a>
+            ```
+    }
+    advanced {
+        identifier: XX_SUMMARY_REPORT_CARD
+        translatable: true
+    }
+)
+

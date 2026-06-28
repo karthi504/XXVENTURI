@@ -1,0 +1,364 @@
+page 180 (
+    name: Login_copy
+    title: Login_copy
+    appearance {
+        pageTemplate: @login
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            /* For Log Image */
+            .app-fouraai-tracker {
+                background-image: url('#APP_IMAGES#fouraai1.png');
+                /*background-size: cover; */
+                background-size: 100% 100%;
+                width: 240px;
+                height: 50px;
+            }
+            /*.t-Login-logo {
+                width: 390px;
+            }
+            */
+            /* Background Image */
+            .t-PageBody--login .t-Body {
+            /*background-image: url('#APP_IMAGES#background-img.png'); */
+            background-image: url('#APP_IMAGES#venturi_bac.png');
+            background-size:100% 100%;
+            background-repeat:no-repeat;
+            }
+            .t-Login-title {
+                font-size: 30px;
+                margin-top: 10px;
+            }
+            
+            /*Login Container */
+            .t-Login-container{
+                margin-right: 4%;
+            /*    float: right;
+                top: 0px;
+                right: 0;
+                margin-top: 5%;
+                position: absolute;*/
+            }
+            
+            .t-Login-header {
+                padding: 0px 0 !important;
+            }
+            .t-Login-region{
+                 border-radius: 0px;
+            }
+            
+            .container{
+                width: 80% !important;
+            }
+            
+            /* Login Button */
+            .t-Button--hot{
+                width: 50% !important;
+                height: 20% !important;
+                margin-left: 23% !important;
+                padding: 13px 24px !important;
+                background: #2f2f2f !important;
+                font-weight: normal !important;
+            }
+            
+            /* Login Input field */
+            #P101_USERNAME,#P101_PASSWORD{
+                background: transparent;
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0px;
+            }
+            
+            
+            
+            
+            /*.t-Login-region{
+                box-shadow: none;
+                padding: 20px 15px 10px 15px;
+                width: 70%;
+                background: rgba(2, 0.60, 0, 0);
+                border-radius: 17px;
+            }
+            
+            .t-Alert{
+                top: 10px !important;
+                position: absolute !important;
+                left: inherit !important;
+            }
+            */
+            ```
+    }
+    htmlHeader {
+        htmlHeader: <img src="#APP_IMAGES#venturiss.png" style="position: absolute; z-index: 1; margin: 30px;" >
+    }
+    security {
+        authentication: public
+        formAutoComplete: false
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+
+    region crm (
+        name: CRM
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @login
+            templateOptions: [
+                #DEFAULT#
+                #DEFAULT#
+            ]
+            icon: app-fouraai-tracker
+        }
+        advanced {
+            htmlDomId: opptracker
+        }
+    )
+
+    pageItem P180_PASSWORD (
+        type: password
+        label {
+            label: Password
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @crm
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+            icon: fa-key
+            width: 64
+            valuePlaceholder: password
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        advanced {
+            postText: <!--<span class="t-Login-iconValidation a-Icon icon-check"></span>-->
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P180_USERNAME (
+        type: textField
+        label {
+            label: User Name
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 10
+            region: @crm
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @hidden
+            templateOptions: #DEFAULT#
+            icon: fa-user
+            width: 10
+            valuePlaceholder: username
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        advanced {
+            postText: <!--<span class="t-Login-iconValidation a-Icon icon-check"></span> -->
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button login (
+        buttonName: LOGIN
+        label: Login
+        layout {
+            sequence: 10
+            region: @crm
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+            ]
+            icon: fa-arrow-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction set-focus (
+        name: Set Focus
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+        clientSideCondition {
+            type: jsExpression
+            javaScriptExpression: ( $v( "P180_USERNAME" ) === "" )
+        }
+
+        action native-set-focus (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P180_USERNAME
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+        action native-set-focus-2 (
+            action: setFocus
+            affectedElements {
+                selectionType: items
+                items: P180_PASSWORD
+            }
+            execution {
+                sequence: 20
+                fireWhenEventResultIs: false
+            }
+        )
+
+    )
+
+    process clear-page-s-cache (
+        name: Clear Page(s) Cache
+        type: clearSessionState
+        execution {
+            sequence: 40
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 71866390716971225
+        }
+    )
+
+    process get-username (
+        name: get_username
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                 
+                    lv_first_name varchar2(100);
+                    lv_last_name varchar2(100);
+                    
+                begin
+                
+                  begin
+                  
+                      select REP_FIRST_NAME, REP_LAST_NAME into lv_first_name, lv_last_name from 
+                                             EBA_SALES_SALESREPS where lower(USER_NAME) = lower(:P180_USERNAME) and STATUS = 'Y'; 
+                      :APP_USERNAME := lv_first_name || ' ' || lv_last_name;
+                
+                   exception 
+                     when others then
+                     raise_application_error(-20100, :APP_USERNAME||': Username Error');
+                        :APP_USERNAME := :APP_USER;
+                  end;
+                  
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 71864800147971224
+        }
+    )
+
+    process get-username-cookie (
+        name: Get Username Cookie
+        type: executeCode
+        source {
+            plsqlCode: :P180_USERNAME := apex_authentication.get_login_username_cookie;
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+        advanced {
+            executionMappingIdentifier: 71865992127971225
+        }
+    )
+
+    process login (
+        name: Login
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                apex_authentication.login(
+                    p_username => :P180_USERNAME,
+                    p_password => :P180_PASSWORD );
+                  
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 71865147766971225
+        }
+    )
+
+    process set-username-cookie (
+        name: Set Username Cookie
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                apex_authentication.send_login_username_cookie (
+                    p_username => lower(:P180_USERNAME) );
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        error {
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 71865547569971225
+        }
+    )
+
+)
+

@@ -1,0 +1,227 @@
+authorization administration-rights (
+    name: ADMINISTRATION RIGHTS
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody: return eba_sales_acl_api.get_authorization_level(:APP_USER) = 3;
+    }
+    error {
+        errorMessage: Insufficient privileges, user is not an Administrator
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization application-sentry (
+    name: APPLICATION SENTRY
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody:
+            ```plsql
+            begin
+                if :APP_PAGE_ID = 101 then
+                    return true;
+                else
+                    return (eba_sales_acl_api.get_authorization_level(:APP_USER) > 0);
+                end if;
+            end;
+            ```
+    }
+    error {
+        errorMessage: You are not authorized to view this application, either because you have not been granted access, or your account has been locked. Please contact the application administrator.
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization contribution-rights (
+    name: CONTRIBUTION RIGHTS
+    type: plSqlFunctionBody
+    settings {
+        plsqlFunctionBody: return eba_sales_acl_api.get_authorization_level(:APP_USER) >= 2;
+    }
+    error {
+        errorMessage: Insufficient privileges, user is not a Contributor
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization edit-product (
+    name: EDIT PRODUCT
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            SELECT 1 
+            FROM eba_sales_salesreps sr, eba_sales_salesrep_roles r
+            WHERE sr.rep_role = r.id
+              AND sr.id = :USER_ID
+              AND r.role_name = 'Administrator'
+            ```
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-admin (
+    name: XXEBA_ADMIN
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) = 'ADMINISTRATOR'
+            and SR.ID = :USER_ID
+            ```
+    }
+    error {
+        errorMessage: Admin
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-admin-coordinator (
+    name: XXEBA_ADMIN_COORDINATOR
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) in ('ADMINISTRATOR','SALES CO-ORDINATOR')
+            and SR.ID = :USER_ID
+            ```
+    }
+    error {
+        errorMessage: Admin
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-admin-teamlead (
+    name: XXEBA_ADMIN_TEAMLEAD
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) in ('ADMINISTRATOR','TEAM LEADER - SALES', 'SALES ENGINEER')
+             and SR.ID = :USER_ID or :USER_ID in (SELECT
+               distinct manager_id
+            FROM
+                eba_sales_product_families
+            )
+            ```
+    }
+    error {
+        errorMessage: ADMIN AND TEAM LEAD
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-admin-tl-co-ordinator (
+    name: XXEBA_ADMIN_TL_CO-ORDINATOR
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) in ('ADMINISTRATOR','TEAM LEADER - SALES','SALES CO-ORDINATOR')
+            and SR.ID = :USER_ID
+            ```
+    }
+    error {
+        errorMessage: ADMIN AND TEAM LEAD
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-product-manager (
+    name: XXEBA_PRODUCT_MANAGER
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            SELECT
+               distinct 'Y'
+            FROM
+                eba_sales_product_families
+            WHERE
+                :user_id IN ( manager_id )
+                AND :user_id NOT IN (
+                    SELECT
+                        sr.id
+                    FROM
+                        eba_sales_salesreps      sr, eba_sales_salesrep_roles r
+                    WHERE
+                            sr.rep_role = r.id
+                        AND r.role_name = 'Administrator'
+                )
+            ```
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-sales-coordinator (
+    name: XXEBA_SALES_COORDINATOR
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) in ('SALES CO-ORDINATOR')
+            and SR.ID = :USER_ID
+            ```
+    }
+    error {
+        errorMessage: SALES CO-ORDINATOR
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+
+authorization xxeba-team-lead (
+    name: XXEBA_TEAM_LEAD
+    type: existsSqlQuery
+    settings {
+        sqlQuery:
+            ```sql
+            select 'Y' from EBA_SALES_SALESREPS SR,
+            EBA_SALES_SALESREP_ROLES R
+            where SR.REP_ROLE = R.ID
+            and Upper(R.ROLE_NAME) in ('TEAM LEADER - SALES')
+            and SR.ID = :USER_ID
+            ```
+    }
+    error {
+        errorMessage: TEAM LEAD
+    }
+    advanced {
+        evaluationType: perSession
+    }
+)
+

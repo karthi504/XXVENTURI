@@ -1,0 +1,288 @@
+page 187 (
+    name: Accounts Receivable
+    title: Accounts Receivable
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region accounts-receivable (
+        name: Accounts Receivable
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1220
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region accounts-receivable-2 (
+        name: Accounts Receivable
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select R.CUSTOMER_ID,
+                     ( select CUSTOMER_NAME from CRM_ACCOUNTS_V where CUSTOMER_ID = R.CUSTOMER_ID) CUSTOMER_NAME,
+                      --- sum(R.PENDING_AMOUNT) as PENDING_AMOUNT,
+                       INVOICE_NUMBER,
+                       INVOICE_DATE,
+                       INV_PENDING_AMOUNT,
+                       LASTPAYMT_RECDATE,
+                       R.BATCH_NUMBER
+                    --   R.CURRENCY,
+                    --   R.CREATED_DATE,
+                    --   R.UPDATED_DATE,
+                    --   R.STATUS
+                  from XXEBA_TALLY_RECEIVABLES_T R 
+                       -- ,CRM_ACCOUNTS_V C
+                  where R.BATCH_NUMBER = (select max(cnt.batch_number) from XXEBA_TALLY_RECEIVABLES_T CNT)
+                       ----to_number(R.CUSTOMER_ID) = to_number(C.CUSTOMER_ID) and
+                       
+                 --- group by R.CUSTOMER_ID, C.CUSTOMER_NAME
+                ```
+        }
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 5000
+        }
+        messages {
+            whenNoDataFound: No data found.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 480524090271940449
+        }
+        description {
+            description: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+
+        column BATCH_NUMBER (
+            type: plainText
+            heading {
+                heading: Batch number
+                alignment: center
+            }
+            layout {
+                sequence: 72
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: P
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: plainText
+            heading {
+                heading: Customer ID
+                alignment: center
+            }
+            layout {
+                sequence: 22
+                columnAlignment: center
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: K
+            }
+        )
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 82
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column INVOICE_DATE (
+            type: plainText
+            heading {
+                heading: Invoice Date
+                alignment: center
+            }
+            layout {
+                sequence: 42
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: M
+            }
+        )
+
+        column INVOICE_NUMBER (
+            type: plainText
+            heading {
+                heading: Invoice No.
+            }
+            layout {
+                sequence: 32
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: L
+            }
+        )
+
+        column INV_PENDING_AMOUNT (
+            type: plainText
+            heading {
+                heading: Pending Amount
+                alignment: center
+            }
+            layout {
+                sequence: 52
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 99G99G99G99G990D00
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: N
+            }
+        )
+
+        column LASTPAYMT_RECDATE (
+            type: plainText
+            heading {
+                heading: Last Payment Date
+                alignment: center
+            }
+            layout {
+                sequence: 62
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+            }
+            advanced {
+                endUserAlias: O
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 4805281 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 1
+            )
+
+            displayColumn INVOICE_DATE (
+                sequence: 3
+            )
+
+            displayColumn INVOICE_NUMBER (
+                sequence: 2
+            )
+
+            displayColumn INV_PENDING_AMOUNT (
+                sequence: 4
+            )
+
+            displayColumn LASTPAYMT_RECDATE (
+                sequence: 5
+            )
+
+            sort (
+                column: CUSTOMER_ID
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: INVOICE_DATE
+                sort {
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: INVOICE_NUMBER
+                sort {
+                    sequence: 3
+                }
+            )
+
+            aggregate (
+                column: PENDING_AMOUNT
+            )
+
+        )
+
+    )
+
+)
+

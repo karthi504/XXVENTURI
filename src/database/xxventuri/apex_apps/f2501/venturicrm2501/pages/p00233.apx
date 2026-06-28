@@ -1,0 +1,2052 @@
+page 233 (
+    name: Account Details
+    title: Account Details
+    pageGroup: @accounts
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            $(document).ready(function() {
+                $("#P233_GSTNO").keypress(function(event) { 
+                    var charCode = event.which || event.keyCode;
+                    var currentVal = $(this).val();
+                    var currentLength = currentVal.length;
+            
+                    // Check if the current length is less than 15
+                    if (currentLength >= 15) {
+                        event.preventDefault();
+                        return;
+                    }
+            
+                    // Validate each position based on the specified format
+                    if (currentLength < 2) {
+                        // First 2 characters must be numbers
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength < 7) {
+                        // Next 5 characters must be alphabets
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength < 11) {
+                        // Next 4 characters must be numbers
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 11) {
+                        // Next character must be an alphabet
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 12) {
+                        // Next character must be a number
+                        if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 13) {
+                        // Next character must be an alphabet
+                        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    } else if (currentLength == 14) {
+                        // Next character can be alphanumeric
+                        if (!((charCode >= 48 && charCode <= 57) || 
+                              (charCode >= 65 && charCode <= 90) || 
+                              (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+                        }
+                    }
+                });
+            
+                // Prevent pasting if you also want to restrict pasting more than 15 characters or non-alphanumeric characters
+                $("#P233_GSTNO").on('paste', function(event) {
+                    var pasteData = (event.originalEvent || event).clipboardData.getData('text');
+                    
+                    if (pasteData.length > 15 || !/^[a-zA-Z0-9]*$/.test(pasteData)) {
+                        event.preventDefault();
+                        return;
+                    }
+            
+                    // Additional check for the specific format
+                    if (!/^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z][0-9][a-zA-Z][a-zA-Z0-9]$/.test(pasteData)) {
+                        event.preventDefault();
+                    }
+                });
+            });
+            
+            
+            
+            
+            
+            $(document).ready(function() {
+                $("#P233_PAN_NUMBER").keypress(function(event) {
+                    var charCode = event.which || event.keyCode;
+            		var currentVal = $(this).val();
+            		var currentLength = currentVal.length;
+                    
+                    // Check if the current length is less than 10
+                    if ($(this).val().length >= 10) {
+                        event.preventDefault();
+                        return;
+                    }
+            		
+            		if (currentLength <5)
+            		{
+            		 if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
+                            event.preventDefault();
+            		}
+            		}
+            		else if (currentLength <9) 
+            		{
+            		 if (!(charCode >= 48 && charCode <= 57)) {
+                            event.preventDefault();
+                        }
+            		}
+            		
+                    
+                   else if (currentLength ==9) {
+            	   if (!((charCode >= 65 && charCode <= 90) || // Uppercase A-Z
+                          (charCode >= 97 && charCode <= 122)  // Lowercase a-z
+            		
+                          )) {
+                        event.preventDefault();
+                    }
+            		}
+                });
+            
+                // Optional: Prevent pasting if you also want to restrict pasting more than 10 characters
+                $("#P233_PAN_NUMBER").on('paste', function(event) {
+                    var pasteData = (event.originalEvent || event).clipboardData.getData('text');
+                    
+                    if (pasteData.length > 10 || !/^[a-zA-Z0-9]*$/.test(pasteData)) {
+                        event.preventDefault();
+                    }
+                });
+            });
+            
+            
+            
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script language="JavaScript" type="text/javascript">
+            <!--
+            
+             htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+            
+            //-->
+            </script>
+            
+            
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region b-new-account-b (
+        name: <b>New Account</b>
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+                t-Form--slimPadding
+            ]
+        }
+    )
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region classification (
+        name: Classification
+        type: staticContent
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @collapsible
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                is-collapsed
+                t-Region--noBorder
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    region contact (
+        name: Contact
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent9
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region location (
+        name: Location
+        type: staticContent
+        layout {
+            sequence: 30
+            slot: body
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--accent4
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P233_CITY_ID (
+        type: selectList
+        label {
+            label: City
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select CITY_NAME as d,CITY_ID as r from XXEBA_SALES_CITIES_T where 
+                STATE_ID=:P233_STATE_ID
+                ```
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        cascadingLov {
+            parentItems: P233_STATE_ID
+        }
+        layout {
+            sequence: 60
+            region: @location
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CLASSIFICATION (
+        type: selectList
+        label {
+            label: Classification
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select class_name as d,class_id as r from XXEBA_SALES_Classification
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 100
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CLASSIFICATION_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CONTACT_CELL (
+        type: textField
+        label {
+            alignment: left
+        }
+        settings {
+            subtype: phone
+        }
+        layout {
+            sequence: 50
+            region: @contact
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 4
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            icon: fa-mobile
+            width: 10
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        advanced {
+            customAttributes: style="width:16.5%"
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CONTACT_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+        }
+        layout {
+            sequence: 60
+            region: @contact
+            slot: regionBody
+            alignment: left
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            icon: fa-envelope
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CONTACT_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @contact
+            slot: regionBody
+            alignment: left
+            columnSpan: 10
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CONTACT_PREFIX (
+        type: textField
+        label {
+            label: Mobile
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @contact
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 2
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        default {
+            type: static
+            staticValue: 91
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_COUNTRY_ID (
+        type: selectList
+        label {
+            label: Country
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select COUNTRY_NAME d, id as r from  EBA_SALES_COUNTRIES
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 40
+            region: @location
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_ADDRESS1 (
+        type: textField
+        label {
+            label: Address1
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @location
+            slot: regionBody
+            alignment: left
+            columnSpan: 10
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_ADDRESS2 (
+        type: textField
+        label {
+            label: Address2
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @location
+            slot: regionBody
+            alignment: left
+            columnSpan: 10
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_CODE (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @b-new-account-b
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_DESCRIPTION (
+        type: textField
+        label {
+            label: Description
+            alignment: left
+        }
+        layout {
+            sequence: 180
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            columnSpan: 8
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_DESCRIPTION
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P233_CUSTOMER_DUNS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 90
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_DUNS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_FACEBOOK (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 130
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_FACEBOOK
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_IS_KEY_ACCOUNT_YN (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @b-new-account-b
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_IS_KEY_ACCOUNT_YN
+            used: always
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P233_CUSTOMER_LINKEDIN (
+        type: textField
+        label {
+            label: LinkedIn
+            alignment: left
+        }
+        settings {
+            subtype: url
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @classification
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-linkedin-square
+            width: 80
+            valuePlaceholder: https://www.linkedin.com/company/account-name
+        }
+        validation {
+            maxLength: 4000
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_LINKEDIN
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_LOCATION_NAME (
+        type: textField
+        label {
+            label: Location Name
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @location
+            slot: regionBody
+            alignment: left
+            columnSpan: 10
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_NAME (
+        type: textField
+        label {
+            label: Name
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 86
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    pageItem P233_CUSTOMER_POSTAL_CODE (
+        type: textField
+        label {
+            label: Postal Code
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @location
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_SIC (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 100
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_SIC
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_STOCK_SYMB (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 80
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_STOCK_SYMB
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_TERRITORY_ID (
+        type: selectList
+        label {
+            label: Territory
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @territory
+            displayExtraValues: false
+            nullDisplayValue: - Select a Territory -
+        }
+        layout {
+            sequence: 40
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_TERRITORY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+        config {
+            buildOption: @territories
+        }
+    )
+
+    pageItem P233_CUSTOMER_TWITTER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 140
+            region: @classification
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_TWITTER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_CUSTOMER_WEB_SITE (
+        type: textField
+        label {
+            label: Website
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 110
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            icon: fa-link
+            width: 86
+            valuePlaceholder: http://account-name.com
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_WEB_SITE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_DEFAULT_REP_ID (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                lv_all_customers varchar2(4000);
+                lv_customers varchar2(4000);
+                begin
+                lv_all_customers := 'select REP_FIRST_NAME ||'' ''|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS where STATUS=''Y''
+                order by 1';
+                
+                lv_customers := 'select REP_FIRST_NAME ||'' ''|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS where STATUS=''Y''
+                and UPPER(USER_NAME)<>UPPER(''admin'')
+                order by 1';
+                if UPPER(:APP_USERNAME) = UPPER('System Administrator') then
+                return lv_all_customers;
+                else 
+                return lv_customers;
+                end if;
+                end;
+                ```
+            nullDisplayValue: - Select Rep -
+        }
+        layout {
+            sequence: 170
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: DEFAULT_REP_ID
+            used: always
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                Declare 
+                lv_number  number;
+                Begin
+                lv_number :=:user_id;
+                return lv_number;
+                END;
+                ```
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+        comments {
+            comments:
+                ```
+                select REP_FIRST_NAME ||' '|| REP_LAST_NAME  d, id r
+                from EBA_SALES_SALESREPS where STATUS='Y'
+                order by 1
+                ```
+        }
+    )
+
+    pageItem P233_DEPARTMENT (
+        type: selectList
+        label {
+            label: Department
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @customer-department
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 20
+            region: @contact
+            slot: regionBody
+            alignment: left
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_DESIGNATION (
+        type: textField
+        label {
+            label: Designation
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @contact
+            slot: regionBody
+            alignment: left
+            columnSpan: 8
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_EMAIL (
+        type: textField
+        label {
+            label: Email
+            alignment: left
+        }
+        settings {
+            subtype: email
+            trimSpaces: none
+        }
+        layout {
+            sequence: 120
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            icon: fa-envelope
+            width: 86
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: EMAIL_ADDRESS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_GSTNO (
+        type: textField
+        label {
+            label: GST No.
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 27
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: GST_NO
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @b-new-account-b
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_INDUSTRY_TYPE (
+        type: selectList
+        label {
+            label: Industry
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: "select INDUSTRY_NAME As d  ,ID as r from  eba_sales_industries "
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 50
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 4
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: INDUSTRY_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_KEY_CONTACT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 70
+            region: @contact
+            slot: regionBody
+        }
+        default {
+            type: static
+            staticValue: Y
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_MOBILE_NUMBER (
+        type: textField
+        label {
+            label: Mobile
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 160
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 0
+            columnAttributes: style="width:16.5%"
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            icon: fa-mobile
+            width: 10
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event);"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MOBILE_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_PAN_NUMBER (
+        type: textField
+        label {
+            label: PAN No.
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 27
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PAN_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_PHONE_NUMBER (
+        type: textField
+        label {
+            label: Phone
+            alignment: left
+        }
+        settings {
+            subtype: phone
+            trimSpaces: none
+        }
+        layout {
+            sequence: 140
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+            labelColumnSpan: 1
+            columnAttributes: style="width:16.5%"
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            icon: fa-phone
+            width: 26
+        }
+        validation {
+            valueRequired: true
+            maxLength: 10
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PHONE_NUMBER
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_PREFIX (
+        type: textField
+        label {
+            label: Mobile
+            alignment: left
+        }
+        layout {
+            sequence: 150
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            width: 2
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: readonly
+        }
+        default {
+            type: static
+            staticValue: 91
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_SOURCE (
+        type: selectList
+        label {
+            label: Source
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select lead_source, id from EBA_SALES_ACC_SOURCES  order by 1
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 130
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            height: 1
+        }
+        advanced {
+            cssClasses: mnw180
+            customAttributes: style="min-width: 187px;"
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ACCOUNT_SOURCE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_STATE_ID (
+        type: selectList
+        label {
+            label: State
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select STATE as d,id as r from EBA_SALES_STATES where COUNTRY_ID =:P233_COUNTRY_ID
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        cascadingLov {
+            parentItems: P233_COUNTRY_ID
+            itemsToSubmit: P233_COUNTRY_ID
+        }
+        layout {
+            sequence: 50
+            region: @location
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+                t-Form-fieldContainer--indicatorAsterisk
+            ]
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P233_TAGS (
+        type: plugin/tagEntry
+        label {
+            label: Tags
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select tag
+                  from eba_sales_tags_type_sum
+                 where content_type = 'ACCOUNT'
+                ```
+        }
+        layout {
+            sequence: 190
+            region: @b-new-account-b
+            slot: regionBody
+            alignment: left
+            columnSpan: 6
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 87
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: TAGS
+            used: always
+        }
+        serverSideCondition {
+            type: never
+        }
+        security {
+            encryptSessionState: false
+            restrictedChars: webSafe
+        }
+    )
+
+    button add-city (
+        buttonName: ADD_CITY
+        label: Add City
+        layout {
+            sequence: 70
+            region: @location
+            slot: regionBody
+            startNewRow: false
+            columnSpan: 1
+        }
+        appearance {
+            buttonTemplate: @icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--small
+                t-Button--padTop
+            ]
+            icon: fa-plus
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 156
+                clearCache: 156
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @b-new-account-b
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 2
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create Account
+        layout {
+            sequence: 40
+            region: @b-new-account-b
+            slot: edit
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P233_ID
+        }
+    )
+
+    dynamicAction dialog-closed (
+        name: dialog_closed
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: button
+            button: @add-city
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('City has been added successfully.');
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: items
+                items: P233_CITY_ID
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation contractnumber-validation (
+        name: ContractNumber Validation
+        execution {
+            sequence: 30
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                    IF length(:P233_CONTACT_CELL) < 10 OR length(:P233_CONTACT_CELL) > 11 THEN
+                        return 'Contract Mobile Number should contain atleast 10 digits.';
+                    END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation gst-len-validation (
+        name: GST_LEN_Validation
+        execution {
+            sequence: 70
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin 
+                 if LENGTH(:P233_GSTNO) != 15  THEN 
+                 RETURN 'GST number should contain atleast 15 digits.';
+                END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE
+        }
+    )
+
+    validation gst-no-validation (
+        name: GST No Validation
+        execution {
+            sequence: 50
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_no_of_records NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO v_no_of_records
+                  FROM EBA_SALES_customers
+                  WHERE upper(trim(GST_NO)) = upper(trim(:P233_GSTNO));
+                  
+                  IF v_no_of_records  > 0 THEN
+                    RETURN 'Sorry! This GST No. is already exists';
+                  END IF;
+                  
+                END;
+                ```
+        }
+    )
+
+    validation gst-validation (
+        name: GST_Validation
+        execution {
+            sequence: 80
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                   if   :P233_GSTNO is null THEN
+                        return 'GST Number must have some values.';
+                     end if;
+                END;
+                ```
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    validation mobile-number-validation (
+        name: Mobile Number Validation
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                
+                
+                
+                BEGIN
+                    if length(:P233_MOBILE_NUMBER) < 10 OR length(:P233_MOBILE_NUMBER) > 11 THEN
+                         return 'Account Mobile Number should contain atleast 10 digits.';
+                    end if;
+                    
+                   
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation p233-customer-name-not-duplicated (
+        name: P233_CUSTOMER_NAME not duplicated
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  v_no_of_records NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO v_no_of_records
+                  FROM EBA_SALES_customers
+                  WHERE upper(trim(GST_NO)) = upper(trim(:P233_GSTNO))
+                  AND UPPER(TRIM(CUSTOMER_NAME)) = UPPER(TRIM(:P233_CUSTOMER_NAME));
+                  
+                  IF v_no_of_records  > 0 THEN
+                    RETURN 'An account with that name already exists.';
+                  END IF;
+                  
+                END;
+                ```
+        }
+        comments {
+            comments:
+                ```
+                select null
+                from eba_sales_customers
+                where (:P233_ID is null or :P233_ID != id)
+                    and upper(trim(customer_name)) = upper(trim(:P233_CUSTOMER_NAME))
+                ```
+        }
+    )
+
+    validation pan-len-validation (
+        name: PAN Len Validation
+        execution {
+            sequence: 60
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                begin 
+                 if LENGTH(:P233_PAN_NUMBER) != 10  THEN 
+                 RETURN 'PAN number should contain atleast 10 digits.';
+                END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+            type: requestIsContainedInValue
+            value: CREATE
+        }
+    )
+
+    validation phone-number-validation (
+        name: PHONE_NUMBER validation
+        execution {
+            sequence: 40
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                BEGIN
+                    IF length(:P233_PHONE_NUMBER) < 10 OR length(:P233_PHONE_NUMBER) > 11 THEN
+                        return 'Phone Number should contain atleast 10 digits.';
+                    END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process contact-and-location-insert (
+        name: Contact and Location Insert
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                /* Contact Insert */
+                  IF :P233_ID IS NOT NULL THEN
+                    INSERT
+                    INTO EBA_SALES_CUSTOMER_CONTACTS
+                      (
+                        CUSTOMER_ID,
+                        CONTACT_NAME,
+                        DEPARTMENT,
+                        CONTACT_CELL,
+                        DESIGNATION,
+                        CONTACT_EMAIL,
+                        KEY_CONTACT
+                      )
+                      VALUES
+                      (
+                        :P233_ID,
+                        :P233_CONTACT_NAME,
+                        :P233_DEPARTMENT,
+                        trim(:P233_CONTACT_PREFIX)||trim(:P233_CONTACT_CELL),
+                        :P233_DESIGNATION,
+                        :P233_CONTACT_EMAIL,
+                        :P233_KEY_CONTACT
+                      );
+                /* Location Insert */      
+                    INSERT
+                    INTO EBA_SALES_CUSTOMER_LOCATIONS
+                      (
+                        CUSTOMER_ID,
+                        CUSTOMER_LOCATION_NAME,
+                        CUSTOMER_ADDRESS1,
+                        CUSTOMER_ADDRESS2,
+                        COUNTRY_ID,
+                        STATE_ID,
+                        CITY_ID,
+                        CUSTOMER_POSTAL_CODE
+                      )
+                      VALUES
+                      (
+                        :P233_ID,
+                        :P233_CUSTOMER_LOCATION_NAME,
+                        :P233_CUSTOMER_ADDRESS1,
+                        :P233_CUSTOMER_ADDRESS2,
+                        :P233_COUNTRY_ID,
+                        :P233_STATE_ID,
+                        :P233_CITY_ID,
+                        :P233_CUSTOMER_POSTAL_CODE
+                      );
+                  END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 50
+        }
+        advanced {
+            executionMappingIdentifier: 26427254189660243
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process customer-code-update (
+        name: Customer_code_Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                 
+                  update EBA_SALES_CUSTOMERS SET CUSTOMER_CODE=(select max(to_number(CUSTOMER_CODE)) + 1 from EBA_SALES_CUSTOMERS) where ID=:P233_ID;
+                
+                END;
+                ```
+        }
+        execution {
+            sequence: 40
+        }
+        advanced {
+            executionMappingIdentifier: 28230748193705129
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process fetch-row-from-eba-sales-customers (
+        name: Fetch Row from eba_sales_CUSTOMERS
+        type: autoRowFetch
+        source {
+            tableName: EBA_SALES_CUSTOMERS
+            pkColumn: ID
+            pkItem: P233_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        error {
+            errorMessage: Unable to fetch row.
+        }
+        advanced {
+            executionMappingIdentifier: 28231560323705129
+        }
+    )
+
+    process mobile-number-update (
+        name: Mobile Number Update
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                Begin
+                 update EBA_SALES_CUSTOMERS SET MOBILE_NUMBER=trim(:P233_PREFIX)||trim(:P233_MOBILE_NUMBER) where ID=:P233_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 121911934901881747
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    process process-row-of-eba-sales-customers (
+        name: Process Row of eba_sales_CUSTOMERS
+        type: autoRowProcessing
+        target {
+            tableName: EBA_SALES_CUSTOMERS
+            pkColumn: ID
+            pkItem: P233_ID
+            returnKeyIntoItem: P233_ID
+            supportedOperations: insert
+        }
+        execution {
+            sequence: 20
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        error {
+            errorMessage: Unable to process row of table eba_sales_CUSTOMERS.
+            displayLocation: onErrorPage
+        }
+        advanced {
+            executionMappingIdentifier: 28232011576705129
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: CREATE,SAVE
+        }
+    )
+
+    branch (
+        name: Branch to Accounts on delete
+        execution {
+            sequence: 40
+        }
+        behavior {
+            target: {
+                page: 2
+                clearCache: 2
+            }
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+        comments {
+            comments: Created 17-JAN-2012 10:41 by MIKE
+        }
+    )
+
+)
+

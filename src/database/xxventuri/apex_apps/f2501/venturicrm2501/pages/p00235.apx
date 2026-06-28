@@ -1,0 +1,626 @@
+page 235 (
+    name: Competitor Product Details
+    title: Competitor Product Details
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    javaScript {
+        functionAndGlobalVariableDeclaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    }
+    security {
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region buttons (
+        name: Buttons
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    region competitor-product-detail (
+        name: Competitor Product Detail
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            outputAs: text
+        }
+    )
+
+    pageItem P235_BRAND_NAME (
+        type: textField
+        label {
+            label: Brand
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+            columnSpan: 5
+        }
+        appearance {
+            template: @required
+            templateOptions: [
+                #DEFAULT#
+                t-Form-fieldContainer--stretchInputs
+            ]
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: BRAND_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @competitor-product-detail
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: CUSTOMER_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_HSN_CODE (
+        type: textField
+        label {
+            label: HSN Code
+            alignment: left
+        }
+        settings {
+            trimSpaces: none
+        }
+        layout {
+            sequence: 70
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 50
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: HSN_CODE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @competitor-product-detail
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: ID
+            used: always
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_MONTHLY_VOLUME (
+        type: numberField
+        label {
+            label: Monthly Volume
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 80
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+            columnSpan: 4
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: MONTHLY_VOLUME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_PRODUCT_GROUP_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @competitor-product-detail
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_GROUP_ID
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_PRODUCT_NAME (
+        type: textField
+        label {
+            label: Product Name
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 200
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_NAME
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_PRODUCT_TYPE (
+        type: textField
+        label {
+            label: Product Type
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 60
+        }
+        validation {
+            valueRequired: true
+            maxLength: 100
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: PRODUCT_TYPE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_REMARKS (
+        type: textarea
+        label {
+            label: Remarks
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 50
+            height: 2
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: REMARKS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_STATUS (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 120
+            region: @competitor-product-detail
+            slot: regionBody
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: STATUS
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_UNIT_OF_MEASURES (
+        type: selectList
+        label {
+            label: New
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select unit_name  as d,UNIT_ID as r from XXEBA_SALES_Units where status = 'Y' order by 1
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 90
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UNIT_OF_MEASURES
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P235_UNIT_PRICE (
+        type: numberField
+        label {
+            label: Unit Price
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 100
+            region: @competitor-product-detail
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 7
+            columnSpan: 4
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            maxLength: 255
+        }
+        source {
+            type: databaseColumn
+            databaseColumn: UNIT_PRICE
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 10
+            region: @buttons
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button create (
+        buttonName: CREATE
+        label: Create
+        layout {
+            sequence: 40
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: insert
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P235_ID
+        }
+    )
+
+    button delete (
+        buttonName: DELETE
+        label: Delete
+        layout {
+            sequence: 20
+            region: @buttons
+            slot: delete
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectUrl
+            targetUrl: javascript:apex.confirm(htmldb_delete_message,'DELETE');
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: delete
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P235_ID
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 30
+            region: @buttons
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+            databaseAction: update
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P235_ID
+        }
+    )
+
+    dynamicAction cancel-dialog (
+        name: Cancel Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    validation duplicate-product-validations-create (
+        name: Duplicate_product_validations-Create
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  lv_count NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO lv_count
+                  FROM XXEBA_SALES_COMPETITOR_PRODUCT
+                  WHERE upper(trim(PRODUCT_NAME))= upper(trim(:P235_PRODUCT_NAME)) and customer_id = :P235_CUSTOMER_ID;
+                   IF lv_count  > 0 THEN
+                     RETURN 'Sorry! Product already exists.';
+                   END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @create
+        }
+    )
+
+    validation duplicate-product-validations-update (
+        name: Duplicate_product_validations-Update
+        execution {
+            sequence: 20
+        }
+        validation {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                DECLARE
+                  lv_count NUMBER;
+                BEGIN
+                  SELECT COUNT(*)
+                  INTO lv_count
+                  FROM XXEBA_SALES_COMPETITOR_PRODUCT
+                  WHERE ID !=:P235_ID AND upper(trim(PRODUCT_NAME))= upper(trim(:P235_PRODUCT_NAME)) and customer_id = :P235_CUSTOMER_ID;
+                   IF lv_count > 0 THEN
+                     RETURN 'Sorry! Product already exists.';
+                   END IF;
+                END;
+                ```
+        }
+        serverSideCondition {
+            whenButtonPressed: @save
+        }
+    )
+
+    process fetch-row-from-xxeba-sales-competitor-product (
+        name: Fetch Row from XXEBA_SALES_COMPETITOR_PRODUCT
+        type: autoRowFetch
+        source {
+            tableName: XXEBA_SALES_COMPETITOR_PRODUCT
+            pkColumn: ID
+            pkItem: P235_ID
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 32422248223427266
+        }
+    )
+
+    process process-row-of-xxeba-sales-competitor-product (
+        name: Process Row of XXEBA_SALES_COMPETITOR_PRODUCT
+        type: autoRowProcessing
+        target {
+            tableName: XXEBA_SALES_COMPETITOR_PRODUCT
+            pkColumn: ID
+            pkItem: P235_ID
+        }
+        execution {
+            sequence: 30
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 32422707975427266
+        }
+    )
+
+    branch (
+        name: Go to 94
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 94
+                items: {
+                    P94_ID: &P235_CUSTOMER_ID.
+                }
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

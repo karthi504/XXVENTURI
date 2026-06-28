@@ -1,0 +1,473 @@
+page 144 (
+    name: Opportunities Won
+    title: Opportunities Won
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region opportunities-won (
+        name: Opportunities Won
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region opportunities-won-2 (
+        name: Opportunities Won
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d.id,
+                  d.row_key,
+                  d.deal_name,
+                 d.CUSTOMER_ID,
+                  c.customer_name account,
+                  d.deal_amount,
+                 d.deal_probability,
+                 d.DEAL_CLOSE_DATE,
+                 d.CREATED,
+                 d.SALESREP_ID_01,
+                 r.REP_FIRST_NAME||', '||r.REP_LAST_NAME sales_rep
+                from eba_sales_deals d, EBA_SALES_CUSTOMERS c, EBA_SALES_SALESREPS r
+                where 
+                deal_probability = 100
+                and c.id = d.CUSTOMER_ID
+                and  d.SALESREP_ID_01 = r.id
+                  and  d.CREATED BETWEEN :P144_FROM_DATE AND :P144_TO_DATE  
+                 
+                ```
+            pageItemsToSubmit: [
+                P144_FROM_DATE
+                P144_TO_DATE
+            ]
+        }
+        layout {
+            sequence: 20
+            parentRegion: @opportunities-won
+            slot: subRegions
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: [
+                #DEFAULT#
+                t-IRR-region--noBorders
+            ]
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 1000000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: The maximum row count for this report is #MAX_ROW_COUNT# rows.  Please apply a filter to reduce the number of records in your query.
+        }
+        actionsMenu {
+            subscription: false
+        }
+        advanced {
+            savedReportMappingIdentifier: 253280260647774734
+        }
+
+        column ACCOUNT (
+            type: plainText
+            heading {
+                heading: Customer
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: Q
+            }
+        )
+
+        column CREATED (
+            type: plainText
+            heading {
+                heading: Created Date
+                alignment: center
+            }
+            layout {
+                sequence: 90
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: AX
+            }
+        )
+
+        column CUSTOMER_ID (
+            type: hidden
+            heading {
+                heading: Customer id
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AV
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column DEAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Amount
+                alignment: center
+            }
+            layout {
+                sequence: 60
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AB
+            }
+        )
+
+        column DEAL_CLOSE_DATE (
+            type: plainText
+            heading {
+                heading: Closed Date
+                alignment: center
+            }
+            layout {
+                sequence: 80
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-Mon-YYYY
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: AW
+            }
+        )
+
+        column DEAL_NAME (
+            type: plainText
+            heading {
+                heading: Opportunities Name
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: X
+            }
+        )
+
+        column DEAL_PROBABILITY (
+            type: hidden
+            heading {
+                heading: Deal Probability
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AF
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: Id
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: V
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column ROW_KEY (
+            type: hidden
+            heading {
+                heading: Row key
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: W
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SALESREP_ID_01 (
+            type: hidden
+            heading {
+                heading: Salesrep id 01
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: AY
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column SALES_REP (
+            type: plainText
+            heading {
+                heading: Sales Rep
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AZ
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 1266670 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 50
+            }
+
+            displayColumn CREATED (
+                sequence: 9
+            )
+
+            displayColumn CUSTOMER_APPOINTMENT_PURPOSE (
+                sequence: 1
+            )
+
+            displayColumn CUSTOMER_ID (
+                sequence: 7
+            )
+
+            displayColumn DEAL_AMOUNT (
+                sequence: 5
+            )
+
+            displayColumn DEAL_CLOSE_DATE (
+                sequence: 8
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 4
+            )
+
+            displayColumn DEAL_PROBABILITY (
+                sequence: 6
+            )
+
+            displayColumn ID (
+                sequence: 2
+            )
+
+            displayColumn ROW_KEY (
+                sequence: 3
+            )
+
+            displayColumn SALESREP_ID_01 (
+                sequence: 10
+            )
+
+            displayColumn SALES_REP (
+                sequence: 11
+            )
+
+        )
+
+    )
+
+    pageItem P144_FROM_DATE (
+        type: datePickerJquery
+        label {
+            label: From Date
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @opportunities-won-2
+            slot: regionBody
+            alignment: left
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P144_TO_DATE (
+        type: datePickerJquery
+        label {
+            label: "To "
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @opportunities-won-2
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 3
+            labelColumnSpan: 1
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            formatMask: DD-Mon-YYYY
+            width: 15
+        }
+        default {
+            type: expression
+            plsqlExpression: sysdate
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button go (
+        buttonName: Go
+        label: Go
+        layout {
+            sequence: 30
+            region: @opportunities-won-2
+            slot: regionBody
+            startNewRow: false
+            column: 7
+            columnSpan: 1
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+        advanced {
+            customAttributes: style="margin-top: 4px; "
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region Refresh
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @go
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @opportunities-won-2
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

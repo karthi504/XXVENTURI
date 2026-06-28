@@ -1,0 +1,171 @@
+page 35 (
+    name: Application Preferences
+    title: Application Preferences
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+    help {
+        helpText: Manage your application's preferences. Set the title text used to describe representatives in your line of business.
+    }
+
+    region breadcrumb (
+        name: Breadcrumb
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @title-bar
+            templateOptions: [
+                #DEFAULT#
+                t-BreadcrumbRegion--useBreadcrumbTitle
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region preferences (
+        name: Preferences
+        type: staticContent
+        layout {
+            sequence: 1210
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--hideHeader
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P35_REP_TITLE (
+        type: textField
+        label {
+            label: Representative Title
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @preferences
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            type: functionBody
+            plsqlFunctionBody: return eba_sales_fw.get_preference_value('REP_TITLE');
+        }
+        security {
+            encryptSessionState: false
+        }
+        help {
+            inlineHelpText: The administrator changing this value will see the change immediately. Other users, however, will need to logout and log back in to see the change.
+            helpText: By default, the term "Sales Rep" is used in many places of this application but this title may not be appropriate for some lines of business. Use this preference to change this title to something more appropriate to your line of business (e.g. Account Manager, Key Account Director, Global Consultant Advisor, etc...).
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @breadcrumb
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: settings
+                action: resetPagination
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button save (
+        buttonName: SAVE
+        label: Apply Changes
+        layout {
+            sequence: 10
+            region: @breadcrumb
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    process save-preference-value (
+        name: Save Preference Value
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                eba_sales_fw.set_preference_value('REP_TITLE', :P35_REP_TITLE);
+                
+                :REP_TITLE := eba_sales_fw.get_preference_value('REP_TITLE');
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Application preferences updated.
+        }
+        advanced {
+            executionMappingIdentifier: 1718321352943298360
+        }
+    )
+
+    branch (
+        name: Go to Administration
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: settings
+                action: resetPagination
+            }
+        }
+    )
+
+)
+

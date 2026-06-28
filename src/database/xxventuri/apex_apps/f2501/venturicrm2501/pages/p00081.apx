@@ -1,0 +1,432 @@
+page 81 (
+    name: Closed Opportunities
+    title: Closed Opportunities
+    pageGroup: @administration
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            
+            .t-Footer{
+            	display:none;
+            
+            
+            }
+            ```
+    }
+    security {
+        authorizationScheme: @xxeba-admin
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: Opportunities that are won or lost (0 or 100% probability) cannot be edited. Set the status to something other then 0 or 100% to reenable edit capabilities. Click the <strong>Reset</strong> button to reset the interactive report. Click the <strong>Actions ∨</strong> button to define the number of rows displayed per page, filter, format, download, and/or save the interactive report.
+    }
+
+    region closed-opportunities (
+        name: Closed Opportunities
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 30
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region closed-opportunities-2 (
+        name: Closed Opportunities
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select id,
+                  row_key,
+                  customer_name,
+                  rep_name,
+                  deal_name,
+                  deal_close_date,
+                  deal_amount,
+                  deal_probability,
+                  status_code,
+                  territory_name
+                from eba_sales_opportunities_v
+                where deal_probability = 0 or deal_probability = 100
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @interactive-report
+            templateOptions: #DEFAULT#
+        }
+        link {
+            linkColumn: customTarget
+            target: {
+                page: 82
+                items: {
+                    P82_ID: #ID#
+                }
+                clearCache: 82
+                action: resetPagination
+            }
+            linkIcon: <img src="#IMAGE_PREFIX#app_ui/img/icons/apex-edit-pencil.png" class="apex-edit-pencil" alt="">
+        }
+        componentAppearance {
+            showNullValuesAs: -
+        }
+        pagination {
+            type: rowRangesXToYOfZ
+        }
+        performance {
+            maxRowsToProcess: 10000
+        }
+        messages {
+            whenNoDataFound: No data found.
+            whenMoreDataFound: This query returns more than #MAX_ROW_COUNT# rows, please filter your data to ensure complete results.
+        }
+        actionsMenu {
+            savePublicReport: true
+        }
+        download {
+            formats: [
+                csv
+                html
+                pdf
+            ]
+            filename: accounts.csv
+        }
+        advanced {
+            savedReportMappingIdentifier: 2491236901599500867
+        }
+
+        column CUSTOMER_NAME (
+            type: plainText
+            heading {
+                heading: Account
+            }
+            layout {
+                sequence: 21
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: B
+            }
+        )
+
+        column DEAL_AMOUNT (
+            type: plainText
+            heading {
+                heading: Amount
+                alignment: center
+            }
+            layout {
+                sequence: 81
+                columnAlignment: end
+            }
+            appearance {
+                formatMask: 999G999G999G999G999G990
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Y
+            }
+        )
+
+        column DEAL_CLOSE_DATE (
+            type: plainText
+            heading {
+                heading: Close Date
+                alignment: center
+            }
+            layout {
+                sequence: 191
+                columnAlignment: center
+            }
+            appearance {
+                formatMask: DD-MON-YYYY
+            }
+            source {
+                dataType: DATE
+                timezoneAware: Y
+            }
+            advanced {
+                endUserAlias: AJ
+            }
+        )
+
+        column DEAL_NAME (
+            type: plainText
+            heading {
+                heading: Opportunity
+            }
+            layout {
+                sequence: 11
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: V
+            }
+        )
+
+        column DEAL_PROBABILITY (
+            type: plainText
+            heading {
+                heading: Probability
+                alignment: center
+            }
+            layout {
+                sequence: 91
+                columnAlignment: end
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: Z
+            }
+        )
+
+        column ID (
+            type: hidden
+            heading {
+                heading: &nbsp;
+            }
+            layout {
+                sequence: 1
+            }
+            source {
+                dataType: NUMBER
+            }
+            advanced {
+                endUserAlias: A
+            }
+            security {
+                escapeSpecialChars: false
+            }
+        )
+
+        column REP_NAME (
+            type: plainText
+            heading {
+                heading: &REP_TITLE.
+            }
+            layout {
+                sequence: 71
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: U
+            }
+        )
+
+        column ROW_KEY (
+            type: plainText
+            heading {
+                heading: Key
+                alignment: center
+            }
+            layout {
+                sequence: 41
+                columnAlignment: end
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: R
+            }
+        )
+
+        column STATUS_CODE (
+            type: plainText
+            heading {
+                heading: Stage
+            }
+            layout {
+                sequence: 101
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: AA
+            }
+        )
+
+        column TERRITORY_NAME (
+            type: plainText
+            heading {
+                heading: Territory
+            }
+            layout {
+                sequence: 31
+            }
+            source {
+                dataType: STRING
+            }
+            advanced {
+                endUserAlias: H
+            }
+        )
+
+        page {
+            borderWidth: 0.5
+            borderColor: #666666
+        }
+
+        savedReport 24912391 (
+            visibility: primaryDefault
+            view {
+                rowsPerPage: 15
+            }
+
+            displayColumn CUSTOMER_NAME (
+                sequence: 3
+            )
+
+            displayColumn DEAL_CLOSE_DATE (
+                sequence: 6
+            )
+
+            displayColumn DEAL_NAME (
+                sequence: 1
+            )
+
+            displayColumn DEAL_PROBABILITY (
+                sequence: 4
+            )
+
+            displayColumn ROW_KEY (
+                sequence: 2
+            )
+
+            displayColumn STATUS_CODE (
+                sequence: 5
+            )
+
+            sort (
+                column: DEAL_NAME
+                sort {
+                    sequence: 1
+                }
+            )
+
+            sort (
+                column: LAST_CHANGED
+                sort {
+                    direction: desc
+                    sequence: 2
+                }
+            )
+
+            sort (
+                column: CUSTOMER_NAME
+                sort {
+                    sequence: 3
+                }
+            )
+
+        )
+
+    )
+
+    button reset-report (
+        buttonName: RESET_REPORT
+        label: Reset
+        layout {
+            sequence: 10
+            region: @closed-opportunities
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconLeft
+            ]
+            icon: fa-undo-alt
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 81
+                clearCache: [
+                    81
+                    RIR
+                ]
+            }
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction dialog-closed (
+        name: Dialog Closed
+        execution {
+            sequence: 20
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: jsExpression
+            javaScriptExpression: window
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode: apex.message.showPageSuccess('Action Processed.');
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @closed-opportunities-2
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

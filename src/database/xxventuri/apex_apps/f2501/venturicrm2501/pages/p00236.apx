@@ -1,0 +1,440 @@
+page 236 (
+    name: Update Credit Terms
+    title: Update Credit Terms
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <script>
+            function isCharKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 33 && (charCode < 65 || charCode > 91)&& (charCode < 97 || charCode > 122))
+                        return false;
+            
+                     return true;
+                  }
+            function isNumberKey(evt)
+                  {
+                     var charCode = (evt.which) ? evt.which : event.keyCode
+                     if (charCode > 31 && (charCode < 48 || charCode > 57))
+                        return false;
+            
+                     return true;
+                  }
+            </script>
+            ```
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region buttons-container (
+        name: Buttons Container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: dialogFooter
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region credit-terms (
+        name: Credit Terms
+        type: staticContent
+        layout {
+            sequence: 1220
+            slot: contentBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    pageItem P236_CUSTOMER_DETAILS_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @credit-terms
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_CUSTOMER_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @credit-terms
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_EXISTING_CREDIT (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @credit-terms
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select CREDIT_LIMIT_REC  from XXEBA_SALES_CUSTOMER_DETAILS where CUSTOMER_ID=:P236_CUSTOMER_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_EXISTING_CREDIT_LIMIT_REC (
+        type: displayOnly
+        label {
+            label: Existing Credit Limit
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @credit-terms
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select to_char(CREDIT_LIMIT_REC, '999,999,999,999,990.00')||'  '||CREDIT_LIMIT_CURRENCY as credit_limit  from XXEBA_SALES_CUSTOMER_DETAILS where CUSTOMER_ID=:P236_CUSTOMER_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_EXISTING_GRACE_DAY (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 40
+            region: @credit-terms
+            slot: regionBody
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select GRACE_DAYS_REC from XXEBA_SALES_CUSTOMER_DETAILS where CUSTOMER_ID=:P236_CUSTOMER_ID
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_EXISTING_GRACE_DAYS (
+        type: displayOnly
+        label {
+            label: Existing Grace Days
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @credit-terms
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            column: 8
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select grace_days||' '||'Days' from (select nvl(GRACE_DAYS_REC,0) as grace_days from XXEBA_SALES_CUSTOMER_DETAILS where CUSTOMER_ID=:P236_CUSTOMER_ID)
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_EXPECTED_CURRENCY (
+        type: selectList
+        label {
+            label: Currency
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select CURRENCY_CODE d, CURRENCY_CODE  as r from EBA_SALES_CURRENCIES
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 80
+            region: @credit-terms
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            columnSpan: 2
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        default {
+            type: static
+            staticValue: INR
+        }
+        readOnly {
+            type: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_NEW_CREDIT_LIMIT_REC (
+        type: numberField
+        label {
+            label: New Credit Limit
+            alignment: left
+        }
+        settings {
+            minValue: 0
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 70
+            region: @credit-terms
+            slot: regionBody
+            alignment: left
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 10
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            customAttributes: onkeypress="return isNumberKey(event)";
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P236_NEW_GRACE_DAYS_REC (
+        type: selectList
+        label {
+            label: New Grace Days
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select d ,r from 
+                (select 'No Grace'd,'0' r, '1' seq from dual
+                union 
+                select '3 Days' d,'3' r ,'2' seq from dual
+                union 
+                select '5 Days' d,'5' r ,'3' seq from dual
+                union 
+                select '7 Days' d,'7' r ,'4' seq from dual
+                union 
+                select '10 Days' d,'10' r ,'5' seq from dual
+                union 
+                select '15 Days' d,'15' r ,'6' seq from dual
+                ) order by seq
+                ```
+            displayExtraValues: false
+        }
+        layout {
+            sequence: 90
+            region: @credit-terms
+            slot: regionBody
+            alignment: left
+            startNewRow: false
+            labelColumnSpan: 3
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @buttons-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button update (
+        buttonName: UPDATE
+        label: Update
+        layout {
+            sequence: 10
+            region: @buttons-container
+            slot: create
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction close-dialog (
+        name: Close Dialog
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process close-dialog (
+        name: Close Dialog
+        type: closeDialog
+        settings {
+            showSuccessMessages: false
+        }
+        execution {
+            sequence: 30
+        }
+        advanced {
+            executionMappingIdentifier: 32474012070654365
+        }
+    )
+
+    process update-credit-limit (
+        name: Update Credit Limit
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                  UPDATE XXEBA_SALES_CUSTOMER_DETAILS
+                  SET CREDIT_LIMIT_REC   =:P236_NEW_CREDIT_LIMIT_REC,
+                    CREDIT_LIMIT_CURRENCY=:P236_EXPECTED_CURRENCY,
+                    GRACE_DAYS_REC       =:P236_NEW_GRACE_DAYS_REC
+                  WHERE CUSTOMER_ID      =:P236_CUSTOMER_ID;
+                 
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        successMessage {
+            successMessage: Action Processed.
+        }
+        advanced {
+            executionMappingIdentifier: 32473163752654364
+        }
+        serverSideCondition {
+            whenButtonPressed: @update
+        }
+    )
+
+    process update-customer-status (
+        name: Update Customer Status
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :P236_NEW_CREDIT_LIMIT_REC > :P236_EXISTING_CREDIT OR :P236_NEW_GRACE_DAYS_REC >:P236_EXISTING_GRACE_DAY  THEN
+                   UPDATE EBA_SALES_CUSTOMERS SET STATUS='V' WHERE ID=:P236_CUSTOMER_ID;
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 32473609173654364
+        }
+        serverSideCondition {
+            whenButtonPressed: @update
+        }
+    )
+
+)
+

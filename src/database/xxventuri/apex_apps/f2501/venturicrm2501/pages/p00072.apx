@@ -1,0 +1,487 @@
+page 72 (
+    name: Create Opportunity
+    title: Create Opportunity
+    pageGroup: @opportunities
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @wizard-modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    dialog {
+        resizable: false
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    css {
+        inline:
+            ```css
+            .shuttleSelect1 select, .shuttleSelect2 select {
+                width: 290px;
+                margin: 0;
+                font-size: 12px;
+                font-family: monospace;
+            }
+            .shuttleSort1 img, .shuttleSort2 img, .shuttleControl img {
+                padding: 2px;
+                margin: 2px;
+            }
+            table.formlayout table.shuttle td {
+                vertical-align: middle !important;
+            }
+            table.formlayout table.shuttle td a {
+                border: 1px solid #D0D0D0;
+                display: block;
+                margin: 4px;
+                border-radius: 4px;
+                background-color: #F8F8F8;
+            }
+            table.formlayout table.shuttle td a:hover {
+                background-color: #E9F3FF;
+                border-color: #AEC6E5;
+            }
+            
+            
+            /* Styles Specific for Page 72 */
+            #P72_X {
+                width: 80%;
+            }
+            #P72_TEAM {
+                width: 100%;
+            }
+            .shuttle {
+                width: 100%;
+            }
+            .shuttleControl, .shuttleSort2 {
+                width: 1%;
+            }
+            .shuttle_left, .shuttle_right {
+                width: 100% !important;
+            }
+            .shuttleSelect1, .shuttleSelect2 {
+                width: 50%;
+            }
+            ```
+    }
+    htmlHeader {
+        htmlHeader:
+            ```html
+            <style>
+            .shuttle select {width: 300px}
+            </style>
+            ```
+    }
+    security {
+        authorizationScheme: @contribution-rights
+    }
+    advanced {
+        reloadOnSubmit: always
+    }
+    help {
+        helpText: No help is available for this page.
+    }
+
+    region button-container (
+        name: Button container
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: wizardButtons
+        }
+        appearance {
+            template: @buttons-container
+            templateOptions: #DEFAULT#
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region create-opportunity-top (
+        name: Create Opportunity top
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: wizardBody
+        }
+        appearance {
+            template: @blank-with-attributes
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region create-opportunity-train (
+        name: create opportunity train
+        type: list
+        source {
+            list: @create-opportunity-train
+        }
+        layout {
+            sequence: 10
+            slot: wizardProgressBar
+        }
+        componentAppearance {
+            listTemplate: @wizard-progress
+            templateOptions: [
+                #DEFAULT#
+                t-WizardSteps--displayLabels
+            ]
+        }
+    )
+
+    pageItem P72_AMOUNT (
+        type: numberField
+        label {
+            label: Amount
+            alignment: left
+        }
+        settings {
+            minValue: 1
+            maxValue: 10000000000
+            numberAlignment: end
+            virtualKeyboard: text
+        }
+        layout {
+            sequence: 30
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 2000
+        }
+        default {
+            type: static
+            staticValue: 0
+        }
+        security {
+            encryptSessionState: false
+        }
+        config {
+            buildOption: 2564105947780700774
+        }
+    )
+
+    pageItem P72_CLOSE_DATE (
+        type: datePickerJquery
+        label {
+            label: Close Date
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            formatMask: &APP_DATE_FORMAT.
+            width: 32
+        }
+        validation {
+            valueRequired: true
+            maxLength: 255
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody: return to_char((sysdate + 90),'&APP_DATE_FORMAT.');
+        }
+        security {
+            encryptSessionState: false
+        }
+        config {
+            buildOption: 2855981526762085198
+        }
+    )
+
+    pageItem P72_CURRENCY (
+        type: selectList
+        label {
+            label: Currency
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery: select currency_code, id from eba_sales_currencies order by 1
+            displayNullValue: false
+        }
+        layout {
+            sequence: 31
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        source {
+            type: staticValue
+            staticValue: 1
+        }
+        default {
+            type: static
+            staticValue: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P72_OPPORTUNITY_NAME (
+        type: displayOnly
+        label {
+            label: Opportunity
+            alignment: left
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        layout {
+            sequence: 10
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+        }
+        source {
+            type: staticValue
+            staticValue: &P71_OPPORTUNITY_NAME.
+            used: always
+        }
+        default {
+            type: static
+            staticValue: &P71_OPPORTUNITY_NAME.
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P72_SALESREP (
+        type: selectList
+        label {
+            label: &REP_TITLE.
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @primary-sales-rep
+            displayExtraValues: false
+            nullDisplayValue: - Select -
+        }
+        layout {
+            sequence: 20
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        default {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                declare
+                   x number := null;
+                begin
+                   for c1 in (select DEFAULT_REP_ID
+                                 from EBA_SALES_CUSTOMERS
+                                 where id = :P71_ACCOUNT) loop
+                       x := c1.DEFAULT_REP_ID;
+                   end loop;
+                   return x;
+                end;
+                ```
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P72_STATUS (
+        type: selectList
+        label {
+            label: Status
+            alignment: left
+        }
+        lov {
+            type: sharedComponent
+            lov: @steps-to-close-status-code
+            displayExtraValues: false
+            nullDisplayValue: - Select a Status -
+        }
+        layout {
+            sequence: 36
+            region: @create-opportunity-top
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @required
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        validation {
+            valueRequired: true
+        }
+        advanced {
+            cssClasses: mnw180
+        }
+        default {
+            type: static
+            staticValue: 2
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button cancel (
+        buttonName: CANCEL
+        label: Cancel
+        layout {
+            sequence: 20
+            region: @button-container
+            slot: close
+        }
+        appearance {
+            buttonTemplate: @text
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    button next (
+        buttonName: NEXT
+        label: Next
+        layout {
+            sequence: 30
+            region: @button-container
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @text-with-icon
+            hot: true
+            templateOptions: [
+                #DEFAULT#
+                t-Button--iconRight
+                t-Button--large
+            ]
+            icon: fa-chevron-right
+        }
+        behavior {
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    button previous (
+        buttonName: PREVIOUS
+        label: Previous
+        layout {
+            sequence: 10
+            region: @button-container
+            slot: previous
+        }
+        appearance {
+            buttonTemplate: @icon
+            templateOptions: [
+                #DEFAULT#
+                t-Button--large
+            ]
+            icon: fa-chevron-left
+        }
+        behavior {
+            executeValidations: false
+            warnOnUnsavedChanges: doNotCheck
+        }
+    )
+
+    dynamicAction cancel-clicked (
+        name: Cancel clicked
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+
+        action native-dialog-cancel (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    branch (
+        name: Go To Page 71
+        execution {
+            sequence: 20
+            point: validating
+        }
+        behavior {
+            target: {
+                page: 71
+            }
+            saveStateBeforeBranching: true
+        }
+        serverSideCondition {
+            whenButtonPressed: @previous
+        }
+    )
+
+    branch (
+        execution {
+            sequence: 10
+        }
+        behavior {
+            target: {
+                page: 73
+            }
+            saveStateBeforeBranching: true
+        }
+        serverSideCondition {
+            whenButtonPressed: @next
+        }
+    )
+
+)
+

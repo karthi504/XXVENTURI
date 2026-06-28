@@ -1,0 +1,2525 @@
+page 237 (
+    name: Advanced Reports
+    title: New Reports
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+    }
+    security {
+        formAutoComplete: false
+    }
+
+    region advanced-reports (
+        name: Advanced Reports
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 1270
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @hero
+            templateOptions: [
+                #DEFAULT#
+                t-HeroRegion--hideIcon
+            ]
+        }
+        componentAppearance {
+            breadcrumbTemplate: @breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+
+    region analytics (
+        name: Analytics
+        type: staticContent
+        layout {
+            sequence: 80
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region booking-vs-billing-trend (
+        name: Booking vs Billing Trend
+        type: chart
+        layout {
+            sequence: 90
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: line
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        tooltip {
+            showSeriesName: false
+            showGroupName: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series booking (
+            name: Booking
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select sum(ORDER_VALUE)/100000 total, to_char(order_date,'YYYY') year
+                    from XXEBA_SALES_ORDER SO,
+                    	EBA_SALES_DEALS SD,
+                    	EBA_SALES_CUSTOMERS SC,
+                    	EBA_SALES_SALESREPS SR,   
+                      --  XXEBA_TALLY_INVOICES_T tal,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                           (select
+                        ORDER_ID,
+                        sum(order_value) order_value,
+                        min(DELIVERY_DATE) as DELIVERY_DATE from
+                        (
+                        select
+                        ORDER_ID,
+                        QUANTITY,
+                        PRODUCT_PRICE,
+                        (QUANTITY * PRODUCT_PRICE)order_value,
+                        DELIVERY_DATE
+                        from
+                        XXEBA_ORDER_PRODUCTS
+                        )
+                        group by ORDER_ID)value    
+                    where SO.DEAL_ID = SD.ID  
+                     -- and SO.CUSTOMER_ID = SC.ID(+)
+                         and SO.CUSTOMER_ID = SC.ID
+                     -- and SO.SALES_REP = SR.ID(+)
+                      and SO.SALES_REP = SR.ID
+                      and SO.DELIVERY_LOCATION = CL.ID(+)
+                      and SO.BILLING_LOCATION = CL2.ID (+)
+                      and SO.ORDER_ID = value.ORDER_ID(+)
+                      and to_char(SO.order_date,'YYYY') in (:P237_YEAR, :P237_YEAR-1) 
+                      AND (upper(SC.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                                             FROM eba_sales_salesreps r
+                                                            START WITH r.id = :USER_ID
+                                                           CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                         or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                        or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Sales Co-Ordinator'))
+                        and SO.STATUS  IN ('Y')
+                    group by to_char(order_date,'YYYY')
+                    order by to_char(order_date,'YYYY')
+                      
+                    
+                    ```
+                pageItemsToSubmit: P237_YEAR
+            }
+            columnMapping {
+                label: YEAR
+                value: TOTAL
+            }
+            label {
+                show: true
+            }
+        )
+
+        series sales (
+            name: Sales
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select sum(TOTAL_AMOUNT)/100000 total, to_char(INVOICE_DATE ,'YYYY') year 
+                      from XXEBA_TALLY_INVOICES_T 
+                      where to_char(INVOICE_DATE,'YYYY') in (:P237_YEAR, :P237_YEAR-1) 
+                         AND batch_sequence=(select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T )
+                    group by to_char(INVOICE_DATE ,'YYYY')
+                    order by to_char(INVOICE_DATE,'YYYY')
+                    ```
+                pageItemsToSubmit: P237_YEAR
+            }
+            columnMapping {
+                label: YEAR
+                value: TOTAL
+            }
+            appearance {
+                color: #E3073A
+            }
+            label {
+                show: true
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                formatScaling: none
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region brand-wise-sales (
+        name: Brand-wise Sales 2019
+        type: chart
+        layout {
+            sequence: 210
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,BRAND_NAME from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    BRAND_NAME
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_SALES_PRODUCT_BRANDS  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.BRAND_ID = B.BRAND_ID  
+                    group by BRAND_NAME,to_char(INVOICE_DATE,'YYYY') order by BRAND_NAME )
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') - 2
+                     -- and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: BRAND_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region brand-wise-sales-2 (
+        name: Brand-wise Sales 2020
+        type: chart
+        layout {
+            sequence: 220
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,BRAND_NAME from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    BRAND_NAME
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_SALES_PRODUCT_BRANDS  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.BRAND_ID = B.BRAND_ID  
+                    group by BRAND_NAME,to_char(INVOICE_DATE,'YYYY') order by BRAND_NAME)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') - 1
+                    --  and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: BRAND_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region brand-wise-sales-3 (
+        name: Brand-wise Sales 2021
+        type: chart
+        layout {
+            sequence: 230
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,BRAND_NAME from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    BRAND_NAME
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_SALES_PRODUCT_BRANDS  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.BRAND_ID = B.BRAND_ID  
+                    group by BRAND_NAME,to_char(INVOICE_DATE,'YYYY')order by BRAND_NAME)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') 
+                     -- and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: BRAND_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region industry-wise-accounts (
+        name: Industry-wise Accounts
+        type: chart
+        layout {
+            sequence: 70
+            parentRegion: @reports
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        tooltip {
+            showSeriesName: false
+        }
+        legend {
+            show: false
+        }
+
+        series industrywise-count (
+            name: Industrywise Count
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT industry_name,
+                      COUNT(*) AS no_of_record
+                    FROM eba_sales_industries ind,
+                      eba_sales_customers cus
+                    WHERE ind.id = cus.industry_id
+                    AND cus.status !='X'
+                    GROUP BY industry_name;
+                    ```
+            }
+            columnMapping {
+                label: INDUSTRY_NAME
+                value: NO_OF_RECORD
+            }
+            appearance {
+                color: #F208CF
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+            tickLabel {
+                position: inside
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: thousand
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region last-2-years-sales (
+        name: Last 2 Years Sales
+        type: chart
+        layout {
+            sequence: 140
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series previous-year-sales (
+            name: Previous Year Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT 
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P 
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                    group by to_char(INVOICE_DATE,'YYYY'))
+                    
+                    where ( SALES_YEAR= to_char(sysdate,'YYYY')-1
+                    or  SALES_YEAR= to_char(sysdate,'YYYY')-2)
+                    
+                    ```
+            }
+            columnMapping {
+                label: SALES_YEAR
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region new (
+        name: New
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @new-accounts-trend
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+    )
+
+    region new-accounts-trend (
+        name: New Accounts Trend
+        type: chart
+        layout {
+            sequence: 300
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        tooltip {
+            showSeriesName: false
+            showGroupName: false
+        }
+        legend {
+            show: false
+        }
+
+        series new-accounts (
+            name: New Accounts
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select no_of_records,year_wise,year_id 
+                    from 
+                    (SELECT 
+                     count(*) as no_of_records,
+                    to_char(CREATED , 'YYYY') AS year_wise,
+                    to_char(CREATED , 'YYYY') AS year_id
+                    FROM eba_sales_customers
+                    where 
+                    STATUS != 'X'
+                    AND STATUS = 'A'
+                    AND DEFAULT_REP_ID =NVL(UPPER(:P237_SALES_REP), :USER_ID)
+                     
+                     AND NOT EXISTS
+                      (SELECT 'Y'
+                      FROM EBA_SALES_SALESREPS SR,
+                        EBA_SALES_SALESREP_ROLES R
+                      WHERE SR.REP_ROLE       = R.ID
+                      AND Upper(R.ROLE_NAME)  in ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                      AND upper(SR.user_name) =  :APP_USER
+                      )
+                         
+                     OR (((DEFAULT_REP_ID = NVL(UPPER(:P237_SALES_REP),:USER_ID) OR upper(:P237_SALES_REP) IS NULL) and created_by in (SELECT upper(user_name)
+                    FROM eba_sales_salesreps r
+                      START WITH r.id      = :USER_ID
+                      CONNECT BY PRIOR r.id= r.REP_MANAGER_ID))
+                    AND EXISTS
+                      (SELECT 'Y'
+                      FROM EBA_SALES_SALESREPS SR,
+                        EBA_SALES_SALESREP_ROLES R
+                      WHERE SR.REP_ROLE       = R.ID
+                      AND Upper(R.ROLE_NAME)  = 'TEAM LEADER - SALES'
+                      AND upper(SR.user_name) = upper(:APP_USER)
+                      ))  
+                    OR ((DEFAULT_REP_ID = NVL(UPPER(:P237_SALES_REP),:USER_ID)
+                    OR :P237_SALES_REP IS NULL)
+                    AND EXISTS
+                      (SELECT 'Y'
+                      FROM EBA_SALES_SALESREPS SR,
+                        EBA_SALES_SALESREP_ROLES R
+                      WHERE SR.REP_ROLE       = R.ID
+                      AND Upper(R.ROLE_NAME)  = 'ADMINISTRATOR'
+                      AND upper(SR.user_name) = :APP_USER
+                      )
+                      )
+                      
+                     
+                     
+                     
+                     
+                     
+                    GROUP BY to_char(CREATED , 'YYYY'))
+                    order by to_date (year_wise,'YYYY')  asc
+                    
+                    ```
+                pageItemsToSubmit: P237_SALES_REP
+            }
+            columnMapping {
+                label: YEAR_WISE
+                value: NO_OF_RECORDS
+            }
+            appearance {
+                color: #05F5CD
+            }
+            label {
+                show: true
+                fontColor: #911791
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region order-booking-trend-sub-report (
+        name: Order Booking Trend Sub Report
+        type: staticContent
+        layout {
+            sequence: 10
+            parentRegion: @booking-vs-billing-trend
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--noPadding
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--hiddenOverflow
+            ]
+        }
+    )
+
+    region product-class-wise-sales (
+        name: Product Class-wise Sales 2020
+        type: chart
+        layout {
+            sequence: 190
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            title: Product Class
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_CLASS_NAME  from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_CLASS_NAME 
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_PRODUCT_CLASS C
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  C.ID =P.PRODUCT_CLASS_ID   
+                    group by PRODUCT_CLASS_NAME ,to_char(INVOICE_DATE,'YYYY')order by PRODUCT_CLASS_NAME)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY')-1
+                      --and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_CLASS_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-class-wise-sales-2 (
+        name: Product Class-wise Sales 2021
+        type: chart
+        layout {
+            sequence: 200
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            title: Product Class
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_CLASS_NAME  from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_CLASS_NAME 
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_PRODUCT_CLASS C
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  C.ID =P.PRODUCT_CLASS_ID   
+                    group by PRODUCT_CLASS_NAME ,to_char(INVOICE_DATE,'YYYY')order by PRODUCT_CLASS_NAME)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY')
+                    --  and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_CLASS_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-class-wise-sales-3 (
+        name: Product Class-wise Sales 2019
+        type: chart
+        layout {
+            sequence: 180
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            title: Products Class
+            hideAndShowBehavior: none
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_CLASS_NAME  from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_CLASS_NAME 
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,XXEBA_PRODUCT_CLASS C
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  C.ID =P.PRODUCT_CLASS_ID   
+                    group by PRODUCT_CLASS_NAME ,to_char(INVOICE_DATE,'YYYY') order by PRODUCT_CLASS_NAME )
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY')-2
+                    --  and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_CLASS_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-class-wise-sales-order (
+        name: Product Class-wise Sales Order
+        type: chart
+        layout {
+            sequence: 60
+            parentRegion: @reports
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        tooltip {
+            showSeriesName: false
+        }
+        legend {
+            show: false
+        }
+
+        series product-class-wise-sales-order (
+            name: " Product Class-wise Sales Order"
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT PRODUCT_CLASS_NAME,
+                      COUNT(DISTINCT ORDER_ID) as no_of_record
+                    FROM
+                      (SELECT OP.product_id,
+                        P.ID,
+                        OP.ORDER_ID,
+                        P.PRODUCT_NAME,
+                        OP.PRODUCT_NAME,
+                        P.PRODUCT_CLASS_ID,
+                        PC.PRODUCT_CLASS_NAME
+                      FROM eba_sales_products P,
+                        XXEBA_ORDER_PRODUCTS OP,
+                        XXEBA_PRODUCT_CLASS PC,XXEBA_SALES_ORDER SO
+                      WHERE P.ID            =OP.PRODUCT_ID
+                      AND SO.ORDER_ID      = OP.ORDER_ID
+                      AND P.PRODUCT_CLASS_ID=PC.ID
+                      AND SO.STATUS !='X'
+                      )
+                    GROUP BY PRODUCT_CLASS_NAME
+                    ORDER BY 1;
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_CLASS_NAME
+                value: NO_OF_RECORD
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                formatScaling: thousand
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: thousand
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region product-group-wise-sales (
+        name: Product Group-wise Sales 2019
+        type: chart
+        layout {
+            sequence: 240
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series group-wise-sales (
+            name: Group Wise Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_FAMILY from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_FAMILY
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,eba_sales_product_families  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.PRODUCT_FAMILY_ID = B.ID  
+                    group by PRODUCT_FAMILY,to_char(INVOICE_DATE,'YYYY')order by PRODUCT_FAMILY)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') - 2;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_FAMILY
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-group-wise-sales-2 (
+        name: Product Group -wise Sales 2020
+        type: chart
+        layout {
+            sequence: 250
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series group-wise-sales (
+            name: Group Wise Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_FAMILY from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_FAMILY
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,eba_sales_product_families  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.PRODUCT_FAMILY_ID = B.ID  
+                    group by PRODUCT_FAMILY,to_char(INVOICE_DATE,'YYYY') order by PRODUCT_FAMILY)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') - 1;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_FAMILY
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-group-wise-sales-3 (
+        name: Product Group-wise Sales 2021
+        type: chart
+        layout {
+            sequence: 260
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series group-wise-sales (
+            name: Group Wise Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,PRODUCT_FAMILY from
+                      (
+                    SELECT 
+                    TO_CHAR(INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    PRODUCT_FAMILY
+                    FROM XXEBA_TALLY_INVOICES_T T,EBA_SALES_PRODUCTS P ,eba_sales_product_families  B
+                    WHERE T.product_code=p.row_key
+                      AND batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                      AND  P.PRODUCT_FAMILY_ID = B.ID  
+                    group by PRODUCT_FAMILY,to_char(INVOICE_DATE,'YYYY')order by PRODUCT_FAMILY)
+                    
+                    where SALES_YEAR= to_char(sysdate,'YYYY') ;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_FAMILY
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region product-type-wise-sales-order (
+        name: Product Type-wise Sales Order
+        type: chart
+        layout {
+            sequence: 50
+            parentRegion: @reports
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        tooltip {
+            showSeriesName: false
+        }
+        legend {
+            show: false
+        }
+
+        series product-type-wise-sales-order (
+            name: Product Type-wise Sales Order
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT PRODUCT_TYPE,
+                      COUNT(DISTINCT ORDER_ID) AS no_of_record
+                    FROM
+                      (SELECT OP.product_id,
+                        P.ID,
+                        OP.ORDER_ID,
+                        P.PRODUCT_NAME,
+                        OP.PRODUCT_NAME,
+                        P.PRODUCT_TYPE_ID,
+                        PT.PRODUCT_TYPE
+                      FROM eba_sales_products P,
+                        XXEBA_ORDER_PRODUCTS OP,
+                        XXEBA_SALES_PRODUCT_TYPES PT,
+                        XXEBA_SALES_ORDER SO
+                      WHERE P.ID            =OP.PRODUCT_ID
+                      AND P.PRODUCT_TYPE_ID =PT.PRODUCT_TYPE_ID
+                      AND SO.ORDER_ID      = OP.ORDER_ID
+                      AND SO.STATUS !='X'
+                      )
+                    GROUP BY PRODUCT_TYPE
+                    ORDER BY 1;
+                    
+                    
+                    
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_TYPE
+                value: NO_OF_RECORD
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                formatScaling: thousand
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 0
+                formatScaling: thousand
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region region-display (
+        name: "Region Display "
+        type: regionDisplaySelector
+        layout {
+            sequence: 10
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--noBorder
+                t-Region--scrollBody
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        settings {
+            includeShowAll: false
+            rememberSelection: bySession
+        }
+    )
+
+    region reports (
+        name: Reports
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--removeHeader js-removeLandmark
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region sales-by-region (
+        name: Sales by Region
+        type: chart
+        layout {
+            sequence: 130
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: donut
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            title: Region
+            hideAndShowBehavior: none
+        }
+
+        series region (
+            name: Region
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  SALES_YEAR, TOTAL_AMOUNT,TERRITORY_NAME from
+                      (
+                    SELECT 
+                    TO_CHAR(t.INVOICE_DATE,'YYYY')AS SALES_YEAR, 
+                    SUM(to_number(NVL(t.TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    tr.TERRITORY_NAME
+                    FROM XXEBA_TALLY_INVOICES_T t , EBA_SALES_CUSTOMERS c, EBA_SALES_TERRITORIES tr
+                    WHERE 
+                    t.customer_id = c.ROW_KEY
+                    and tr.id = c.CUSTOMER_TERRITORY_ID
+                    and   t.batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                    group by TERRITORY_NAME,to_char(INVOICE_DATE,'YYYY'))
+                    
+                    --where rownum <=5 ; 
+                    
+                    ```
+            }
+            columnMapping {
+                label: TERRITORY_NAME
+                value: TOTAL_AMOUNT
+            }
+            label {
+                show: true
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region territory-wise-number-of-orders (
+        name: Territory-wise Number of Orders
+        type: chart
+        layout {
+            sequence: 30
+            parentRegion: @reports
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+            formatScaling: thousand
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series industrywise-count (
+            name: Industrywise Count
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT territory_name,
+                      COUNT(*) AS no_of_record
+                    FROM xxeba_sales_order ord,
+                      eba_sales_TERRITORIES ter
+                    WHERE ord.territory_id = ter.id
+                    AND ord.status !='X'
+                    GROUP BY territory_name
+                    ORDER BY 1;
+                    ```
+            }
+            columnMapping {
+                label: TERRITORY_NAME
+                value: NO_OF_RECORD
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region territory-wise-sales (
+        name: Territory-wise Sales
+        type: chart
+        layout {
+            sequence: 40
+            parentRegion: @reports
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chart {
+            type: pie
+        }
+        value {
+            format: decimal
+            decimalPlaces: 0
+            formatScaling: thousand
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series industrywise-count (
+            name: Industrywise Count
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT ter.territory_name, sum(nvl(prd.quantity,0) * nvl(prd.product_price,0)) AS order_value
+                    FROM xxeba_sales_order ord, XXEBA_ORDER_PRODUCTS prd, eba_sales_TERRITORIES ter
+                    WHERE ord.territory_id = ter.id
+                    AND ord.status !='X'
+                    AND ord.order_id = prd.order_id
+                    GROUP BY territory_name
+                    ORDER BY 1;
+                    ```
+            }
+            columnMapping {
+                label: TERRITORY_NAME
+                value: ORDER_VALUE
+            }
+            label {
+                show: true
+                position: outsideBarEdge
+                displayAs: percentage
+            }
+        )
+
+    )
+
+    region top-10-booking (
+        name: Top 10 Booking 2020
+        type: chart
+        layout {
+            sequence: 110
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series top10-orders (
+            name: Top10 orders
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  CUSTOMER_NAME,ORDER_VALUE from (select  CUSTOMER_NAME, sum (ORDER_VALUE) ORDER_VALUE, to_char(order_date,'YYYY') order_year
+                    
+                    from XXEBA_SALES_ORDER SO,
+                    	EBA_SALES_DEALS SD,
+                    	EBA_SALES_CUSTOMERS SC,
+                    	EBA_SALES_SALESREPS SR,
+                       
+                      --  XXEBA_TALLY_INVOICES_T tal,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                           (select
+                        ORDER_ID,
+                        sum(order_value) order_value,
+                        min(DELIVERY_DATE) as DELIVERY_DATE from
+                        (
+                        select
+                        ORDER_ID,
+                        QUANTITY,
+                        PRODUCT_PRICE,
+                        (QUANTITY * PRODUCT_PRICE)order_value,
+                        DELIVERY_DATE
+                        from
+                        XXEBA_ORDER_PRODUCTS
+                        )
+                        group by ORDER_ID)value
+                        
+                    where SO.DEAL_ID = SD.ID  
+                     -- and SO.CUSTOMER_ID = SC.ID(+)
+                         and SO.CUSTOMER_ID = SC.ID
+                     -- and SO.SALES_REP = SR.ID(+)
+                      and SO.SALES_REP = SR.ID
+                      and SO.DELIVERY_LOCATION = CL.ID(+)
+                      and SO.BILLING_LOCATION = CL2.ID (+)
+                      and SO.ORDER_ID = value.ORDER_ID(+)
+                      AND (upper(SC.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                                             FROM eba_sales_salesreps r
+                                                            START WITH r.id = :USER_ID
+                                                           CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                         or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                        or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Sales Co-Ordinator'))
+                        and SO.STATUS  IN ('Y')
+                    --and to_char(order_date,'YYYY')= nvl(:P237_YAER_ORDERS , to_char(sysdate,'YYYY')) 
+                     and ORDER_VALUE is not null
+                    group by CUSTOMER_NAME ,to_char(order_date,'YYYY')
+                    order by ORDER_VALUE desc
+                                                            
+                    ) where order_year = to_char(sysdate,'YYYY')-1 and  rownum <=10
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: ORDER_VALUE
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-10-booking-2 (
+        name: Top 10 Booking 2021
+        type: chart
+        layout {
+            sequence: 120
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        serverSideCondition {
+            type: never
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series top10-orders (
+            name: Top10 orders
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select  CUSTOMER_NAME,ORDER_VALUE from (select  CUSTOMER_NAME, sum (ORDER_VALUE) ORDER_VALUE, to_char(order_date,'YYYY') order_year
+                    
+                    from XXEBA_SALES_ORDER SO,
+                    	EBA_SALES_DEALS SD,
+                    	EBA_SALES_CUSTOMERS SC,
+                    	EBA_SALES_SALESREPS SR,
+                       
+                      --  XXEBA_TALLY_INVOICES_T tal,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL,
+                    	EBA_SALES_CUSTOMER_LOCATIONS CL2,
+                           (select
+                        ORDER_ID,
+                        sum(order_value) order_value,
+                        min(DELIVERY_DATE) as DELIVERY_DATE from
+                        (
+                        select
+                        ORDER_ID,
+                        QUANTITY,
+                        PRODUCT_PRICE,
+                        (QUANTITY * PRODUCT_PRICE)order_value,
+                        DELIVERY_DATE
+                        from
+                        XXEBA_ORDER_PRODUCTS
+                        )
+                        group by ORDER_ID)value
+                        
+                    where SO.DEAL_ID = SD.ID  
+                     -- and SO.CUSTOMER_ID = SC.ID(+)
+                         and SO.CUSTOMER_ID = SC.ID
+                     -- and SO.SALES_REP = SR.ID(+)
+                      and SO.SALES_REP = SR.ID
+                      and SO.DELIVERY_LOCATION = CL.ID(+)
+                      and SO.BILLING_LOCATION = CL2.ID (+)
+                      and SO.ORDER_ID = value.ORDER_ID(+)
+                      AND (upper(SC.DEFAULT_REP_ID) in (SELECT  upper(r.ID)
+                                                             FROM eba_sales_salesreps r
+                                                            START WITH r.id = :USER_ID
+                                                           CONNECT BY PRIOR r.id= r.REP_MANAGER_ID) 
+                         or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Administrator')
+                        or 
+                        EXISTS(select 'Y' from EBA_SALES_SALESREPS R, EBA_SALES_SALESREP_ROLES SR where R.id = :USER_ID and SR.ID = R.REP_ROLE and SR.ROLE_NAME = 'Sales Co-Ordinator'))
+                        and SO.STATUS  IN ('Y')
+                    --and to_char(order_date,'YYYY')= nvl(:P237_YAER_ORDERS , to_char(sysdate,'YYYY')) 
+                     and ORDER_VALUE is not null
+                    group by CUSTOMER_NAME ,to_char(order_date,'YYYY')
+                    order by ORDER_VALUE desc
+                                                            
+                    ) where order_year = to_char(sysdate,'YYYY')  and customer_name <> '4i Apps Solutions' and  rownum <=10
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: ORDER_VALUE
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-5-customers (
+        name: Top 5 Customers
+        type: chart
+        layout {
+            sequence: 290
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series total-sales (
+            name: Total  Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select CUSTOMER_NAME,
+                           TOTAL_AMOUNT 
+                    from
+                      (
+                      select  CUSTOMER_NAME, 
+                              sum(to_number(nvl(TOTAL_AMOUNT,0))) as TOTAL_AMOUNT
+                      from XXEBA_TALLY_INVOICES_T 
+                          where batch_sequence=(select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T )
+                          group by CUSTOMER_NAME order by TOTAL_AMOUNT desc)
+                    where 
+                       rownum <=5;
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: TOTAL_AMOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-5-products (
+        name: Top 5 Products
+        type: chart
+        layout {
+            sequence: 280
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series total-sales (
+            name: Total Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select TOTAL_AMOUNT,PRODUCT_NAME  from
+                      (
+                    SELECT 
+                    SUM(to_number(NVL(TOTAL_AMOUNT,0)))AS TOTAL_AMOUNT,
+                    (select PRODUCT_NAME from EBA_SALES_PRODUCTS where ROW_KEY=T.PRODUCT_CODE) as PRODUCT_NAME
+                    FROM XXEBA_TALLY_INVOICES_T T
+                    WHERE 
+                       batch_sequence=(SELECT MAX(BATCH_SEQUENCE) FROM XXEBA_TALLY_INVOICES_T) 
+                    group by PRODUCT_CODE)
+                    
+                    where 
+                        rownum <=5;
+                    ```
+            }
+            columnMapping {
+                label: PRODUCT_NAME
+                value: TOTAL_AMOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-sales-in-the-year (
+        name: Top Sales in the year 2019
+        type: chart
+        layout {
+            sequence: 150
+            parentRegion: @analytics
+            slot: subRegions
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select CUSTOMER_NAME, SALES_YEAR, TOTAL_AMOUNT from
+                      (
+                      select CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY') as SALES_YEAR, sum(to_number(nvl(TOTAL_AMOUNT,0))) as TOTAL_AMOUNT
+                         from XXEBA_TALLY_INVOICES_T where batch_sequence=(select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T )
+                          group by CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY')
+                          order by TOTAL_AMOUNT desc)    
+                      ----and to_char(INVOICE_DATE,'YYYY')=nvl(:P237_YAER,to_char(sysdate,'YYYY'))
+                    where SALES_YEAR = to_char(sysdate,'YYYY')-2
+                      and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: TOTAL_AMOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-sales-in-the-year-2 (
+        name: Top Sales in the year 2021
+        type: chart
+        layout {
+            sequence: 170
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select CUSTOMER_NAME, SALES_YEAR, TOTAL_AMOUNT from
+                      (
+                      select CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY') as SALES_YEAR, sum(to_number(nvl(TOTAL_AMOUNT,0))) as TOTAL_AMOUNT
+                         from XXEBA_TALLY_INVOICES_T where batch_sequence=(select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T )
+                          group by CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY')
+                          order by TOTAL_AMOUNT desc)    
+                      ----and to_char(INVOICE_DATE,'YYYY')=nvl(:P237_YAER,to_char(sysdate,'YYYY'))
+                    where SALES_YEAR = to_char(sysdate,'YYYY')
+                      and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: TOTAL_AMOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region top-sales-in-the-year-3 (
+        name: Top Sales in the year 2020
+        type: chart
+        layout {
+            sequence: 160
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        chartAppearance {
+            orientation: horizontal
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        legend {
+            show: false
+        }
+
+        series top10-sales (
+            name: Top10 Sales
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    select CUSTOMER_NAME, SALES_YEAR, TOTAL_AMOUNT from
+                      (
+                      select CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY') as SALES_YEAR, sum(to_number(nvl(TOTAL_AMOUNT,0))) as TOTAL_AMOUNT
+                         from XXEBA_TALLY_INVOICES_T where batch_sequence=(select max(BATCH_SEQUENCE) from XXEBA_TALLY_INVOICES_T )
+                          group by CUSTOMER_NAME, to_char(INVOICE_DATE,'YYYY')
+                          order by TOTAL_AMOUNT desc)    
+                      ----and to_char(INVOICE_DATE,'YYYY')=nvl(:P237_YAER,to_char(sysdate,'YYYY'))
+                    where SALES_YEAR = to_char(sysdate,'YYYY')-1
+                      and rownum <=10;
+                    ```
+            }
+            columnMapping {
+                label: CUSTOMER_NAME
+                value: TOTAL_AMOUNT
+            }
+        )
+
+        axis x (
+            name: x
+            value {
+                format: decimal
+                decimalPlaces: 2
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            value {
+                format: decimal
+                decimalPlaces: 2
+                pattern: Rs ##,##,##,###.##
+                baselineScaling: min
+            }
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    region trials-trend-created-vs-passed (
+        name: Trials Trend- Created vs Passed
+        type: chart
+        layout {
+            sequence: 310
+            parentRegion: @analytics
+            slot: subRegions
+            startNewRow: false
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        dataCursor {
+            dimOnHover: false
+        }
+        tooltip {
+            showSeriesName: false
+            showGroupName: false
+        }
+        legend {
+            hideAndShowBehavior: none
+        }
+
+        series created (
+            name: Created
+            execution {
+                sequence: 10
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT no_of_records, year_wise,year_id
+                    FROM
+                      (SELECT distinct COUNT(*) no_of_records,
+                        TO_CHAR(CREATED_DATE , 'YYYY') AS year_wise,
+                        TO_CHAR(CREATED_DATE ,'YYYY') AS year_id
+                      FROM XXEBA_TRIAL_DETAILS tri
+                      WHERE tri.status != 'X'
+                     /* AND ((created_by = :APP_USER
+                      AND NOT EXISTS
+                        (SELECT 'Y'
+                        FROM EBA_SALES_SALESREPS SR,
+                          EBA_SALES_SALESREP_ROLES R
+                        WHERE SR.REP_ROLE       = R.ID
+                        AND Upper(R.ROLE_NAME)   in ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                        AND upper(SR.user_name) = :APP_USER
+                        ))
+                            
+                     OR (((created_by = :P1002_TRIAL_CREATED_PASSED_ID OR :P1002_TRIAL_CREATED_PASSED_ID IS NULL) and created_by in (SELECT upper(user_name)
+                    FROM eba_sales_salesreps r
+                      START WITH r.id      = :USER_ID
+                      CONNECT BY PRIOR r.id= r.REP_MANAGER_ID))
+                    AND EXISTS
+                      (SELECT 'Y'
+                      FROM EBA_SALES_SALESREPS SR,
+                        EBA_SALES_SALESREP_ROLES R
+                      WHERE SR.REP_ROLE       = R.ID
+                      AND Upper(R.ROLE_NAME)  = 'TEAM LEADER - SALES'
+                      AND upper(SR.user_name) = :APP_USER
+                      ))        
+                      OR ((created_by                   = :P1002_TRIAL_CREATED_PASSED_ID
+                      OR :P1002_TRIAL_CREATED_PASSED_ID IS NULL)
+                      AND EXISTS
+                        (SELECT 'Y'
+                        FROM EBA_SALES_SALESREPS SR,
+                          EBA_SALES_SALESREP_ROLES R
+                        WHERE SR.REP_ROLE       = R.ID
+                        AND Upper(R.ROLE_NAME)  = 'ADMINISTRATOR'
+                        AND upper(SR.user_name) = :APP_USER
+                        ) ) )*/
+                      GROUP BY TO_CHAR(CREATED_DATE , 'YYYY'),
+                        to_number(TO_CHAR(CREATED_DATE , 'YYYY'))
+                      )
+                     order by to_date (year_wise,'YYYY')  asc
+                    ```
+            }
+            columnMapping {
+                label: YEAR_WISE
+                value: NO_OF_RECORDS
+            }
+            label {
+                show: true
+                position: insideBarEdge
+                fontColor: WHITE
+            }
+        )
+
+        series passed (
+            name: Passed
+            execution {
+                sequence: 20
+            }
+            source {
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT no_of_records,year_wise,year_id
+                    FROM
+                      (SELECT distinct COUNT(*) no_of_records,
+                        TO_CHAR(CREATED_DATE , 'YYYY')          AS year_wise,
+                        to_number(TO_CHAR(CREATED_DATE , 'YYYY')) AS year_id
+                      FROM XXEBA_TRIAL_DETAILS tri
+                      WHERE TRIAL_RESULT = 'P'
+                      AND STATUS != 'X'
+                     /* AND ((created_by = :APP_USER
+                      AND NOT EXISTS
+                        (SELECT 'Y'
+                        FROM EBA_SALES_SALESREPS SR,
+                          EBA_SALES_SALESREP_ROLES R
+                        WHERE SR.REP_ROLE       = R.ID
+                        AND Upper(R.ROLE_NAME)  in ('ADMINISTRATOR', 'TEAM LEADER - SALES')
+                        AND upper(SR.user_name) = :APP_USER
+                        ))
+                           
+                    OR (((created_by = :P1002_TRIAL_CREATED_PASSED_ID OR :P1002_TRIAL_CREATED_PASSED_ID IS NULL) and created_by in (SELECT upper(user_name)
+                    FROM eba_sales_salesreps r
+                      START WITH r.id      = :USER_ID
+                      CONNECT BY PRIOR r.id= r.REP_MANAGER_ID))
+                    AND EXISTS
+                      (SELECT 'Y'
+                      FROM EBA_SALES_SALESREPS SR,
+                        EBA_SALES_SALESREP_ROLES R
+                      WHERE SR.REP_ROLE       = R.ID
+                      AND Upper(R.ROLE_NAME)  = 'TEAM LEADER - SALES'
+                      AND upper(SR.user_name) = :APP_USER
+                      ))
+                      OR ((created_by                   = :P1002_TRIAL_CREATED_PASSED_ID
+                      OR :P1002_TRIAL_CREATED_PASSED_ID IS NULL)
+                      AND EXISTS
+                        (SELECT 'Y'
+                        FROM EBA_SALES_SALESREPS SR,
+                          EBA_SALES_SALESREP_ROLES R
+                        WHERE SR.REP_ROLE       = R.ID
+                        AND Upper(R.ROLE_NAME)  = 'ADMINISTRATOR'
+                        AND upper(SR.user_name) = :APP_USER
+                        ) ) )*/
+                      GROUP BY TO_CHAR(CREATED_DATE , 'YYYY'),
+                        to_number(TO_CHAR(CREATED_DATE , 'YYYY'))
+                      )
+                    order by to_date (year_wise,'YYYY')  asc
+                    ```
+            }
+            columnMapping {
+                label: YEAR_WISE
+                value: NO_OF_RECORDS
+            }
+            label {
+                show: true
+                position: insideBarEdge
+                fontColor: WHITE
+            }
+        )
+
+        axis x (
+            name: x
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y (
+            name: y
+            minorTicks {
+                show: false
+            }
+        )
+
+        axis y-2 (
+            name: y2
+            minorTicks {
+                show: false
+            }
+        )
+
+    )
+
+    pageItem P237_SALES_REP (
+        type: selectList
+        label {
+            label: Sales Rep
+            alignment: left
+        }
+        lov {
+            type: functionBody
+            plsqlFunctionBody:
+                ```plsql
+                  DECLARE
+                  v_tl_sql     VARCHAR2(4000);
+                  v_admin_sql  VARCHAR2(4000);
+                  v_rep_mgr_id NUMBER;
+                BEGIN
+                
+                  SELECT COUNT(REP_MANAGER_ID)
+                  INTO v_rep_mgr_id
+                  FROM eba_sales_salesreps
+                  WHERE id        = :USER_ID;
+                  
+                  IF v_rep_mgr_id = 0 THEN
+                    v_admin_sql  := 'SELECT rep_first_name  
+                                      ||'' ''  
+                                      ||rep_last_name d,  
+                                      ID r
+                                      FROM eba_sales_salesreps
+                                      where status = ''Y''
+                                      and id !=137299580992928658344444066683110435759
+                                      order by 1 asc';
+                    RETURN v_admin_sql;
+                  elsif v_rep_mgr_id > 0 THEN
+                    v_tl_sql        := ('SELECT rep_first_name  
+                                        ||'' ''||rep_last_name d,  
+                                        ID r
+                                        FROM eba_sales_salesreps r                       
+                                        START WITH r.id      = :USER_ID  
+                                        CONNECT BY PRIOR r.id= r.REP_MANAGER_ID  
+                                        order by 1 asc');
+                    RETURN v_tl_sql;
+                  END IF;
+                END;
+                ```
+            displayExtraValues: false
+            nullDisplayValue: All
+        }
+        layout {
+            sequence: 10
+            region: @new
+            slot: regionBody
+            alignment: left
+            column: 4
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P237_TALLY_DATA_LAST_SYNC (
+        type: displayOnly
+        label {
+            label: Tally Data-Last Sync:
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @region-display
+            slot: regionBody
+            alignment: left
+            column: 9
+        }
+        appearance {
+            template: @optional
+            templateOptions: [
+                #DEFAULT#
+                margin-top-none
+                margin-bottom-none
+            ]
+        }
+        source {
+            type: sqlQuerySingleValue
+            sqlQuery: select to_char (max(UPDATED_DATE),'DD-Mon-YYYY HH24:MI:AM') from  XXEBA_TALLY_INVOICES_T ;
+            used: always
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P237_YEAR (
+        type: selectList
+        label {
+            label: Year
+            alignment: left
+        }
+        lov {
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select distinct to_char(ORDER_DATE,'YYYY')d, to_char(ORDER_DATE,'YYYY')r from XXEBA_SALES_ORDER order by 1 desc ;
+                
+                ```
+            displayExtraValues: false
+            displayNullValue: false
+        }
+        layout {
+            sequence: 10
+            region: @order-booking-trend-sub-report
+            slot: regionBody
+            alignment: left
+            column: 6
+            labelColumnSpan: 0
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    dynamicAction refresh (
+        name: Refresh
+        execution {
+            sequence: 40
+        }
+        when {
+            selectionType: items
+            items: P237_SALES_REP
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @new-accounts-trend
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction refresh-report (
+        name: refresh report
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P237_YAER
+        }
+    )
+
+    dynamicAction refresh-report-2 (
+        name: REFRESH REPORT
+        execution {
+            sequence: 20
+        }
+        when {
+            selectionType: items
+            items: P237_YAER_ORDERS
+        }
+    )
+
+    dynamicAction region-refresh (
+        name: Region  Refresh
+        execution {
+            sequence: 30
+        }
+        when {
+            selectionType: items
+            items: P237_YEAR
+        }
+
+        action native-refresh (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @booking-vs-billing-trend
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+)
+

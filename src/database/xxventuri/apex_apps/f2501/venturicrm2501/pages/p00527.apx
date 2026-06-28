@@ -1,0 +1,895 @@
+page 527 (
+    name: Apex Screen Capture
+    title: Apex Screen Capture
+    appearance {
+        pageTemplate: @standard
+        templateOptions: #DEFAULT#
+    }
+    navigation {
+        cursorFocus: doNotFocusCursor
+        warnOnUnsavedChanges: false
+    }
+    javaScript {
+        fileUrls: #APP_IMAGES#spin.js
+        functionAndGlobalVariableDeclaration:
+            ```javascript-browser
+            var video = document.getElementById('video');
+            var videoStream;
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            
+            var spinner;
+            var spinTargetElem = document.getElementById('wwvFlowForm');
+            var spinOptions = {
+              lines: 13
+            , length: 28
+            , width: 14
+            , radius: 42
+            , scale: 1
+            , corners: 1
+            , color: '#000'
+            , opacity: 0.25
+            , rotate: 0
+            , direction: 1
+            , speed: 1
+            , trail: 60
+            , fps: 20
+            , zIndex: 2e9
+            , className: 'spinner'
+            , top: '50%'
+            , left: '50%'
+            , shadow: false
+            , hwaccel: false
+            , position: 'absolute'
+            }
+            ```
+    }
+    security {
+        authentication: public
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+
+    region capture-photo (
+        name: capture photo
+        type: staticContent
+        source {
+            htmlCode:
+                ```html
+                <div style="text-align:center;">
+                  <video id="video" width="450" height="220" autoplay></video>
+                  <canvas id="canvas" width="450" height="220" style="display:none;"></canvas>
+                </div>
+                ```
+        }
+        layout {
+            sequence: 1220
+            slot: body
+            column: 1
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+    )
+
+    region new (
+        name: New
+        type: classicReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                select photos.seq_id,
+                       photos.seq_id as view_photo
+                from apex_collections photos
+                where photos.collection_name = 'PHOTOS'
+                ```
+        }
+        layout {
+            sequence: 1240
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+        componentAppearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Report--altRowsDefault
+                t-Report--rowHighlight
+            ]
+            showNullValuesAs: -
+        }
+        pagination {
+            type: nextAndPreviousLinks
+        }
+
+        column SEQ_ID (
+            reportColumnQueryId: 1
+            derivedColumn: N
+            heading {
+                heading: Seq Id
+                alignment: center
+            }
+            layout {
+                sequence: 1
+            }
+        )
+
+        column VIEW_PHOTO (
+            reportColumnQueryId: 2
+            derivedColumn: N
+            heading {
+                heading: View Photo
+                alignment: center
+            }
+            layout {
+                sequence: 2
+            }
+        )
+
+    )
+
+    region new-2 (
+        name: New
+        type: plSqlDynamicContent
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_photo_clob clob;
+                  l_photo_blob blob;
+                  v_base64_content CLOB;
+                  v_step PLS_INTEGER := 12000;
+                
+                  
+                begin
+                  select blob001
+                  into l_photo_blob
+                  from apex_collections
+                  where collection_name = 'PHOTOS'
+                  and seq_id = 1;
+                  
+                  --:P527_PHOTO_SEQ_ID
+                 FOR i IN 0 .. TRUNC((DBMS_LOB.getlength(l_photo_blob) - 1 )/v_step) LOOP
+                        v_base64_content := v_base64_content || replace(replace(UTL_RAW.cast_to_varchar2(UTL_ENCODE.base64_encode(DBMS_LOB.substr(l_photo_blob, v_step, i * v_step + 1))),chr(10)),chr(13));
+                    END LOOP;
+                    
+                  --P527_PHOTO_SEQ_ID
+                 /* l_photo_clob := apex_web_service.blob2clobbase64(
+                                    p_blob => l_photo_blob
+                                  );*/
+                                  
+                        
+                 --  :P527_PHOTO_BASE64:= v_base64_content;
+                  -- htp.p(v_base64_content);
+                   
+                 INSERT INTO base64_test(base64_content) VALUES(v_base64_content);  
+                 /* apex_json.open_object;
+                  apex_json.write('photoBase64', l_photo_clob);
+                  apex_json.close_object;*/
+                end;
+                
+                ```
+        }
+        layout {
+            sequence: 1230
+            slot: body
+        }
+        appearance {
+            template: @standard
+            templateOptions: [
+                #DEFAULT#
+                t-Region--scrollBody
+            ]
+        }
+        advanced {
+            regionDisplaySelector: true
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    pageItem P527_CONTACT_NUMBER (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 30
+            region: @capture-photo
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P527_PHOTO_BASE64 (
+        type: textarea
+        label {
+            label: Photo Base64
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @capture-photo
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+            height: 1
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P527_PHOTO_CLOB (
+        type: textField
+        label {
+            label: Photo CLOB
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @capture-photo
+            slot: regionBody
+            alignment: left
+        }
+        appearance {
+            template: @optional
+            templateOptions: #DEFAULT#
+            width: 30
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P527_PHOTO_SEQ_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 10
+            region: @capture-photo
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P527_SMS_OTP (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 60
+            region: @capture-photo
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    pageItem P527_VISITLOG_ID (
+        type: hidden
+        settings {
+            valueProtected: false
+        }
+        layout {
+            sequence: 20
+            region: @capture-photo
+            slot: regionBody
+        }
+        security {
+            encryptSessionState: false
+        }
+    )
+
+    button snap-photo (
+        buttonName: SNAP_PHOTO
+        label: Snap Photo
+        layout {
+            sequence: 10
+            region: @capture-photo
+            slot: belowBox
+        }
+        appearance {
+            buttonTemplate: @text
+            hot: true
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+
+    dynamicAction auto-play-video (
+        name: AUTO_PLAY_VIDEO
+        execution {
+            sequence: 40
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P527_PHOTO_SEQ_ID
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    var errBack = function(error) {
+                                    console.log('video capture error: ', error.code);
+                    							};
+                    
+                    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                      navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                        videoStream = stream;
+                        video.srcObject = stream;
+                        video.play();
+                      });
+                    } else if (navigator.getUserMedia) { // Standard
+                      navigator.getUserMedia({ video: true }, function(stream) {
+                        videoStream = stream;
+                        video.src = stream;
+                        video.play();
+                      }, errBack);
+                    } else if (navigator.webkitGetUserMedia) { // WebKit-prefixed
+                      navigator.webkitGetUserMedia({ video: true }, function(stream) {
+                        videoStream = stream;
+                        video.srcObject = stream;
+                        video.play();
+                      }, errBack);
+                    } else if (navigator.mozGetUserMedia) { // Mozilla-prefixed
+                      navigator.mozGetUserMedia({ video: true }, function(stream) {
+                        videoStream = stream;
+                        video.srcObject = stream;
+                        video.play();
+                      }, errBack);
+                    }
+                    ```
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction new (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            selectionType: items
+            items: P527_APEX_SCREEN
+        }
+
+        action plugin-de-danielh-apexscreencapture (
+            action: plugin/apexScreenCapture
+            settings {
+                backgroundColor: #fff
+                letterRendering: false
+                allowTaint: false
+                logging: false
+            }
+            execution {
+                sequence: 10
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    dynamicAction new-2 (
+        name: New
+        execution {
+            sequence: 10
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P527_PHOTO_SEQ_ID
+        }
+
+        action native-execute-plsql-code (
+            action: executeServerSideCode
+            settings {
+                plsqlCode:
+                    ```plsql
+                    declare
+                      l_photo_clob clob;
+                      l_photo_blob blob;
+                      v_base64_content CLOB;
+                      v_step PLS_INTEGER := 12000;
+                    
+                      
+                    begin
+                      select blob001
+                      into l_photo_blob
+                      from apex_collections
+                      where collection_name = 'PHOTOS'
+                      and seq_id = 1;
+                      
+                      --:P527_PHOTO_SEQ_ID
+                     FOR i IN 0 .. TRUNC((DBMS_LOB.getlength(l_photo_blob) - 1 )/v_step) LOOP
+                            v_base64_content := v_base64_content || replace(replace(UTL_RAW.cast_to_varchar2(UTL_ENCODE.base64_encode(DBMS_LOB.substr(l_photo_blob, v_step, i * v_step + 1))),chr(10)),chr(13));
+                        END LOOP;
+                        
+                      --P527_PHOTO_SEQ_ID
+                     /* l_photo_clob := apex_web_service.blob2clobbase64(
+                                        p_blob => l_photo_blob
+                                      );*/
+                                      
+                            
+                     --  :P527_PHOTO_BASE64:= v_base64_content;
+                      -- htp.p(v_base64_content);
+                       
+                     INSERT INTO base64_test(base64_content) VALUES(v_base64_content);  
+                     /* apex_json.open_object;
+                      apex_json.write('photoBase64', l_photo_clob);
+                      apex_json.close_object;*/
+                    end;
+                    
+                    ```
+                itemsToSubmit: P527_PHOTO_SEQ_ID
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show-camera (
+        name: SHOW_CAMERA
+        execution {
+            sequence: 30
+        }
+        when {
+            event: ready
+        }
+
+        action native-show (
+            action: show
+            affectedElements {
+                selectionType: region
+                region: @capture-photo
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction show-photo (
+        name: SHOW_PHOTO
+        execution {
+            sequence: 50
+        }
+        when {
+            event: ready
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P527_PHOTO_SEQ_ID
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    spinner = new Spinner(spinOptions).spin(spinTargetElem);
+                    video.style.display = 'none';
+                    canvas.style.display = 'inline-block';
+                    
+                    apex.server.process(
+                      'GET_PHOTO',
+                      {},
+                    	{
+                        success: function(data) {
+                                   var image = new Image();
+                                   image.onload = function() {
+                                     context.drawImage(image, 0, 0);
+                                   };
+                                   image.src = 'data:image/png;base64,' + data.photoBase64;
+                                   
+                                   spinner.stop();
+                                 }
+                      }
+                    );
+                    ```
+            }
+            affectedElements {
+                selectionType: items
+                items: P527_PHOTO_BASE64
+            }
+            execution {
+                sequence: 10
+            }
+        )
+
+    )
+
+    dynamicAction snap-photo (
+        name: snap photo
+        execution {
+            sequence: 20
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @snap-photo
+        }
+
+        action native-javascript-code (
+            action: executeJsCode
+            settings {
+                jsCode:
+                    ```javascript-browser
+                    spinner = new Spinner(spinOptions).spin(spinTargetElem);
+                    context.drawImage(video, 0, 0, 384, 288);
+                    video.style.display = 'none';  
+                    canvas.style.display = 'inline-block'; 
+                    videoStream.getTracks()[0].stop(); 
+                    
+                    apex.server.process(
+                      'SAVE_PHOTO',
+                      {
+                        p_clob_01: canvas.toDataURL().match(/,(.*)$/)[1]
+                    	},
+                    	{
+                        success: function(data) {
+                                   if (data.result == 'success') {
+                                     apex.submit('SNAP_PHOTO');
+                                   }
+                                 }
+                      }
+                    );
+                    ```
+            }
+            execution {
+                sequence: 20
+                fireOnInit: false
+            }
+        )
+
+    )
+
+    process get-photo (
+        name: GET_PHOTO
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_photo_clob clob;
+                  l_photo_blob blob;
+                  v_base64_content CLOB;
+                  v_step PLS_INTEGER := 12000;
+                
+                begin
+                
+                  select blob001
+                  into l_photo_blob
+                  from apex_collections
+                  where collection_name = 'PHOTOS'
+                  and seq_id = :P527_PHOTO_SEQ_ID;
+                
+                 FOR i IN 0 .. TRUNC((DBMS_LOB.getlength(l_photo_blob) - 1 )/v_step) LOOP
+                        v_base64_content := v_base64_content || replace(replace(UTL_RAW.cast_to_varchar2(UTL_ENCODE.base64_encode(DBMS_LOB.substr(l_photo_blob, v_step, i * v_step + 1))),chr(10)),chr(13));
+                    END LOOP;
+                                    
+                -- INSERT INTO base64_test(base64_content) VALUES(v_base64_content);  
+                
+                   apex_json.open_object;
+                  apex_json.write('photoBase64', l_photo_clob);
+                  apex_json.close_object;
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 20
+            point: ajaxCallback
+        }
+        advanced {
+            executionMappingIdentifier: 633350072357432670
+        }
+        serverSideCondition {
+            type: never
+        }
+    )
+
+    process new (
+        name: New
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                v_number NUMBER;
+                l_photo_clob clob;
+                  l_photo_blob blob;
+                  v_base64_content CLOB;
+                  v_step PLS_INTEGER := 12000;
+                  v_clob CLOB;
+                v_body_content CLOB;
+                v_mail_response CLOB;
+                BEGIN
+                /*SELECT DBMS_LOB.GETLENGTH(blob001) 
+                INTO v_number 
+                from apex_collections where collection_name = 'PHOTOS'
+                AND  seq_id = 1 ;
+                */
+                  select blob001
+                  into l_photo_blob
+                  from apex_collections
+                  where collection_name = 'PHOTOS'
+                  and seq_id = 1;
+                 -- :P527_PHOTO_SEQ_ID;
+                
+                FOR i IN 0 .. TRUNC((DBMS_LOB.getlength(l_photo_blob) - 1 )/v_step) LOOP
+                        v_base64_content := v_base64_content || replace(replace(UTL_RAW.cast_to_varchar2(UTL_ENCODE.base64_encode(DBMS_LOB.substr(l_photo_blob, v_step, i * v_step + 1))),chr(10)),chr(13));
+                    END LOOP;
+                
+                 INSERT INTO base64_test(base64_content) VALUES(v_base64_content);  
+                
+                   v_body_content :=  '{"file":"data:image/png;base64,'||v_base64_content ||'
+                                                    "}';	
+                                                    
+                 xxfs_pm_error_log_pkg.record_log('LOG','CAMERA_ACCESS','v_body_content '||v_clob,4); 
+                 
+                apex_web_service.g_request_headers.DELETE();
+                     apex_web_service.g_request_headers(1).name  := 'Content-Type';
+                     apex_web_service.g_request_headers(1).value := 'application/json';
+                        
+                     v_mail_response := apex_web_service.make_rest_request(p_url          => 'https://events.4iapps.com:9002/barcodereader/api/getcode',
+                                                                           p_http_method  => 'POST',	
+                                                                           p_body		 => v_body_content
+                                                                             );
+                
+                
+                apex_collection.delete_collection(p_collection_name => 'PHOTOS');
+                --raise_application_error(-20001,'photo' ||v_number);
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+        }
+        advanced {
+            executionMappingIdentifier: 633350512335432674
+        }
+        serverSideCondition {
+            whenButtonPressed: @snap-photo
+            type: never
+        }
+    )
+
+    process new-2 (
+        name: New_1
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                  v_number NUMBER;
+                  l_photo_clob clob;
+                  l_photo_blob blob;
+                  v_base64_content CLOB;
+                  v_step PLS_INTEGER := 12000;
+                  v_clob CLOB;
+                  v_body_content CLOB;
+                  v_barcode varchar2(100);
+                  v_response CLOB;
+                  json_content APEX_JSON.t_values;
+                
+                BEGIN
+                
+                /*SELECT DBMS_LOB.GETLENGTH(blob001) 
+                INTO v_number 
+                from apex_collections where collection_name = 'PHOTOS'
+                AND  seq_id = 1 ;
+                */
+                
+                  select blob001
+                  into l_photo_blob
+                  from apex_collections
+                  where collection_name = 'PHOTOS'
+                  and seq_id = (select max(seq_id) from apex_collections where collection_name = 'PHOTOS');
+                 -- :P527_PHOTO_SEQ_ID;
+                
+                    FOR i IN 0 .. TRUNC((DBMS_LOB.getlength(l_photo_blob) - 1 )/v_step) LOOP
+                        v_base64_content := v_base64_content || replace(replace(UTL_RAW.cast_to_varchar2(UTL_ENCODE.base64_encode(DBMS_LOB.substr(l_photo_blob, v_step, i * v_step + 1))),chr(10)),chr(13));
+                    END LOOP;
+                
+                
+                /*
+                  FOR V_I IN 0..TRUNC((DBMS_LOB.GETLENGTH(l_photo_blob) - 1 ) / v_step) LOOP
+                          v_base64_content := v_base64_content || UTL_RAW.CAST_TO_VARCHAR2(
+                                                                       UTL_ENCODE.BASE64_ENCODE(
+                                                                                                DBMS_LOB.SUBSTR(
+                                                                                                                l_photo_blob,
+                                                                                                                v_step,
+                                                                                                                V_I * v_step + 1
+                                                                                                               )
+                                                                                               )
+                                                                      );
+                   END LOOP;
+                */
+                
+                   v_body_content :=  '{"file":"data:image/png;base64,'||v_base64_content ||'"}';	
+                
+                --- INSERT INTO barcode_base64(base64_content, barcode_number) VALUES(v_base64_content, v_barcode);  
+                INSERT INTO base64_test(base64_content) VALUES(v_body_content);  
+                
+                 ---raise_application_error(-20100,v_body_content);                                   
+                 --xxfs_pm_error_log_pkg.record_log('LOG','CAMERA_ACCESS','v_body_content '||v_clob,4); 
+                 
+                apex_web_service.g_request_headers.DELETE();
+                     apex_web_service.g_request_headers(1).name  := 'Content-Type';
+                     apex_web_service.g_request_headers(1).value := 'application/json';
+                        
+                     v_response := apex_web_service.make_rest_request(p_url          => 'http://events.4iapps.com/barcodereader/api/getcode',
+                                                                      p_http_method  => 'POST',	
+                                                                      p_body		 => v_body_content
+                                                                     );
+                
+                ---raise_application_error(-20100,v_response);
+                
+                ---APEX_JSON.parse(v_response);
+                ---- v_barcode := apex_json.get_varchar2('code');
+                
+                --- INSERT INTO barcode_base64(base64_content, barcode_number) VALUES(v_response, v_barcode);  
+                INSERT INTO base64_test(base64_content) VALUES(v_response);
+                --  https://events.4iapps.com:9002/barcodereader/api/getcode
+                
+                apex_collection.delete_collection(p_collection_name => 'PHOTOS');
+                ----raise_application_error(-20001,'photo' ||v_number);
+                ---exception when others then
+                 ---   null;
+                END;
+                ```
+        }
+        execution {
+            sequence: 20
+        }
+        advanced {
+            executionMappingIdentifier: 622649303161583980
+        }
+    )
+
+    process save-photo (
+        name: SAVE_PHOTO
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  l_photo_clob clob;
+                  l_photo_blob blob;
+                begin
+                
+                --raise_application_error(-20001,'Hai');
+                  l_photo_clob := apex_application.g_clob_01;
+                 
+                  --raise_application_error(-20001,'base64 '||l_photo_clob);       
+                  
+                  l_photo_blob := apex_web_service.clobbase642blob(
+                                    p_clob => l_photo_clob
+                                  );
+                -- l_photo_clob:= BLOB_TO_BASE64()                
+                
+                --raise_application_error(-20001,'Hai'||l_photo_blob); 
+                --l_photo_clob             		 := :P527_PHOTO_BASE64;
+                
+                --raise_application_error(-20001,'Hai'||:P527_PHOTO_BASE64);
+                
+                  apex_collection.add_member(
+                    p_collection_name => 'PHOTOS',
+                    p_blob001 => l_photo_blob
+                     );
+                
+                
+                  -- update XXFS_PM_VISITOR_LOG_T set DOCUMENT_FILE = l_photo_blob, VISIT_INTIME = SYSTIMESTAMP where VISITLOG_ID = :P110_VISITLOG_ID;
+                
+                  apex_json.open_object;
+                  apex_json.write(
+                    p_name => 'result',
+                    p_value => 'success'
+                  );
+                  apex_json.close_object;
+                
+                --:APP_PHOTO:= l_photo_clob;
+                --apex_collection.delete_collection(p_collection_name => 'PHOTOS');
+                
+                exception
+                  when others then
+                    apex_json.open_object;
+                    apex_json.write(
+                      p_name => 'result',
+                      p_value => 'fail'
+                    );
+                    apex_json.close_object;
+                end;
+                
+                ```
+        }
+        execution {
+            sequence: 10
+            point: ajaxCallback
+        }
+        advanced {
+            executionMappingIdentifier: 633350006303432669
+        }
+    )
+
+    process set-photo-collection (
+        name: Set Photo collection
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                declare
+                  lco_photos_collection_name constant apex_collections.collection_name%type := 'PHOTOS';
+                begin
+                
+                  if not apex_collection.collection_exists(lco_photos_collection_name) then
+                     apex_collection.create_collection(
+                         p_collection_name => lco_photos_collection_name
+                        );
+                end if;
+                
+                end;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: afterHeader
+        }
+        advanced {
+            executionMappingIdentifier: 633348282708432652
+        }
+    )
+
+)
+
